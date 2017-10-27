@@ -1,0 +1,1 @@
+include ':app', ':azure.android.data'
