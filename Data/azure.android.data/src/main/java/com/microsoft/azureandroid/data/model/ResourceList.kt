@@ -1,7 +1,6 @@
 package com.microsoft.azureandroid.data.model
 
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
 import com.microsoft.azureandroid.data.util.JsonHelper
 
 /**
@@ -30,8 +29,6 @@ class ResourceList<T: Resource>(resourceType: ResourceType, json: JsonObject) {
     init {
         resourceId  = json[resourceIdKey]?.asString
         count       = json[countKey]?.asInt
-
-//        val resourceType = object : TypeToken<T: Resource>() {}.type
 
         json[resourceType.listName]?.asJsonArray?.let {
 

@@ -1,14 +1,12 @@
 package com.microsoft.azureandroid.data.services
 
 import android.content.pm.PackageManager
-import com.google.gson.Gson
 import com.microsoft.azureandroid.data.constants.ApiValues
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.util.ContextProvider
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
 import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
 import com.microsoft.azureandroid.data.util.JsonHelper
 import com.microsoft.azureandroid.data.util.LocaleHelper
 import kotlinx.coroutines.experimental.CommonPool
@@ -202,8 +200,6 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
             val jsonObject = jsonParser.parse(json).asJsonObject
 
             //                            var resourceList = Gson().fromJson(json, ResourceList::class.java)
-
-//            val resourceType = object : TypeToken<T>() {}.type
 
             val resourceList = ResourceList<T>(resourceType, jsonObject)
 

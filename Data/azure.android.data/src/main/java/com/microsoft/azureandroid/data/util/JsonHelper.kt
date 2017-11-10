@@ -25,10 +25,12 @@ class JsonHelper {
             .registerTypeAdapter(Date::class.java, JsonDeserializer<Date> {
                 json, typeOfT, context ->
 
-                if (json.asJsonPrimitive.isNumber)
+                if (json.asJsonPrimitive.isNumber) {
                     Date(json.asLong * 1000) //convert ticks since 1970 to Date
-                else
+                }
+                else {
                     null
+                }
             })
 
             if (ContextProvider.verboseLogging) {
