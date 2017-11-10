@@ -1,0 +1,65 @@
+package com.microsoft.azureandroiddatasample
+
+import android.app.Application
+import android.content.Context
+import com.microsoft.azureandroid.data.AzureData
+import com.microsoft.azureandroid.data.constants.TokenType
+
+class App : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        application = this
+
+        AzureData.init(App.context, "mobile", "c93UmpHKhpsoRzBtdBjp2i9ynergFRYjwHt4Pq9xfd1AM4pkz2PMfpcDeStUzyEm5Uva9iLPRLVL88VimOAWEw==", TokenType.MASTER, true)
+
+        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
+            // Save the fact we crashed out.
+            getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+                    .putBoolean(KEY_APP_CRASHED, true).apply()
+            // Chain default exception handler.
+            defaultHandler?.uncaughtException(thread, exception)
+        }
+
+        val bRestartAfterCrash = getSharedPreferences(TAG, Context.MODE_PRIVATE)
+                .getBoolean(KEY_APP_CRASHED, false)
+        if (bRestartAfterCrash) {
+            // Clear crash flag.
+            isRestartedFromCrash = true
+
+            getSharedPreferences(TAG, Context.MODE_PRIVATE).edit()
+                    .putBoolean(KEY_APP_CRASHED, false).apply()
+        }
+    }
+
+    companion object {
+
+        fun activityResumed() {
+            isActivityVisible = true
+        }
+
+        fun activityPaused() {
+            isActivityVisible = false
+        }
+
+        var isActivityVisible: Boolean = false
+            private set
+
+        var application: Application? = null
+            private set
+
+        private val TAG = "AppDelegate"
+        private val KEY_APP_CRASHED = "KEY_APP_CRASHED"
+
+        var isRestartedFromCrash = false
+            private set
+
+        fun clearIsRestartedFromCrash() {
+            isRestartedFromCrash = false
+        }
+
+        val context: Context
+            get() = application!!.applicationContext
+    }
+}
