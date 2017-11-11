@@ -8,9 +8,15 @@ import com.google.gson.annotations.SerializedName
 
 class Database : Resource() {
 
-    @SerializedName("_colls")
+    @SerializedName(collectionsLinkKey)
     var collectionsLink: String? = null
 
-    @SerializedName("_users")
+    @SerializedName(usersLinkKey)
     var usersLink: String? = null
+
+    companion object {
+
+        const val collectionsLinkKey    = "_colls"
+        const val usersLinkKey          = "_users"
+    }
 }

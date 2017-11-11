@@ -42,12 +42,7 @@ class CardAdapter<T : Any>(private val _viewLayoutId: Int, private val _viewHold
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, i: Int) {
         val item = items[i]
 
-        (viewHolder as ViewHolderBase<T>)?.let {
-            it.setData(item)
-        }
-
-//        onBindViewHolderMethod.setResult(item, viewHolder)
-//        onBindViewHolderMethod.call()
+        (viewHolder as ViewHolderBase<T>).setData(item)
     }
 
     override fun getItemCount(): Int {

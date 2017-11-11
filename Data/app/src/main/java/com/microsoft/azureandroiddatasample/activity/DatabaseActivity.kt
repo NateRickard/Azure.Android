@@ -58,7 +58,6 @@ class DatabaseActivity : AppCompatActivity() {
         button_clear.setOnClickListener { adapter!!.clear() }
 
         button_create.setOnClickListener {
-            val databaseId: String
 
             val editTextView = layoutInflater.inflate(R.layout.edit_text, null)
             val editText = editTextView.findViewById<EditText>(R.id.editText)

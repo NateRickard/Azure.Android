@@ -14,8 +14,17 @@ class ResourceUri(databaseName: String) {
     private val host: String = "$databaseName.documents.azure.com"
 
     fun database(resourceId: String? = null) : UrlLink {
+
         val baseLink = ""
         val itemLink = getItemLink(ResourceType.DATABASE, baseLink, resourceId)
+
+        return getUrlLink(baseLink, itemLink, resourceId)
+    }
+
+    fun collection(databaseId: String, resourceId: String? = null) : UrlLink {
+
+        val baseLink = "dbs/$databaseId"
+        val itemLink = getItemLink(ResourceType.COLLECTION, baseLink, resourceId)
 
         return getUrlLink(baseLink, itemLink, resourceId)
     }

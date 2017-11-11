@@ -10,11 +10,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroiddatasample.App
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.CardAdapter
-import com.microsoft.azureandroiddatasample.adapter.DocumentCollectionViewHolder
+import com.microsoft.azureandroiddatasample.adapter.CollectionViewHolder
 import com.microsoft.azureandroiddatasample.framework.RecyclerItemClickListener
 
 import kotlinx.android.synthetic.main.collections_activity.*
@@ -27,7 +28,7 @@ class CollectionsActivity : Activity() {
 
     private lateinit var adapter: CardAdapter<DocumentCollection>
 
-    private var dbId: String? = null
+    private lateinit var dbId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +36,7 @@ class CollectionsActivity : Activity() {
 
         val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        adapter = CardAdapter(R.layout.collection_view, DocumentCollectionViewHolder::class.java)
+        adapter = CardAdapter(R.layout.collection_view, CollectionViewHolder::class.java)
 
         recycler_view.layoutManager = linearLayoutManager
         recycler_view.adapter = adapter
@@ -91,30 +92,30 @@ class CollectionsActivity : Activity() {
             try {
                 val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Loading. Please wait...", true)
 
-//                AzureData.instance.databases { response ->
-//
-//                    print(response.result)
-//
-//                    if (response.isSuccessful) {
-//
-//                        val dbs = response.resource?.items!!
-//
-//                        runOnUiThread {
-//                            adapter.clear()
-//
-//                            for (db in dbs) {
-//                                adapter.addData(db)
-//                            }
-//
-//                            adapter.notifyDataSetChanged()
-//                        }
-//                    }
-//                    else {
-//                        print(response.error)
-//                    }
-//
-//                    dialog.cancel()
-//                }
+                AzureData.instance.getCollectionsIn(dbId) { response ->
+
+                    print(response.result)
+
+                    if (response.isSuccessful) {
+
+                        val colls = response.resource?.items!!
+
+                        runOnUiThread {
+                            adapter.clear()
+
+                            for (coll in colls) {
+                                adapter.addData(coll)
+                            }
+
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                    else {
+                        print(response.error)
+                    }
+
+                    dialog.cancel()
+                }
 
 
 //                _rxController!!.getCollections(_databaseId)
@@ -143,7 +144,6 @@ class CollectionsActivity : Activity() {
         }
 
         button_create.setOnClickListener {
-            val databaseId: String
 
             val editTextView = layoutInflater.inflate(R.layout.edit_text, null)
             val editText = editTextView.findViewById<EditText>(R.id.editText)

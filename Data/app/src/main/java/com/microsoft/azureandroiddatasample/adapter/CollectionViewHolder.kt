@@ -9,13 +9,13 @@ import kotlinx.android.synthetic.main.collection_view.view.*
  * Created by nater on 11/10/17.
  */
 
-class DocumentCollectionViewHolder(itemView: View) : ViewHolderBase<DocumentCollection>(itemView) {
+class CollectionViewHolder(itemView: View) : ViewHolderBase<com.microsoft.azureandroid.data.model.DocumentCollection>(itemView) {
 
     override fun setData(item: DocumentCollection) {
 
         itemView.idTextView.text = item.id
-        itemView.ridTextView.text = item.rid
-        itemView.selfTextView.text = item.self
+        itemView.ridTextView.text = item.resourceId
+        itemView.selfTextView.text = item.selfLink
         itemView.eTagTextView.text = item.etag
     }
 }

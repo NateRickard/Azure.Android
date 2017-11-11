@@ -7,6 +7,7 @@ import com.microsoft.azureandroid.data.util.ContextProvider
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
 import com.google.gson.JsonParser
+import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.util.JsonHelper
 import com.microsoft.azureandroid.data.util.LocaleHelper
 import kotlinx.coroutines.experimental.CommonPool
@@ -76,12 +77,25 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         builder.build()
     }
 
+    // Database
+
     // list
     fun databases (callback: (ListResponse<Database>) -> Unit) {
 
         val resourceUri = baseUri.database()
 
         resources(resourceUri, ResourceType.DATABASE, Database::class.java, callback)
+    }
+
+    // Collections
+
+    //list
+
+    fun getCollectionsIn(databaseId: String, callback: (ListResponse<DocumentCollection>) -> Unit) {
+
+        val resourceUri = baseUri.collection(databaseId)
+
+        return resources(resourceUri, ResourceType.COLLECTION, DocumentCollection::class.java, callback)
     }
 
     // list
