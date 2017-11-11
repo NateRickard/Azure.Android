@@ -3,6 +3,7 @@ package com.microsoft.azureandroid.data
 import android.content.Context
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.Database
+import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.ResourceUri
 import com.microsoft.azureandroid.data.services.CosmosService
@@ -18,15 +19,31 @@ class AzureData {
     init {
     }
 
-    // dbs
+    // Databases
+
+    // list
 
     fun databases(callback: (ListResponse<Database>) -> Unit) {
         return cosmosService.databases(callback)
     }
 
+    // Collections
+
     // list
     fun getCollectionsIn (databaseId: String, callback: (ListResponse<DocumentCollection>) -> Unit) {
         return cosmosService.getCollectionsIn(databaseId, callback)
+    }
+
+    // Documents
+
+    // list
+
+    fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ListResponse<T>) -> Unit) {
+        return cosmosService.getDocumentsAs(collectionId, databaseId, callback)
+    }
+
+    fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ListResponse<T>) -> Unit) {
+        return cosmosService.getDocumentsAs(collection, callback)
     }
 
     companion object {

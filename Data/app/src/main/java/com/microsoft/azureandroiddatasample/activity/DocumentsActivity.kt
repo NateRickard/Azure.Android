@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import com.microsoft.azureandroid.data.AzureData
+import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroiddatasample.App
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.CardAdapter
@@ -17,13 +19,13 @@ import kotlinx.android.synthetic.main.documents_activity.*
 
 class DocumentsActivity : Activity() {
 
-    private var adapter: CardAdapter<Any>? = null
+    private lateinit var adapter: CardAdapter<Document>
 
 //    private var _rxController: CosmosRxController? = null
 
-    private var databaseId: String? = null
+    private lateinit var databaseId: String
 
-    private var collectionId: String? = null
+    private lateinit var collectionId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,7 @@ class DocumentsActivity : Activity() {
         recycler_view.adapter = adapter
 
         val extras = intent.extras
+
         if (extras != null) {
             databaseId = extras.getString("db_id")
             collectionId = extras.getString("coll_id")
@@ -46,7 +49,7 @@ class DocumentsActivity : Activity() {
             collectionIdTextView.text = collectionId
         }
 
-        button_clear.setOnClickListener { adapter!!.clear() }
+        button_clear.setOnClickListener { adapter.clear() }
 
         button_delete.setOnClickListener {
             val dialog = ProgressDialog.show(this@DocumentsActivity, "", "Deleting. Please wait...", true)
@@ -70,6 +73,31 @@ class DocumentsActivity : Activity() {
         button_fetch.setOnClickListener {
             try {
                 val dialog = ProgressDialog.show(this@DocumentsActivity, "", "Loading. Please wait...", true)
+
+                AzureData.instance.getDocumentsAs<Document>(collectionId, databaseId) { response ->
+
+                    print(response.result)
+
+                    if (response.isSuccessful) {
+
+                        val docs = response.resource?.items!!
+
+                        runOnUiThread {
+                            adapter.clear()
+
+                            for (doc in docs) {
+                                adapter.addData(doc)
+                            }
+
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                    else {
+                        print(response.error)
+                    }
+
+                    dialog.cancel()
+                }
 
 //                _rxController!!.getDocuments(databaseId, collectionId)
 //                        // Run on a background thread

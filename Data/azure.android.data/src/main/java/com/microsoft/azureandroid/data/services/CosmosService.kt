@@ -7,7 +7,6 @@ import com.microsoft.azureandroid.data.util.ContextProvider
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
 import com.google.gson.JsonParser
-import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.util.JsonHelper
 import com.microsoft.azureandroid.data.util.LocaleHelper
 import kotlinx.coroutines.experimental.CommonPool
@@ -84,22 +83,40 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
         val resourceUri = baseUri.database()
 
-        resources(resourceUri, ResourceType.DATABASE, Database::class.java, callback)
+        resources(resourceUri, ResourceType.DATABASE, callback)
     }
 
     // Collections
 
-    //list
+    // list
 
     fun getCollectionsIn(databaseId: String, callback: (ListResponse<DocumentCollection>) -> Unit) {
 
-        val resourceUri = baseUri.collection(databaseId)
+        val resourceUri = baseUri.forCollection(databaseId)
 
-        return resources(resourceUri, ResourceType.COLLECTION, DocumentCollection::class.java, callback)
+        return resources(resourceUri, ResourceType.COLLECTION, callback)
+    }
+
+    // Documents
+
+    // list
+
+    fun<T: Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ListResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(databaseId, collectionId)
+
+        return resources(resourceUri, ResourceType.DOCUMENT, callback)
+    }
+
+    fun<T: Document> getDocumentsAs(collection: DocumentCollection, callback: (ListResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(collection.selfLink!!)
+
+        return resources(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
     // list
-    private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType, type: Class<T>, callback: (ListResponse<T>) -> Unit) {
+    private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType, callback: (ListResponse<T>) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 

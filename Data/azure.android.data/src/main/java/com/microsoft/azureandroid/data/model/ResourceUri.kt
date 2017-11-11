@@ -21,12 +21,27 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, resourceId)
     }
 
-    fun collection(databaseId: String, resourceId: String? = null) : UrlLink {
+    fun forCollection(databaseId: String, resourceId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId"
         val itemLink = getItemLink(ResourceType.COLLECTION, baseLink, resourceId)
 
         return getUrlLink(baseLink, itemLink, resourceId)
+    }
+
+    fun forDocument(databaseId: String, collectionId: String, resourceId: String? = null) : UrlLink {
+
+        val baseLink = "dbs/$databaseId/colls/$collectionId"
+        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, resourceId)
+
+        return getUrlLink(baseLink, itemLink, resourceId)
+    }
+
+    fun forDocument(baseLink: String, resourceId: String? = null) : UrlLink {
+
+        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, resourceId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, resourceId)
     }
 
     private fun getItemLink(resourceType: ResourceType, baseLink: String, resourceId: String?) : String {

@@ -13,10 +13,8 @@ class DocumentViewHolder(itemView: View) : ViewHolderBase<Document>(itemView) {
     override fun setData(item: Document) {
 
         itemView.idTextView.text = item.id
-        itemView.ridTextView.text = item.rid
-        itemView.selfTextView.text = item.self
+        itemView.ridTextView.text = item.resourceId
+        itemView.selfTextView.text = item.selfLink
         itemView.eTagTextView.text = item.etag
-
-//        vHolder.itemView.setOnClickListener(View.OnClickListener { })
     }
 }
