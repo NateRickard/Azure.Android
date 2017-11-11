@@ -1,35 +1,36 @@
 package com.microsoft.azureandroiddatasample.adapter
 
-import android.app.Activity
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 
 import java.util.ArrayList
 
-class CardAdapter<T : Any>(private val _viewLayoutId: Int, private val _onBindViewHolderMethod: Callback<Any>, private val _viewHolderClazz: Class<*>, private val _activity: Activity) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val _mItems: MutableList<T>
+class CardAdapter<T : Any>(private val _viewLayoutId: Int, private val _viewHolderClazz: Class<*>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val items: MutableList<T>
     private var _viewHolder: RecyclerView.ViewHolder? = null
 
     init {
-
-        _mItems = ArrayList()
+        items = ArrayList()
     }
 
     fun addData(item: T) {
-        _mItems.add(item)
-
+        items.add(item)
         notifyDataSetChanged()
     }
 
+    fun getData(index: Int): T {
+        return items[index]
+    }
+
     fun clear() {
-        _mItems.clear()
+        items.clear()
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): RecyclerView.ViewHolder? {
+
         val v = LayoutInflater.from(viewGroup.context)
                 .inflate(_viewLayoutId, viewGroup, false)
 
@@ -39,16 +40,17 @@ class CardAdapter<T : Any>(private val _viewLayoutId: Int, private val _onBindVi
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, i: Int) {
-        val item = _mItems[i]
+        val item = items[i]
 
-        _onBindViewHolderMethod.setResult(item, viewHolder)
-
-        if (item != null) {
-            _onBindViewHolderMethod.call()
+        (viewHolder as ViewHolderBase<T>)?.let {
+            it.setData(item)
         }
+
+//        onBindViewHolderMethod.setResult(item, viewHolder)
+//        onBindViewHolderMethod.call()
     }
 
     override fun getItemCount(): Int {
-        return _mItems.size
+        return items.size
     }
 }

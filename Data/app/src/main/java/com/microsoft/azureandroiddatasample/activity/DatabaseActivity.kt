@@ -3,24 +3,28 @@ package com.microsoft.azureandroiddatasample.activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.TextView
 
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import com.microsoft.azureandroid.data.AzureData
 
 import com.microsoft.azureandroiddatasample.App
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.*
 import com.microsoft.azureandroid.data.model.Database
+import com.microsoft.azureandroiddatasample.framework.RecyclerItemClickListener
 
 import kotlinx.android.synthetic.main.databases_activity.*
 
+
 class DatabaseActivity : AppCompatActivity() {
 
-    private var _adapter: CardAdapter<Any>? = null
+    private lateinit var adapter: CardAdapter<Database>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,30 +32,30 @@ class DatabaseActivity : AppCompatActivity() {
 
         val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        _adapter = CardAdapter(R.layout.database_view, object : Callback<Any>() {
-            override fun call() {
-                val db = this.result as Database
-                val vHolder = this.viewHolder as DatabaseViewHolder
-
-                vHolder.idTextView.text = db.id
-                vHolder.ridTextView.text = db.resourceId
-                vHolder.selfTextView.text = db.selfLink
-                vHolder.eTagTextView.text = db.etag
-                vHolder.collsTextView.text = db.collectionsLink
-                vHolder.usersTextView.text = db.usersLink
-
-//                vHolder.itemView.setOnClickListener(View.OnClickListener {
-//                    val intent = Intent(baseContext, CollectionsActivity::class.java)
-//                    intent.putExtra("db_id", db.id)
-//                    startActivity(intent)
-//                })
-            }
-        }, DatabaseViewHolder::class.java, this)
+        adapter = CardAdapter(R.layout.database_view, DatabaseViewHolder::class.java)
 
         recycler_view.layoutManager = linearLayoutManager
-        recycler_view.adapter = _adapter
+        recycler_view.adapter = adapter
 
-        button_clear.setOnClickListener { _adapter!!.clear() }
+        recycler_view.addOnItemTouchListener(
+                RecyclerItemClickListener(this, recycler_view, object : RecyclerItemClickListener.OnItemClickListener {
+                    override fun onItemClick(view: View, position: Int) {
+
+                        val db = adapter.getData(position)
+
+                        val intent = Intent(baseContext, CollectionsActivity::class.java)
+                        intent.putExtra("db_id", db.id)
+                        startActivity(intent)
+                    }
+
+                    override fun onLongItemClick(view: View, position: Int) {
+                        // do whatever
+                    }
+                })
+        )
+
+
+        button_clear.setOnClickListener { adapter!!.clear() }
 
         button_create.setOnClickListener {
             val databaseId: String
@@ -87,7 +91,6 @@ class DatabaseActivity : AppCompatActivity() {
         button_fetch.setOnClickListener {
             try {
                 val dialog = ProgressDialog.show(this@DatabaseActivity, "", "Loading. Please wait...", true)
-                val adapter = _adapter!!
 
                 AzureData.instance.databases { response ->
 
@@ -113,10 +116,6 @@ class DatabaseActivity : AppCompatActivity() {
 
                     dialog.cancel()
                 }
-
-                //controller.getDocuments("example", "example");
-
-                //controller.getAttachment("testDb", "example", "wiggum", "imageId1");
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -126,9 +125,7 @@ class DatabaseActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (_adapter != null) {
-            _adapter!!.clear()
-        }
+        adapter.clear()
 
         App.activityResumed()
     }
