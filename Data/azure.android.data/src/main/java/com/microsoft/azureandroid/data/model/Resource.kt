@@ -10,12 +10,12 @@ import java.util.*
 abstract class Resource(id: String? = UUID.randomUUID().toString()) {
 
     @SerializedName(idKey)
-    var id: String = id!! //should be a valid ID passed in or generated with the default
+    var id: String = id!!
 
     @SerializedName(resourceIdKey)
     var resourceId: String = ""
 
-    @SerializedName(selfLinkKey)
+    @SerializedName(selfLinkKey)    
     var selfLink: String? = null
 
     @SerializedName(etagKey)

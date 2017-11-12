@@ -8,7 +8,7 @@ import okhttp3.Response
  * Created by nater on 11/7/17.
  */
 
-class ListResponse<T: Resource>(
+class ResourceListResponse<T: Resource>(
         // The URL request sent to the server.
         var request: Request? = null,
         // The server's response to the URL request.

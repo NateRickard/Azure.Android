@@ -3,18 +3,15 @@ package com.microsoft.azureandroid.data.services
 import android.content.pm.PackageManager
 import com.microsoft.azureandroid.data.constants.ApiValues
 import com.microsoft.azureandroid.data.constants.TokenType
-import com.microsoft.azureandroid.data.util.ContextProvider
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
 import com.google.gson.JsonParser
-import com.microsoft.azureandroid.data.util.JsonHelper
-import com.microsoft.azureandroid.data.util.LocaleHelper
+import com.microsoft.azureandroid.data.util.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import okhttp3.*
 import java.io.IOException
-
 
 /**
  * Created by nater on 10/31/17.
@@ -23,7 +20,6 @@ import java.io.IOException
 class CosmosService(private val baseUri: ResourceUri, key: String, keyType: TokenType = TokenType.MASTER) {
 
     private val tokenProvider: TokenProvider = TokenProvider(key, keyType, "1.0")
-    private var authString: String? = null
 
     private val headers: Headers by lazy {
 
@@ -78,8 +74,24 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
     // Database
 
+    // create
+    fun createDatabase (databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
+
+        if (!databaseId.isValidResourceId()) {
+            return callback(ResourceResponse(invalidIdError))
+        }
+
+        val resourceUri = baseUri.database()
+
+        val body = JsonHelper.Gson.toJson(mapOf("id" to databaseId))
+
+        val httpBody = RequestBody.create(jsonMediaType, body)
+
+        return create(resourceUri, ResourceType.DATABASE, httpBody, callback = callback)
+    }
+
     // list
-    fun databases (callback: (ListResponse<Database>) -> Unit) {
+    fun databases (callback: (ResourceListResponse<Database>) -> Unit) {
 
         val resourceUri = baseUri.database()
 
@@ -90,7 +102,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
     // list
 
-    fun getCollectionsIn(databaseId: String, callback: (ListResponse<DocumentCollection>) -> Unit) {
+    fun getCollectionsIn(databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
 
         val resourceUri = baseUri.forCollection(databaseId)
 
@@ -101,58 +113,67 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
     // list
 
-    fun<T: Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ListResponse<T>) -> Unit) {
+    fun<T: Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
 
         return resources(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
-    fun<T: Document> getDocumentsAs(collection: DocumentCollection, callback: (ListResponse<T>) -> Unit) {
+    fun<T: Document> getDocumentsAs(collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(collection.selfLink!!)
 
         return resources(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
+    // Resources
+
     // list
-    private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType, callback: (ListResponse<T>) -> Unit) {
+    private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
-        send(request, resourceType, callback)
+        sendResourceListRequest(request, resourceType, callback)
+    }
+
+    // list
+    private fun<T: Resource> getResourcesAsync (resourceUri: UrlLink, resourceType: ResourceType) : Deferred<ResourceListResponse<T>> {
+
+        val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
+
+        return sendAsync(request, resourceType)
     }
 
     // create
-    private fun <T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, httpBody: ByteArray, additionalHeaders: Headers) : Deferred<ListResponse<T>> {
+    private fun<T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, httpBody: RequestBody, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, httpBody)
+
+        sendResourceRequest(request, resourceType, callback)
+    }
+
+    // create
+    private fun<T: Resource> createAsync (resourceUri: UrlLink, resourceType: ResourceType, httpBody: ByteArray, additionalHeaders: Headers) : Deferred<ResourceListResponse<T>> {
 
         val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders)
 
         return sendAsync(request, resourceType)
     }
 
-    // list
-    private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType) : Deferred<ListResponse<T>> {
-
-        val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
-
-        return sendAsync(request, resourceType)
-    }
-
-    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, forQuery: Boolean = false) : Request {
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, body: RequestBody? = null, forQuery: Boolean = false) : Request {
 
         val token = tokenProvider.getToken(method, resourceType, resourceUri.link)
 
         val builder = Request.Builder()
                 .headers(headers) //base headers
-//                        .addHeader("Accept", "application/json")
                 .url(resourceUri.url)
 
         when (method) {
             ApiValues.HttpMethod.GET -> builder.get()
-//            ApiValues.HttpMethod.POST -> builder.post()
+            ApiValues.HttpMethod.POST -> builder.post(body!!)
             ApiValues.HttpMethod.HEAD -> builder.head()
-//            ApiValues.HttpMethod.PUT -> builder.put()
+            ApiValues.HttpMethod.PUT -> builder.put(body!!)
             ApiValues.HttpMethod.DELETE -> builder.delete()
         }
 
@@ -180,17 +201,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return builder.build()
     }
 
-    private fun<T: Resource> sendAsync(request: Request, resourceType: ResourceType) : Deferred<ListResponse<T>> {
-
-        return async(CommonPool) {
-
-            val response = client.newCall(request).execute()
-
-            processResponse<T>(request, response, resourceType)
-        }
-    }
-
-    private fun<T: Resource> send(request: Request, resourceType: ResourceType, callback: (ListResponse<T>) -> Unit) {
+    private fun<T: Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
 
         try {
             client.newCall(request)
@@ -198,7 +209,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
                         override fun onFailure(call: Call, e: IOException) {
                             // Error
-                            return callback(ListResponse(DataError(e)))
+                            return callback(ResourceResponse(DataError(e)))
                         }
 
                         @Throws(IOException::class)
@@ -213,13 +224,73 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
                 print(e)
             }
 
-            callback(ListResponse(DataError(e)))
+            callback(ResourceResponse(DataError(e)))
         }
     }
 
-    fun<T: Resource> processResponse(request: Request, response: Response, resourceType: ResourceType) : ListResponse<T> {
+    private fun<T: Resource> sendAsync(request: Request, resourceType: ResourceType) : Deferred<ResourceListResponse<T>> {
+
+        return async(CommonPool) {
+
+            val response = client.newCall(request).execute()
+
+            processListResponse<T>(request, response, resourceType)
+        }
+    }
+
+    private fun<T: Resource> sendResourceListRequest(request: Request, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+
         try {
-            val body = response.body() ?: return ListResponse(DataError("Empty response body received"))
+            client.newCall(request)
+                    .enqueue(object : Callback {
+
+                        override fun onFailure(call: Call, e: IOException) {
+                            // Error
+                            return callback(ResourceListResponse(DataError(e)))
+                        }
+
+                        @Throws(IOException::class)
+                        override fun onResponse(call: Call, response: Response) {
+
+                            return callback(processListResponse(request, response, resourceType))
+                        }
+                    })
+        }
+        catch (e: Exception) {
+            if (ContextProvider.verboseLogging) {
+                print(e)
+            }
+
+            callback(ResourceListResponse(DataError(e)))
+        }
+    }
+
+    fun<T: Resource> processResponse(request: Request, response: Response, resourceType: ResourceType) : ResourceResponse<T> {
+
+        try {
+            val body = response.body() ?: return ResourceResponse(DataError("Empty response body received"))
+
+            val json = body.string()
+
+            if (ContextProvider.verboseLogging) {
+                print(json)
+            }
+
+            val resource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
+
+            val result = Result(resource)
+
+            return ResourceResponse(request, response, json, result)
+        }
+        catch (e: Exception) {
+            return ResourceResponse(DataError(e))
+        }
+    }
+
+    fun<T: Resource> processListResponse(request: Request, response: Response, resourceType: ResourceType) : ResourceListResponse<T> {
+
+        try {
+            val body = response.body() ?: return ResourceListResponse(DataError("Empty response body received"))
 
             val json = body.string()
 
@@ -235,23 +306,24 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
             val resourceList = ResourceList<T>(resourceType, jsonObject)
 
             if (!resourceList.isPopuated) {
-                return ListResponse(json.toError())
+                return ResourceListResponse(json.toError())
             }
 
             val result = ListResult(resourceList)
 
-            return ListResponse(request, response, json, result)
+            return ResourceListResponse(request, response, json, result)
         }
         catch (e: Exception) {
-            return ListResponse(DataError(e))
+            return ResourceListResponse(DataError(e))
         }
-    }
-
-    fun String.toError(): DataError {
-        return JsonHelper.Gson.fromJson(this, DataError::class.java)
     }
 
     companion object {
+
         val client = OkHttpClient()
+
+        val invalidIdError : DataError = DataError("Cosmos DB Resource IDs must not exceed 255 characters and cannot contain whitespace")
+
+        val jsonMediaType = MediaType.parse(ApiValues.HttpRequestHeaderValue.ACCEPT_JSON.value)
     }
 }

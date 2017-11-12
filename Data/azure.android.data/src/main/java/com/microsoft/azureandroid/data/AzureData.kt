@@ -7,7 +7,8 @@ import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.ResourceUri
 import com.microsoft.azureandroid.data.services.CosmosService
-import com.microsoft.azureandroid.data.services.ListResponse
+import com.microsoft.azureandroid.data.services.ResourceListResponse
+import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroid.data.util.ContextProvider
 
 /**
@@ -21,16 +22,21 @@ class AzureData {
 
     // Databases
 
+    // create
+    fun createDatabase ( databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
+        return cosmosService.createDatabase (databaseId, callback)
+    }
+
     // list
 
-    fun databases(callback: (ListResponse<Database>) -> Unit) {
+    fun databases(callback: (ResourceListResponse<Database>) -> Unit) {
         return cosmosService.databases(callback)
     }
 
     // Collections
 
     // list
-    fun getCollectionsIn (databaseId: String, callback: (ListResponse<DocumentCollection>) -> Unit) {
+    fun getCollectionsIn (databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
         return cosmosService.getCollectionsIn(databaseId, callback)
     }
 
@@ -38,11 +44,11 @@ class AzureData {
 
     // list
 
-    fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ListResponse<T>) -> Unit) {
+    fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
         return cosmosService.getDocumentsAs(collectionId, databaseId, callback)
     }
 
-    fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ListResponse<T>) -> Unit) {
+    fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
         return cosmosService.getDocumentsAs(collection, callback)
     }
 

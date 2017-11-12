@@ -16,7 +16,7 @@ class ResourceResponse<T: Resource>(
         // The server's response to the URL request.
         var response: Response? = null,
         // The data returned by the server.
-        var data: ByteArray? = null,
+        var jsonData: String? = null,
         // The result of response deserialization.
         var result: Result<T>? = null
         ) {
@@ -28,4 +28,10 @@ class ResourceResponse<T: Resource>(
 
     // Returns the associated error value if the result if it is a failure, `nil` otherwise.
     val error: Error? get() = result?.error
+
+    // Returns `true` if the result is a success, `false` otherwise.
+    val isSuccessful get() = error == null
+
+    // Returns `true` if the result is an error, `false` otherwise.
+    val isErrored get() = error != null
 }

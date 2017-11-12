@@ -67,8 +67,29 @@ class DatabaseActivity : AppCompatActivity() {
             AlertDialog.Builder(this@DatabaseActivity)
                     .setView(editTextView)
                     .setPositiveButton("Create", { dialog, whichButton ->
-                        val databaseId = editText.text.toString()
-                        val progressDialog = ProgressDialog.show(this@DatabaseActivity, "", "Creating. Please wait...", true)
+                        try {
+                            val databaseId = editText.text.toString()
+                            val progressDialog = ProgressDialog.show(this@DatabaseActivity, "", "Creating. Please wait...", true)
+
+                            AzureData.instance.createDatabase(databaseId) { response ->
+
+                                print(response.result)
+
+                                if (response.isSuccessful) {
+
+                                    val db = response.resource
+
+                                    fetchDbs()
+                                } else {
+                                    print(response.error)
+                                }
+
+                                progressDialog.cancel()
+                            }
+                        }
+                        catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
 
 //                        _rxController!!.createDatabase(databaseId)
 //                                // Run on a background thread
@@ -88,36 +109,42 @@ class DatabaseActivity : AppCompatActivity() {
         }
 
         button_fetch.setOnClickListener {
-            try {
-                val dialog = ProgressDialog.show(this@DatabaseActivity, "", "Loading. Please wait...", true)
+            fetchDbs()
+        }
+    }
 
-                AzureData.instance.databases { response ->
+    private fun fetchDbs() {
 
-                    print(response.result)
+        try {
+            val dialog = ProgressDialog.show(this@DatabaseActivity, "", "Loading. Please wait...", true)
 
-                    if (response.isSuccessful) {
+            AzureData.instance.databases { response ->
 
-                        val dbs = response.resource?.items!!
+                print(response.result)
 
-                        runOnUiThread {
-                            adapter.clear()
+                if (response.isSuccessful) {
 
-                            for (db in dbs) {
-                                adapter.addData(db)
-                            }
+                    val dbs = response.resource?.items!!
 
-                            adapter.notifyDataSetChanged()
+                    runOnUiThread {
+                        adapter.clear()
+
+                        for (db in dbs) {
+                            adapter.addData(db)
                         }
-                    }
-                    else {
-                        print(response.error)
-                    }
 
-                    dialog.cancel()
+                        adapter.notifyDataSetChanged()
+                    }
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+                else {
+                    print(response.error)
+                }
+
+                dialog.cancel()
             }
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
