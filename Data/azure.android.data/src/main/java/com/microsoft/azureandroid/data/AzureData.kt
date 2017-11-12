@@ -35,6 +35,11 @@ class AzureData {
 
     // Collections
 
+    // create
+    fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
+        return cosmosService.createCollection (collectionId, databaseId, callback)
+    }
+
     // list
     fun getCollectionsIn (databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
         return cosmosService.getCollectionsIn(databaseId, callback)

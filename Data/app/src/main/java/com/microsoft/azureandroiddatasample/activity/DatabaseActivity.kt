@@ -67,10 +67,11 @@ class DatabaseActivity : AppCompatActivity() {
             AlertDialog.Builder(this@DatabaseActivity)
                     .setView(editTextView)
                     .setPositiveButton("Create", { dialog, whichButton ->
-                        try {
-                            val databaseId = editText.text.toString()
-                            val progressDialog = ProgressDialog.show(this@DatabaseActivity, "", "Creating. Please wait...", true)
 
+                        val databaseId = editText.text.toString()
+                        val progressDialog = ProgressDialog.show(this@DatabaseActivity, "", "Creating. Please wait...", true)
+
+                        try {
                             AzureData.instance.createDatabase(databaseId) { response ->
 
                                 print(response.result)
@@ -79,17 +80,19 @@ class DatabaseActivity : AppCompatActivity() {
 
                                     val db = response.resource
 
-                                    fetchDbs()
+                                    runOnUiThread {
+                                        fetchDbs()
+                                    }
                                 } else {
                                     print(response.error)
                                 }
-
-                                progressDialog.cancel()
                             }
                         }
                         catch (ex: Exception) {
                             ex.printStackTrace()
                         }
+
+                        progressDialog.cancel()
 
 //                        _rxController!!.createDatabase(databaseId)
 //                                // Run on a background thread

@@ -82,12 +82,9 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         }
 
         val resourceUri = baseUri.database()
+        val jsonBody = JsonHelper.Gson.toJson(mapOf("id" to databaseId))
 
-        val body = JsonHelper.Gson.toJson(mapOf("id" to databaseId))
-
-        val httpBody = RequestBody.create(jsonMediaType, body)
-
-        return create(resourceUri, ResourceType.DATABASE, httpBody, callback = callback)
+        return create(resourceUri, ResourceType.DATABASE, jsonBody, callback = callback)
     }
 
     // list
@@ -101,12 +98,24 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     // Collections
 
     // list
-
     fun getCollectionsIn(databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
 
         val resourceUri = baseUri.forCollection(databaseId)
 
         return resources(resourceUri, ResourceType.COLLECTION, callback)
+    }
+
+    // create
+    fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
+
+        if (!collectionId.isValidResourceId()) {
+            return callback(ResourceResponse(invalidIdError))
+        }
+
+        val resourceUri = baseUri.forCollection(databaseId)
+        val jsonBody = JsonHelper.Gson.toJson(mapOf("id" to collectionId))
+
+        return create(resourceUri, ResourceType.COLLECTION, jsonBody, callback = callback)
     }
 
     // Documents
@@ -146,59 +155,66 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
     // create
-    private fun<T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, httpBody: RequestBody, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun<T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, jsonBody: String, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
-        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, httpBody)
+        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
 
         sendResourceRequest(request, resourceType, callback)
     }
 
     // create
-    private fun<T: Resource> createAsync (resourceUri: UrlLink, resourceType: ResourceType, httpBody: ByteArray, additionalHeaders: Headers) : Deferred<ResourceListResponse<T>> {
+    private fun<T: Resource> createAsync (resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null) : Deferred<ResourceListResponse<T>> {
 
-        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders)
+        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
 
         return sendAsync(request, resourceType)
     }
 
-    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, body: RequestBody? = null, forQuery: Boolean = false) : Request {
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, jsonBody: String? = null, forQuery: Boolean = false) : Request {
 
-        val token = tokenProvider.getToken(method, resourceType, resourceUri.link)
+        try {
+            val token = tokenProvider.getToken(method, resourceType, resourceUri.link)
 
-        val builder = Request.Builder()
-                .headers(headers) //base headers
-                .url(resourceUri.url)
+            val builder = Request.Builder()
+                    .headers(headers) //base headers
+                    .url(resourceUri.url)
 
-        when (method) {
-            ApiValues.HttpMethod.GET -> builder.get()
-            ApiValues.HttpMethod.POST -> builder.post(body!!)
-            ApiValues.HttpMethod.HEAD -> builder.head()
-            ApiValues.HttpMethod.PUT -> builder.put(body!!)
-            ApiValues.HttpMethod.DELETE -> builder.delete()
-        }
-
-        builder.addHeader(ApiValues.HttpRequestHeader.XMSDATE.value, token.date)
-        builder.addHeader(ApiValues.HttpRequestHeader.AUTHORIZATION.value, token.authString)
-
-        if (forQuery) {
-            builder.addHeader(ApiValues.HttpRequestHeader.XMSDOCUMENTDBISQUERY.value, "true")
-            builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.QUERY_JSON.value)
-        }
-        else if ((method == ApiValues.HttpMethod.POST || method == ApiValues.HttpMethod.PUT) && resourceType != ResourceType.ATTACHMENT) {
-            // For POST on query operations, it must be application/query+json
-            // For attachments, must be set to the Mime type of the attachment.
-            // For all other tasks, must be application/json.
-            builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.JSON.value)
-        }
-
-        //if we have additional headers, let's add them in here
-        additionalHeaders?.let {
-            for (headerName in additionalHeaders.names()) {
-                builder.addHeader(headerName, additionalHeaders[headerName]!!)
+            when (method) {
+                ApiValues.HttpMethod.GET -> builder.get()
+                ApiValues.HttpMethod.POST -> builder.post(RequestBody.create(jsonMediaType, jsonBody!!))
+                ApiValues.HttpMethod.HEAD -> builder.head()
+                ApiValues.HttpMethod.PUT -> builder.put(RequestBody.create(jsonMediaType, jsonBody!!))
+                ApiValues.HttpMethod.DELETE -> builder.delete()
             }
-        }
 
-        return builder.build()
+            builder.addHeader(ApiValues.HttpRequestHeader.XMSDATE.value, token.date)
+            builder.addHeader(ApiValues.HttpRequestHeader.AUTHORIZATION.value, token.authString)
+
+            if (forQuery) {
+                builder.addHeader(ApiValues.HttpRequestHeader.XMSDOCUMENTDBISQUERY.value, "true")
+                builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.QUERY_JSON.value)
+            } else if ((method == ApiValues.HttpMethod.POST || method == ApiValues.HttpMethod.PUT) && resourceType != ResourceType.ATTACHMENT) {
+                // For POST on query operations, it must be application/query+json
+                // For attachments, must be set to the Mime type of the attachment.
+                // For all other tasks, must be application/json.
+                builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.JSON.value)
+            }
+
+            //if we have additional headers, let's add them in here
+            additionalHeaders?.let {
+                for (headerName in additionalHeaders.names()) {
+                    builder.addHeader(headerName, additionalHeaders[headerName]!!)
+                }
+            }
+
+            return builder.build()
+        }
+        catch (e: Exception) {
+
+            println(e)
+
+            throw e
+        }
     }
 
     private fun<T: Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {

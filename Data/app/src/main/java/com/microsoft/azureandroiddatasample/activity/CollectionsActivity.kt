@@ -89,33 +89,94 @@ class CollectionsActivity : Activity() {
         }
 
         button_fetch.setOnClickListener {
-            try {
-                val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Loading. Please wait...", true)
+            fetchCollections()
+        }
 
-                AzureData.instance.getCollectionsIn(dbId) { response ->
+        button_create.setOnClickListener {
 
-                    print(response.result)
+            val editTextView = layoutInflater.inflate(R.layout.edit_text, null)
+            val editText = editTextView.findViewById<EditText>(R.id.editText)
+            val messageTextView = editTextView.findViewById<TextView>(R.id.messageText)
+            messageTextView.setText(R.string.document_collection_dialog)
 
-                    if (response.isSuccessful) {
+            AlertDialog.Builder(this@CollectionsActivity)
+                    .setView(editTextView)
+                    .setPositiveButton("Create", DialogInterface.OnClickListener { dialog, whichButton ->
 
-                        val colls = response.resource?.items!!
+                        val collectionId = editText.text.toString()
+                        val progressDialog = ProgressDialog.show(this@CollectionsActivity, "", "Creating. Please wait...", true)
 
-                        runOnUiThread {
-                            adapter.clear()
+                        try {
+                            AzureData.instance.createCollection(collectionId, dbId) { response ->
 
-                            for (coll in colls) {
-                                adapter.addData(coll)
+                                print(response.result)
+
+                                if (response.isSuccessful) {
+
+                                    val coll = response.resource
+
+                                    runOnUiThread {
+                                        fetchCollections()
+                                    }
+                                } else {
+                                    print(response.error)
+                                }
                             }
-
-                            adapter.notifyDataSetChanged()
                         }
-                    }
-                    else {
-                        print(response.error)
-                    }
+                        catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
 
-                    dialog.cancel()
+                        progressDialog.cancel()
+
+
+//                        _rxController!!.createCollection(_databaseId, collectionId)
+//                                // Run on a background thread
+//                                .subscribeOn(Schedulers.io())
+//                                // Be notified on the main thread
+//                                .observeOn(AndroidSchedulers.mainThread())
+//                                .subscribe({ x ->
+//                                    _adapter!!.clear()
+//
+//                                    Log.e(TAG, "_rxController.createCollection(_databaseId, collectionId) - finished.")
+//
+//                                    dialog.cancel()
+//                                    progressDialog.cancel()
+//                                })
+                    })
+                    .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, whichButton -> }).show()
+        }
+    }
+
+    private fun fetchCollections() {
+
+        try {
+            val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Loading. Please wait...", true)
+
+            AzureData.instance.getCollectionsIn(dbId) { response ->
+
+                print(response.result)
+
+                if (response.isSuccessful) {
+
+                    val colls = response.resource?.items!!
+
+                    runOnUiThread {
+                        adapter.clear()
+
+                        for (coll in colls) {
+                            adapter.addData(coll)
+                        }
+
+                        adapter.notifyDataSetChanged()
+                    }
                 }
+                else {
+                    print(response.error)
+                }
+
+                dialog.cancel()
+            }
 
 
 //                _rxController!!.getCollections(_databaseId)
@@ -138,39 +199,8 @@ class CollectionsActivity : Activity() {
 //
 //                            dialog.cancel()
 //                        })
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-
-        button_create.setOnClickListener {
-
-            val editTextView = layoutInflater.inflate(R.layout.edit_text, null)
-            val editText = editTextView.findViewById<EditText>(R.id.editText)
-            val messageTextView = editTextView.findViewById<TextView>(R.id.messageText)
-            messageTextView.setText(R.string.document_collection_dialog)
-
-            AlertDialog.Builder(this@CollectionsActivity)
-                    .setView(editTextView)
-                    .setPositiveButton("Create", DialogInterface.OnClickListener { dialog, whichButton ->
-                        val collectionId = editText.text.toString()
-                        val progressDialog = ProgressDialog.show(this@CollectionsActivity, "", "Creating. Please wait...", true)
-
-//                        _rxController!!.createCollection(_databaseId, collectionId)
-//                                // Run on a background thread
-//                                .subscribeOn(Schedulers.io())
-//                                // Be notified on the main thread
-//                                .observeOn(AndroidSchedulers.mainThread())
-//                                .subscribe({ x ->
-//                                    _adapter!!.clear()
-//
-//                                    Log.e(TAG, "_rxController.createCollection(_databaseId, collectionId) - finished.")
-//
-//                                    dialog.cancel()
-//                                    progressDialog.cancel()
-//                                })
-                    })
-                    .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, whichButton -> }).show()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
