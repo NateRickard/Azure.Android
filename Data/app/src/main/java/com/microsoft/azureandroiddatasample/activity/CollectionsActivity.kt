@@ -71,27 +71,24 @@ class CollectionsActivity : Activity() {
         button_delete.setOnClickListener {
             val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Deleting. Please wait...", true)
 
-//            try {
-//                AzureData.instance.deleteCollection(collectionId, dbId) { response ->
-//
-//                    print(response.result)
-//
-//                    if (response.isSuccessful) {
-//
-//                        val coll = response.resource
-//
-//                        runOnUiThread {
-//                            fetchCollections()
-//                        }
-//                    } else {
-//                        print(response.error)
-//                    }
-//                }
-//            }
-//            catch (ex: Exception) {
-//                ex.printStackTrace()
-//            }
+            try {
+                AzureData.instance.deleteDatabase(dbId) { result ->
 
+                    println("deleteDatabase result: $result")
+
+                    if (result) {
+
+                        runOnUiThread {
+                            finish()
+                        }
+                    }
+                }
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
+            adapter.clear()
             dialog.cancel()
 
 //            _rxController!!.deleteDatabase(_databaseId)
@@ -108,7 +105,6 @@ class CollectionsActivity : Activity() {
 //                        finish()
 //                    })
 //
-//            _adapter!!.clear()
         }
 
         button_fetch.setOnClickListener {

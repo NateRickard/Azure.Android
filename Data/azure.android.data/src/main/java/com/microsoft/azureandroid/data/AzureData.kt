@@ -23,51 +23,50 @@ class AzureData {
     // Databases
 
     // create
-    fun createDatabase ( databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
-        return cosmosService.createDatabase (databaseId, callback)
-    }
+    fun createDatabase ( databaseId: String, callback: (ResourceResponse<Database>) -> Unit) =
+            cosmosService.createDatabase (databaseId, callback)
 
     // list
+    fun databases(callback: (ResourceListResponse<Database>) -> Unit) =
+            cosmosService.databases(callback)
 
-    fun databases(callback: (ResourceListResponse<Database>) -> Unit) {
-        return cosmosService.databases(callback)
-    }
+    // delete
+    fun deleteDatabase (database: Database, callback: (Boolean) -> Unit) =
+            cosmosService.deleteDatabase (database.id, callback)
+
+    // delete
+    fun deleteDatabase (databaseId: String, callback: (Boolean) -> Unit) =
+            cosmosService.deleteDatabase (databaseId, callback)
 
 
     // Collections
 
     // create
-    fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
-        return cosmosService.createCollection (collectionId, databaseId, callback)
-    }
+    fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) =
+            cosmosService.createCollection (collectionId, databaseId, callback)
 
     // list
-    fun getCollectionsIn (databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
-        return cosmosService.getCollectionsIn(databaseId, callback)
-    }
+    fun getCollectionsIn (databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) =
+            cosmosService.getCollectionsIn(databaseId, callback)
 
     // delete
-    fun deleteCollection (collection: DocumentCollection, databaseId: String, callback: (Boolean) -> Unit) {
-        return cosmosService.deleteCollection (collection.id, databaseId, callback)
-    }
+    fun deleteCollection (collection: DocumentCollection, databaseId: String, callback: (Boolean) -> Unit) =
+            cosmosService.deleteCollection (collection.id, databaseId, callback)
 
     // delete
-    fun deleteCollection (collectionId: String, databaseId: String, callback: (Boolean) -> Unit) {
-        return cosmosService.deleteCollection (collectionId, databaseId, callback)
-    }
+    fun deleteCollection (collectionId: String, databaseId: String, callback: (Boolean) -> Unit) =
+            cosmosService.deleteCollection (collectionId, databaseId, callback)
 
 
     // Documents
 
     // list
+    fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) =
+            cosmosService.getDocumentsAs(collectionId, databaseId, callback)
 
-    fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
-        return cosmosService.getDocumentsAs(collectionId, databaseId, callback)
-    }
-
-    fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
-        return cosmosService.getDocumentsAs(collection, callback)
-    }
+    // list
+    fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) =
+            cosmosService.getDocumentsAs(collection, callback)
 
 
     companion object {
