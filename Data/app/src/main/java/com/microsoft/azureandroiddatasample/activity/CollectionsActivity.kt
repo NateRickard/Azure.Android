@@ -71,6 +71,29 @@ class CollectionsActivity : Activity() {
         button_delete.setOnClickListener {
             val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Deleting. Please wait...", true)
 
+//            try {
+//                AzureData.instance.deleteCollection(collectionId, dbId) { response ->
+//
+//                    print(response.result)
+//
+//                    if (response.isSuccessful) {
+//
+//                        val coll = response.resource
+//
+//                        runOnUiThread {
+//                            fetchCollections()
+//                        }
+//                    } else {
+//                        print(response.error)
+//                    }
+//                }
+//            }
+//            catch (ex: Exception) {
+//                ex.printStackTrace()
+//            }
+
+            dialog.cancel()
+
 //            _rxController!!.deleteDatabase(_databaseId)
 //                    // Run on a background thread
 //                    .subscribeOn(Schedulers.io())

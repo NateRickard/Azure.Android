@@ -11,9 +11,22 @@ import com.microsoft.azureandroid.data.services.ResourceListResponse
 
 class AzureDataExtensions {
 
+    // Database
+
     fun Database.getCollections(callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
         return AzureData.instance.getCollectionsIn(this.id, callback)
     }
+
+    fun Database.deleteCollection(collection: DocumentCollection, callback: (Boolean) -> Unit) {
+        return AzureData.instance.deleteCollection(collection, this.id, callback)
+    }
+
+    fun Database.deleteCollection(collectionId: String, callback: (Boolean) -> Unit) {
+        return AzureData.instance.deleteCollection(collectionId, this.id, callback)
+    }
+
+
+    // DocumentCollection
 
     fun<T: Document> DocumentCollection.getDocumentsAs(callback: (ResourceListResponse<T>) -> Unit) {
         return AzureData.instance.getDocumentsAs(this, callback)

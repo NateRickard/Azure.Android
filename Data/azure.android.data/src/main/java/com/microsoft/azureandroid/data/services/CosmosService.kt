@@ -72,6 +72,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         builder.build()
     }
 
+
     // Database
 
     // create
@@ -95,15 +96,8 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         resources(resourceUri, ResourceType.DATABASE, callback)
     }
 
+
     // Collections
-
-    // list
-    fun getCollectionsIn(databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
-
-        val resourceUri = baseUri.forCollection(databaseId)
-
-        return resources(resourceUri, ResourceType.COLLECTION, callback)
-    }
 
     // create
     fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
@@ -118,10 +112,26 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return create(resourceUri, ResourceType.COLLECTION, jsonBody, callback = callback)
     }
 
+    // list
+    fun getCollectionsIn(databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
+
+        val resourceUri = baseUri.forCollection(databaseId)
+
+        return resources(resourceUri, ResourceType.COLLECTION, callback)
+    }
+
+    // delete
+    fun deleteCollection (collectionId: String, databaseId: String, callback: (Boolean) -> Unit) {
+
+        val resourceUri = baseUri.forCollection(databaseId, collectionId)
+
+        return delete(resourceUri, ResourceType.COLLECTION, callback)
+    }
+
+
     // Documents
 
     // list
-
     fun<T: Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
@@ -136,7 +146,24 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return resources(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
+
     // Resources
+
+    // create
+    private fun<T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, jsonBody: String, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
+
+        sendResourceRequest(request, resourceType, callback)
+    }
+
+    // create
+    private fun<T: Resource> createAsync (resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null) : Deferred<ResourceListResponse<T>> {
+
+        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
+
+        return sendAsync(request, resourceType)
+    }
 
     // list
     private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
@@ -154,21 +181,16 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return sendAsync(request, resourceType)
     }
 
-    // create
-    private fun<T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, jsonBody: String, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    // delete
+    private fun delete(resourceUri: UrlLink, resourceType: ResourceType, callback: (Boolean) -> Unit) {
 
-        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
+        val request = createRequest(ApiValues.HttpMethod.DELETE, resourceUri, resourceType)
 
-        sendResourceRequest(request, resourceType, callback)
+        return sendRequest(request, callback)
     }
 
-    // create
-    private fun<T: Resource> createAsync (resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null) : Deferred<ResourceListResponse<T>> {
 
-        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
-
-        return sendAsync(request, resourceType)
-    }
+    // Network plumbing
 
     private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, jsonBody: String? = null, forQuery: Boolean = false) : Request {
 
@@ -236,11 +258,34 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
                     })
         }
         catch (e: Exception) {
-            if (ContextProvider.verboseLogging) {
-                print(e)
-            }
-
+            logIfVerbose(e)
             callback(ResourceResponse(DataError(e)))
+        }
+    }
+
+    private fun sendRequest(request: Request, callback: (Boolean) -> Unit) {
+
+        try {
+            client.newCall(request)
+                    .enqueue(object : Callback {
+
+                        override fun onFailure(call: Call, e: IOException) {
+                            // Error
+                            logIfVerbose(e)
+
+                            return callback(false)
+                        }
+
+                        @Throws(IOException::class)
+                        override fun onResponse(call: Call, response: Response) {
+
+                            return callback(true)
+                        }
+                    })
+        }
+        catch (e: Exception) {
+            logIfVerbose(e)
+            callback(false)
         }
     }
 
@@ -273,24 +318,19 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
                     })
         }
         catch (e: Exception) {
-            if (ContextProvider.verboseLogging) {
-                print(e)
-            }
-
+            logIfVerbose(e)
             callback(ResourceListResponse(DataError(e)))
         }
     }
 
-    fun<T: Resource> processResponse(request: Request, response: Response, resourceType: ResourceType) : ResourceResponse<T> {
+    private fun<T: Resource> processResponse(request: Request, response: Response, resourceType: ResourceType) : ResourceResponse<T> {
 
         try {
             val body = response.body() ?: return ResourceResponse(DataError("Empty response body received"))
 
             val json = body.string()
 
-            if (ContextProvider.verboseLogging) {
-                print(json)
-            }
+            logIfVerbose(json)
 
             val resource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
 
@@ -303,16 +343,14 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         }
     }
 
-    fun<T: Resource> processListResponse(request: Request, response: Response, resourceType: ResourceType) : ResourceListResponse<T> {
+    private fun<T: Resource> processListResponse(request: Request, response: Response, resourceType: ResourceType) : ResourceListResponse<T> {
 
         try {
             val body = response.body() ?: return ResourceListResponse(DataError("Empty response body received"))
 
             val json = body.string()
 
-            if (ContextProvider.verboseLogging) {
-                print(json)
-            }
+            logIfVerbose(json)
 
             val jsonParser = JsonParser()
             val jsonObject = jsonParser.parse(json).asJsonObject
@@ -331,6 +369,13 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         }
         catch (e: Exception) {
             return ResourceListResponse(DataError(e))
+        }
+    }
+
+    private fun logIfVerbose(thing: Any) {
+
+        if (ContextProvider.verboseLogging) {
+            println(thing)
         }
     }
 

@@ -33,6 +33,7 @@ class AzureData {
         return cosmosService.databases(callback)
     }
 
+
     // Collections
 
     // create
@@ -45,6 +46,17 @@ class AzureData {
         return cosmosService.getCollectionsIn(databaseId, callback)
     }
 
+    // delete
+    fun deleteCollection (collection: DocumentCollection, databaseId: String, callback: (Boolean) -> Unit) {
+        return cosmosService.deleteCollection (collection.id, databaseId, callback)
+    }
+
+    // delete
+    fun deleteCollection (collectionId: String, databaseId: String, callback: (Boolean) -> Unit) {
+        return cosmosService.deleteCollection (collectionId, databaseId, callback)
+    }
+
+
     // Documents
 
     // list
@@ -56,6 +68,7 @@ class AzureData {
     fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
         return cosmosService.getDocumentsAs(collection, callback)
     }
+
 
     companion object {
 
