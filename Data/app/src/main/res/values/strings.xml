@@ -15,4 +15,5 @@
     <string name="document">Document</string>
     <string name="documents">Documents</string>
     <string name="delete_collection">Delete Collection</string>
+    <string name="icon">Icon</string>
 </resources>
