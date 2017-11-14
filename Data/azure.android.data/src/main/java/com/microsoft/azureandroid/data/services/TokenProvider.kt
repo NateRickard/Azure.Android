@@ -5,6 +5,7 @@ import com.microsoft.azureandroid.data.constants.ApiValues
 import com.microsoft.azureandroid.data.constants.HmacAlgorithm
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.ResourceType
+import com.microsoft.azureandroid.data.model.Token
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.security.InvalidKeyException
@@ -18,9 +19,7 @@ import javax.crypto.spec.SecretKeySpec
  * Created by nater on 11/2/17.
  */
 
-data class Token(val authString: String, val date: String)
-
-class TokenProvider(var key: String, var keyType: TokenType = TokenType.MASTER, var tokenVersion: String = "1.0") {
+class TokenProvider(private var key: String, private var keyType: TokenType = TokenType.MASTER, private var tokenVersion: String = "1.0") {
 
     //    let dateFormatter: DateFormatter = {
 //
