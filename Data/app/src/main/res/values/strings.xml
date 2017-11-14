@@ -3,4 +3,16 @@
     <string name="button_run_scheduler">Azure.Android.Data.Sample</string>
     <string name="database_dialog">Enter a name of the new database</string>
     <string name="document_collection_dialog">Enter a name of the new document collection</string>
+    <string name="clear">Clear</string>
+    <string name="fetch">Fetch</string>
+    <string name="create_database">Create Database</string>
+    <string name="databases">Databases</string>
+    <string name="database">Database</string>
+    <string name="document_collections">Document Collections</string>
+    <string name="delete_database">Delete Database</string>
+    <string name="create_collection">Create Collection</string>
+    <string name="collection">Collection</string>
+    <string name="document">Document</string>
+    <string name="documents">Documents</string>
+    <string name="delete_collection">Delete Collection</string>
 </resources>

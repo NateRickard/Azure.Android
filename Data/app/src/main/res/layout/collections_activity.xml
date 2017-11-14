@@ -17,7 +17,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:textSize="18sp"
-        android:text="Document Collections"/>
+        android:text="@string/document_collections"/>
 
     <TextView
         android:id="@+id/databaseId"
@@ -42,7 +42,8 @@
             android:layout_weight="1"
             android:layout_marginRight="10dp"
             android:textColor="#ffffff"
-            android:text="Clear" />
+            android:text="@string/clear"
+            android:layout_marginEnd="10dp" />
 
         <Button
             android:id="@+id/button_fetch"
@@ -52,7 +53,8 @@
             android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:textColor="#ffffff"
-            android:text="Fetch" />
+            android:text="@string/fetch"
+            android:layout_marginStart="10dp" />
 
     </LinearLayout>
 
@@ -64,7 +66,7 @@
         android:background="#ff0000"
         android:layout_marginTop="10dp"
         android:textColor="#ffffff"
-        android:text="Delete Database" />
+        android:text="@string/delete_database" />
 
     <Button
         android:id="@+id/button_create"
@@ -74,7 +76,7 @@
         android:background="#0000ff"
         android:layout_marginTop="10dp"
         android:textColor="#ffffff"
-        android:text="Create Collection" />
+        android:text="@string/create_collection" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
