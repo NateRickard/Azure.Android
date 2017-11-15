@@ -4,8 +4,9 @@ import com.google.gson.annotations.SerializedName
 import java.util.*
 
 /**
- * Created by nater on 11/3/17.
- */
+* Created by Nate Rickard on 11/3/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 abstract class Resource(id: String? = UUID.randomUUID().toString()) {
 

@@ -2,10 +2,7 @@ package com.microsoft.azureandroid.data
 
 import android.content.Context
 import com.microsoft.azureandroid.data.constants.TokenType
-import com.microsoft.azureandroid.data.model.Database
-import com.microsoft.azureandroid.data.model.Document
-import com.microsoft.azureandroid.data.model.DocumentCollection
-import com.microsoft.azureandroid.data.model.ResourceUri
+import com.microsoft.azureandroid.data.model.*
 import com.microsoft.azureandroid.data.services.CosmosService
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
@@ -67,6 +64,13 @@ class AzureData {
     // list
     fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) =
             cosmosService.getDocumentsAs(collection, callback)
+
+
+    // Offers
+
+    // list
+    fun offers(callback: (ResourceListResponse<Offer>) -> Unit) =
+            cosmosService.offers(callback)
 
 
     companion object {

@@ -3,17 +3,16 @@ package com.microsoft.azureandroid.data.model
 import okhttp3.HttpUrl
 
 /**
- * Created by nater on 10/31/17.
- */
-
-data class UrlLink(val url: HttpUrl, val link: String)
+* Created by Nate Rickard on 10/31/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 // https://docs.microsoft.com/en-us/rest/api/documentdb/documentdb-resource-uri-syntax-for-rest
 class ResourceUri(databaseName: String) {
 
     private val host: String = "$databaseName.documents.azure.com"
 
-    fun database(resourceId: String? = null) : UrlLink {
+    fun forDatabase(resourceId: String? = null) : UrlLink {
 
         val baseLink = ""
         val itemLink = getItemLink(ResourceType.DATABASE, baseLink, resourceId)
@@ -44,7 +43,23 @@ class ResourceUri(databaseName: String) {
         return getUrlLinkForSelf(baseLink, itemLink, resourceId)
     }
 
-    private fun getItemLink(resourceType: ResourceType, baseLink: String, resourceId: String?) : String {
+    fun forOffer() : UrlLink {
+
+        val baseLink = ""
+        val itemLink = getItemLink(ResourceType.OFFER, baseLink)
+
+        return getUrlLink(baseLink, itemLink)
+    }
+
+    fun forOffer(resourceId: String? = null) : UrlLink {
+
+        val baseLink = ""
+        val itemLink = getItemLink(ResourceType.OFFER, baseLink, resourceId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, resourceId)
+    }
+
+    private fun getItemLink(resourceType: ResourceType, baseLink: String, resourceId: String? = null) : String {
 
         var fragment = ""
 
@@ -66,7 +81,7 @@ class ResourceUri(databaseName: String) {
         }
     }
 
-    private fun getUrlLink(baseLink: String, itemLink: String, resourceId: String?) : UrlLink {
+    private fun getUrlLink(baseLink: String, itemLink: String, resourceId: String? = null) : UrlLink {
         val url = HttpUrl.Builder()
                 .scheme("https")
                 .host(host)
@@ -76,7 +91,7 @@ class ResourceUri(databaseName: String) {
         return UrlLink(url, if (resourceId != null) itemLink else baseLink)
     }
 
-    private fun getUrlLinkForSelf(baseLink: String, itemLink: String, resourceId: String?) : UrlLink {
+    private fun getUrlLinkForSelf(baseLink: String, itemLink: String, resourceId: String? = null) : UrlLink {
         val url = HttpUrl.Builder()
                 .scheme("https")
                 .host(host)

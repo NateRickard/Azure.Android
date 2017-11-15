@@ -4,8 +4,9 @@ import com.google.gson.JsonObject
 import com.microsoft.azureandroid.data.util.JsonHelper
 
 /**
- * Created by nater on 11/3/17.
- */
+* Created by Nate Rickard on 11/3/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class ResourceList<T: Resource>(resourceType: ResourceType, json: JsonObject) {
 

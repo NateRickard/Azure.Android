@@ -16,8 +16,9 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 /**
- * Created by nater on 11/2/17.
- */
+* Created by Nate Rickard on 11/2/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class TokenProvider(private var key: String, private var keyType: TokenType = TokenType.MASTER, private var tokenVersion: String = "1.0") {
 

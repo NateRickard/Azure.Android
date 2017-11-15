@@ -82,7 +82,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
             return callback(ResourceResponse(invalidIdError))
         }
 
-        val resourceUri = baseUri.database()
+        val resourceUri = baseUri.forDatabase()
         val jsonBody = JsonHelper.Gson.toJson(mapOf("id" to databaseId))
 
         return create(resourceUri, ResourceType.DATABASE, jsonBody, callback = callback)
@@ -91,7 +91,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     // list
     fun databases (callback: (ResourceListResponse<Database>) -> Unit) {
 
-        val resourceUri = baseUri.database()
+        val resourceUri = baseUri.forDatabase()
 
         resources(resourceUri, ResourceType.DATABASE, callback)
     }
@@ -99,7 +99,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     // delete
     fun deleteDatabase (databaseId: String, callback: (Boolean) -> Unit) {
 
-        val resourceUri = baseUri.database(databaseId)
+        val resourceUri = baseUri.forDatabase(databaseId)
 
         return delete(resourceUri, ResourceType.DATABASE, callback)
     }
@@ -198,7 +198,18 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
 
-    // Network plumbing
+    // Offers
+
+    // list
+    fun offers (callback: (ResourceListResponse<Offer>) -> Unit) {
+
+        val resourceUri = baseUri.forOffer()
+
+        resources(resourceUri, ResourceType.OFFER, callback)
+    }
+
+
+    //region Network plumbing
 
     private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, jsonBody: String? = null, forQuery: Boolean = false) : Request {
 
@@ -379,6 +390,8 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
             return ResourceListResponse(DataError(e))
         }
     }
+
+    //endregion
 
     private fun logIfVerbose(thing: Any) {
 
