@@ -3,6 +3,8 @@ package com.microsoft.azureandroiddatasample.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.microsoft.azureandroiddatasample.viewholder.ViewHolderBase
+import com.microsoft.azureandroiddatasample.viewholder.ViewHolderFactory
 
 import java.util.ArrayList
 

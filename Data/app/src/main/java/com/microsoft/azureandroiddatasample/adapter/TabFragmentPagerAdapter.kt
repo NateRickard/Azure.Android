@@ -11,8 +11,9 @@ import android.widget.TextView
 import com.microsoft.azureandroiddatasample.R
 
 /**
- * Created by nater on 11/14/17.
- */
+* Created by Nate Rickard on 11/14/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 // Adapter where Fragments can be created/configured externally and added/managed here in the adapter.
 open class TabFragmentPagerAdapter(private val context: Context, manager: FragmentManager) : FragmentPagerAdapterBase(manager) {

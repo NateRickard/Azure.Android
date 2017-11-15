@@ -15,7 +15,7 @@ import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroiddatasample.App
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.CardAdapter
-import com.microsoft.azureandroiddatasample.adapter.CollectionViewHolder
+import com.microsoft.azureandroiddatasample.viewholder.CollectionViewHolder
 import com.microsoft.azureandroiddatasample.framework.RecyclerItemClickListener
 
 import kotlinx.android.synthetic.main.collections_activity.*
@@ -101,7 +101,7 @@ class CollectionsActivity : Activity() {
 //
 //                        dialog.cancel()
 //
-//                        // revert back to database page
+//                        // revert back to forDatabase page
 //                        finish()
 //                    })
 //

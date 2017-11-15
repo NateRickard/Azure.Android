@@ -1,7 +1,8 @@
-package com.microsoft.azureandroiddatasample.adapter
+package com.microsoft.azureandroiddatasample.viewholder
 
 import android.view.View
 import com.microsoft.azureandroid.data.model.DocumentCollection
+import com.microsoft.azureandroiddatasample.viewholder.ViewHolderBase
 
 import kotlinx.android.synthetic.main.collection_view.view.*
 
@@ -9,7 +10,7 @@ import kotlinx.android.synthetic.main.collection_view.view.*
  * Created by nater on 11/10/17.
  */
 
-class CollectionViewHolder(itemView: View) : ViewHolderBase<com.microsoft.azureandroid.data.model.DocumentCollection>(itemView) {
+class CollectionViewHolder(itemView: View) : ViewHolderBase<DocumentCollection>(itemView) {
 
     override fun setData(item: DocumentCollection) {
 

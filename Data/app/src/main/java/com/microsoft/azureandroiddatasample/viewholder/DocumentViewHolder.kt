@@ -1,12 +1,14 @@
-package com.microsoft.azureandroiddatasample.adapter
+package com.microsoft.azureandroiddatasample.viewholder
 
 import android.view.View
 import com.microsoft.azureandroid.data.model.Document
+import com.microsoft.azureandroiddatasample.viewholder.ViewHolderBase
 import kotlinx.android.synthetic.main.document_view.view.*
 
 /**
- * Created by nater on 10/27/17.
- */
+* Created by Nate Rickard on 10/27/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class DocumentViewHolder(itemView: View) : ViewHolderBase<Document>(itemView) {
 

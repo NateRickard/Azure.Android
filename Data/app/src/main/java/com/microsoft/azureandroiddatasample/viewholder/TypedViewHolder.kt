@@ -3,8 +3,9 @@ package com.microsoft.azureandroiddatasample.viewholder
 import android.view.View
 
 /**
- * Created by nater on 11/14/17.
- */
+* Created by Nate Rickard on 11/14/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 interface TypedViewHolder<in TData> {
 

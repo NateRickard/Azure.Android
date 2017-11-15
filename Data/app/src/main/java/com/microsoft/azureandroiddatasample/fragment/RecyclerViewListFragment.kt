@@ -16,12 +16,11 @@ import android.view.ViewGroup
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.RecyclerViewAdapter
 import com.microsoft.azureandroiddatasample.viewholder.ViewHolder
-import kotlinx.coroutines.experimental.Deferred
-
 
 /**
- * Created by nater on 11/14/17.
- */
+* Created by Nate Rickard on 11/14/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -37,13 +36,16 @@ abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> 
     lateinit var adapter: RecyclerView.Adapter<*>
     lateinit var typedAdapter: RecyclerViewAdapter<TData, TViewHolder>
 
+    // Gets or sets the resource ID of the Tab item layout to use.  Defaults to 'recycler_view_fragment'
+    open val viewResourceId : Int = R.layout.recycler_view_fragment;
+
     protected abstract fun createAdapter(): RecyclerViewAdapter<TData, TViewHolder>
 
     //region Lifecycle Methods
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val rootView = inflater.inflate (R.layout.recycler_view_fragment, container, false)
+        val rootView = inflater.inflate (viewResourceId, container, false)
 
         recyclerView = rootView.findViewById (R.id.recyclerView)
 
@@ -51,15 +53,6 @@ abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> 
         recyclerView.layoutManager = layoutManagerCurrent
         itemAnimatorCurrent = getItemAnimator ()
         recyclerView.itemAnimator = itemAnimatorCurrent
-
-        swipeRefreshLayout = rootView.findViewById (R.id.swipe_refresh_layout)
-
-        if (enablePullToRefresh)
-        {
-            swipeRefreshLayout?.let {
-                it.setOnRefreshListener (this)
-            }
-        }
 
         //adds item divider lines if ShowDividers == true
         if (showDividers)
@@ -73,8 +66,16 @@ abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> 
         recyclerView.scrollToPosition (0)
         recyclerView.adapter = adapter
 
+        // configure swipe to refresh, unless the implementor has turned it off
+        swipeRefreshLayout = rootView.findViewById (R.id.swipe_refresh_layout)
+        swipeRefreshLayout?.isEnabled = enablePullToRefresh
+
         //start to load the data that will populate the RecyclerView
-        doLoadData ()
+        if (enablePullToRefresh) {
+
+            swipeRefreshLayout?.setOnRefreshListener (this)
+            doLoadData ()
+        }
 
         return rootView
     }

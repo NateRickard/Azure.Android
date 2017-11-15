@@ -7,24 +7,27 @@ import android.view.ViewGroup
 import com.microsoft.azureandroiddatasample.viewholder.ViewHolder
 
 /**
- * Created by nater on 11/14/17.
- */
+* Created by Nate Rickard on 11/14/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(private val dataSet: ArrayList<TData>) : RecyclerView.Adapter<TViewHolder>() {
 
     private var itemClick: ((View, TData, Int) -> Unit)? = null
     private var itemLongClick: ((View, TData, Int) -> Unit)? = null
 
-    private val isLongClickEnabled: Boolean = itemLongClick != null;
+    private val isLongClickEnabled: Boolean = itemLongClick != null
     private var isClearingSelections: Boolean = false
 
     lateinit var originalDataSet: List<TData>
 
     // index is used to animate only the last selected/deselected row
-    private var lastSelectionIndex: Int = -1;
+    private var lastSelectionIndex: Int = -1
     private val selectedItemIndices: MutableSet<Int> = mutableSetOf()
 
     val selectedItemCount: Int = selectedItemIndices.count()
+
+    constructor() : this(ArrayList<TData>()) //create with empty list of data
 
     override fun onBindViewHolder(holder: TViewHolder, position: Int) {
 
@@ -147,6 +150,11 @@ abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(privat
         dataSet.removeAt (fromPosition)
         dataSet.add (toPosition, item)
         notifyItemMoved (fromPosition, toPosition)
+    }
+
+    fun clearItems () {
+        dataSet.clear()
+        notifyDataSetChanged()
     }
 
     //endregion

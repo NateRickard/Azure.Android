@@ -6,12 +6,14 @@ import android.support.design.widget.TabLayout
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.TabFragmentPagerAdapter
 import com.microsoft.azureandroiddatasample.fragment.DatabaseFragment
+import com.microsoft.azureandroiddatasample.fragment.OffersFragment
 
 import kotlinx.android.synthetic.main.tab_layout.*
 
 /**
- * Created by nater on 11/14/17.
- */
+* Created by Nate Rickard on 11/14/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,16 +35,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewPager() {
 
+        // create & config our adapter
         pagerAdapter = TabFragmentPagerAdapter (this, supportFragmentManager)
-        pagerAdapter.addFragment (DatabaseFragment (), getString(R.string.databases).toUpperCase())
-//        pagerAdapter.addFragment (FavoritesRecyclerFragment ())
+
+        with(pagerAdapter) {
+            addFragment (DatabaseFragment (), getString(R.string.databases).toUpperCase())
+            addFragment (OffersFragment (), getString(R.string.offers).toUpperCase())
+        }
 
         viewPager.adapter = pagerAdapter
 
-        tabLayout.tabMode =  TabLayout.MODE_FIXED;
-        tabLayout.tabGravity = TabLayout.GRAVITY_FILL;
-        tabLayout.setupWithViewPager (viewPager);
+        // configure tabLayout & viewPager
+        with(tabLayout) {
+            tabMode =  TabLayout.MODE_FIXED
+            tabGravity = TabLayout.GRAVITY_FILL
+            setupWithViewPager (viewPager)
+        }
 
+        // finally, glue it all together
         pagerAdapter.fillTabLayout (tabLayout)
 
 

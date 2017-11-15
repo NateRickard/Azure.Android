@@ -9,7 +9,7 @@ import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroiddatasample.App
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.CardAdapter
-import com.microsoft.azureandroiddatasample.adapter.DocumentViewHolder
+import com.microsoft.azureandroiddatasample.viewholder.DocumentViewHolder
 
 import kotlinx.android.synthetic.main.documents_activity.*
 

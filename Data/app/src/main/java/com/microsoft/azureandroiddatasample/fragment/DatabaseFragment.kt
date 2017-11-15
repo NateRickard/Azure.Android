@@ -16,12 +16,14 @@ import com.microsoft.azureandroid.data.model.Database
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.activity.CollectionsActivity
 import com.microsoft.azureandroiddatasample.adapter.CardAdapter
-import com.microsoft.azureandroiddatasample.adapter.DatabaseViewHolder
+import com.microsoft.azureandroiddatasample.viewholder.DatabaseViewHolder
 import com.microsoft.azureandroiddatasample.framework.RecyclerItemClickListener
+
 import kotlinx.android.synthetic.main.databases_fragment.*
 
 /**
- * Created by nater on 11/14/17.
+ * Created by Nate Rickard on 11/14/17.
+ * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
 class DatabaseFragment : Fragment() {

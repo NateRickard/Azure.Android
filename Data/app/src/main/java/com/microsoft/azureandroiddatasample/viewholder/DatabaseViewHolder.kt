@@ -1,7 +1,8 @@
-package com.microsoft.azureandroiddatasample.adapter
+package com.microsoft.azureandroiddatasample.viewholder
 
 import android.view.View
 import com.microsoft.azureandroid.data.model.Database
+import com.microsoft.azureandroiddatasample.viewholder.ViewHolderBase
 
 import kotlinx.android.synthetic.main.database_view.view.*
 
