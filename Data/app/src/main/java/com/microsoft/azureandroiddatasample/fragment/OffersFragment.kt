@@ -4,11 +4,6 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.model.Resource
-import com.microsoft.azureandroiddatasample.R
-import com.microsoft.azureandroiddatasample.adapter.RecyclerViewAdapter
-import com.microsoft.azureandroiddatasample.adapter.ResourceItemAdapter
-import com.microsoft.azureandroiddatasample.viewholder.ResourceViewHolder
 
 import kotlinx.android.synthetic.main.resource_list_fragment.*
 
@@ -17,31 +12,15 @@ import kotlinx.android.synthetic.main.resource_list_fragment.*
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class OffersFragment : RecyclerViewListFragment<Resource, ResourceViewHolder>() {
-
-    override val viewResourceId: Int = R.layout.resource_list_fragment
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        enablePullToRefresh = false
-    }
-
-    override fun createAdapter(): RecyclerViewAdapter<Resource, ResourceViewHolder> =
-            ResourceItemAdapter()
+class OffersFragment : ResourceListFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        button_fetch.setOnClickListener {
-            fetchOffers()
-        }
+        super.onViewCreated(view, savedInstanceState)
 
-        button_clear.setOnClickListener {
-            typedAdapter.clearItems()
-        }
     }
 
-    private fun fetchOffers() {
+    override fun fetchData() {
 
         try {
             val dialog = ProgressDialog.show(activity, "", "Loading. Please wait...", true)
