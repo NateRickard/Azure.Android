@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="8dip"
-    android:background="?attr/selectableItemBackground">
+    android:background="@drawable/bg_list_row"><!--android:background="?attr/selectableItemBackground"-->
     <TextView
         android:id="@+id/subTitle"
         android:layout_width="match_parent"

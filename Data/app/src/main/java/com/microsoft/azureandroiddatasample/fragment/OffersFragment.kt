@@ -1,11 +1,7 @@
 package com.microsoft.azureandroiddatasample.fragment
 
 import android.app.ProgressDialog
-import android.os.Bundle
-import android.view.View
 import com.microsoft.azureandroid.data.AzureData
-
-import kotlinx.android.synthetic.main.resource_list_fragment.*
 
 /**
  * Created by Nate Rickard on 11/14/17.
@@ -13,12 +9,6 @@ import kotlinx.android.synthetic.main.resource_list_fragment.*
  */
 
 class OffersFragment : ResourceListFragment() {
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        super.onViewCreated(view, savedInstanceState)
-
-    }
 
     override fun fetchData() {
 
@@ -43,6 +33,27 @@ class OffersFragment : ResourceListFragment() {
                 }
 
                 dialog.cancel()
+            }
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    override fun getItem(id: String) {
+
+        try {
+            AzureData.instance.getOffer(id) { response ->
+
+                if (response.isSuccessful) {
+
+                    val offer = response.resource
+
+                    println("GET operation succeeded for resource ${offer?.id}")
+                }
+                else {
+                    println(response.error)
+                }
             }
         }
         catch (ex: Exception) {

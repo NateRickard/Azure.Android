@@ -45,7 +45,7 @@ abstract class ViewHolder<in TData>(itemView: View) : RecyclerView.ViewHolder(it
         itemClickHandler?.invoke (v, adapterPosition)
     }
 
-    abstract override fun findViews(rootView: View)
+    override fun findViews(rootView: View) {}
 
     // base behavior is to change the row state to activated if it's selected
     override fun setData (data: TData, selected: Boolean, animateSelection: Boolean) {

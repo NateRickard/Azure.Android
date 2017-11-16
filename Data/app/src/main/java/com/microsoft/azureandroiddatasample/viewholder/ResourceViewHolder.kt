@@ -12,11 +12,6 @@ import kotlinx.android.synthetic.main.two_row_viewcell.view.*
 
 class ResourceViewHolder(itemView: View) : ViewHolder<Resource>(itemView) {
 
-    override fun findViews(rootView: View) {
-
-        //using KotlinX instead of finding views here!
-    }
-
     override fun setData(data: Resource, selected: Boolean, animateSelection: Boolean) {
 
         super.setData(data, selected, animateSelection)

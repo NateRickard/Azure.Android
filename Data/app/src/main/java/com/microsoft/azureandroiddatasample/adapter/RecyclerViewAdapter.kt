@@ -16,8 +16,9 @@ abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(privat
     private var itemClick: ((View, TData, Int) -> Unit)? = null
     private var itemLongClick: ((View, TData, Int) -> Unit)? = null
 
-    private val isLongClickEnabled: Boolean = itemLongClick != null
     private var isClearingSelections: Boolean = false
+    private val isLongClickEnabled: Boolean
+        get() = itemLongClick != null
 
     lateinit var originalDataSet: List<TData>
 
@@ -25,7 +26,8 @@ abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(privat
     private var lastSelectionIndex: Int = -1
     private val selectedItemIndices: MutableSet<Int> = mutableSetOf()
 
-    val selectedItemCount: Int = selectedItemIndices.count()
+    val selectedItemCount: Int
+        get() = selectedItemIndices.count()
 
     constructor() : this(ArrayList<TData>()) //create with empty list of data
 
@@ -86,6 +88,8 @@ abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(privat
         itemLongClick?.invoke (view, dataSet [position], position)
     }
 
+    //region Selection
+
     fun toggleSelection(position: Int) {
 
         lastSelectionIndex = position
@@ -106,6 +110,15 @@ abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(privat
         isClearingSelections = true
         notifyDataSetChanged()
     }
+
+    fun getSelectedItems() : List<TData> {
+
+        return selectedItemIndices.map { index ->
+            dataSet[index]
+        }
+    }
+
+    //endregion
 
     //region Item Operations
 
