@@ -1,38 +1,30 @@
 package com.microsoft.azureandroiddatasample.fragment
 
-import android.app.ProgressDialog
+import android.os.Bundle
 import com.microsoft.azureandroid.data.AzureData
+import com.microsoft.azureandroid.data.model.Offer
+import com.microsoft.azureandroid.data.services.ResourceListResponse
+import com.microsoft.azureandroid.data.services.ResourceResponse
 
 /**
  * Created by Nate Rickard on 11/14/17.
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class OffersFragment : ResourceListFragment() {
+class OffersFragment : ResourceListFragment<Offer>() {
 
-    override fun fetchData() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun fetchData(callback: (ResourceListResponse<Offer>) -> Unit) {
 
         try {
-            val dialog = ProgressDialog.show(activity, "", "Loading. Please wait...", true)
-
             AzureData.instance.offers { response ->
-
-                print(response.result)
-
-                if (response.isSuccessful) {
-
-                    val offers = response.resource?.items!!
-
-                    activity.runOnUiThread {
-
-                        typedAdapter.setItems(offers)
-                    }
-                }
-                else {
-                    print(response.error)
-                }
-
-                dialog.cancel()
+                callback(response)
             }
         }
         catch (ex: Exception) {
@@ -40,20 +32,11 @@ class OffersFragment : ResourceListFragment() {
         }
     }
 
-    override fun getItem(id: String) {
+    override fun getItem(id: String, callback: (ResourceResponse<Offer>) -> Unit) {
 
         try {
             AzureData.instance.getOffer(id) { response ->
-
-                if (response.isSuccessful) {
-
-                    val offer = response.resource
-
-                    println("GET operation succeeded for resource ${offer?.id}")
-                }
-                else {
-                    println(response.error)
-                }
+                callback(response)
             }
         }
         catch (ex: Exception) {

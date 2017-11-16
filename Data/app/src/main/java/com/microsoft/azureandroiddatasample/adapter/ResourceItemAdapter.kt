@@ -11,7 +11,7 @@ import com.microsoft.azureandroiddatasample.viewholder.ResourceViewHolder
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class ResourceItemAdapter : RecyclerViewAdapter<Resource, ResourceViewHolder>() {
+class ResourceItemAdapter<TData: Resource> : RecyclerViewAdapter<TData, ResourceViewHolder>() {
 
     override fun createViewHolder(inflater: LayoutInflater, parent: ViewGroup): ResourceViewHolder {
 

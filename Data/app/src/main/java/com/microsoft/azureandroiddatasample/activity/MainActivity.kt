@@ -3,6 +3,7 @@ package com.microsoft.azureandroiddatasample.activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.view.MenuItem
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.TabFragmentPagerAdapter
 import com.microsoft.azureandroiddatasample.fragment.DatabaseFragment
@@ -72,4 +73,6 @@ class MainActivity : AppCompatActivity() {
 //            toolbarTitle.Text = tabFragment.Title;
 //        };
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = false
 }

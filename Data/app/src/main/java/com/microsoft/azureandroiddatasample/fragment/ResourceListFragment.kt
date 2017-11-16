@@ -1,5 +1,6 @@
 package com.microsoft.azureandroiddatasample.fragment
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
@@ -13,6 +14,11 @@ import android.support.v7.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import android.view.MenuInflater
+import android.widget.EditText
+import android.widget.TextView
+import com.microsoft.azureandroid.data.services.ResourceListResponse
+import com.microsoft.azureandroid.data.services.ResourceResponse
 
 import kotlinx.android.synthetic.main.resource_list_fragment.*
 
@@ -21,7 +27,7 @@ import kotlinx.android.synthetic.main.resource_list_fragment.*
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-abstract class ResourceListFragment : RecyclerViewListFragment<Resource, ResourceViewHolder>(), ActionMode.Callback {
+abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<TData, ResourceViewHolder>(), ActionMode.Callback {
 
     private var actionMode: ActionMode? = null
 
@@ -32,15 +38,40 @@ abstract class ResourceListFragment : RecyclerViewListFragment<Resource, Resourc
 
         enablePullToRefresh = false
         enableLongClick = true
+        setHasOptionsMenu(true)
     }
 
-    override fun createAdapter(): RecyclerViewAdapter<Resource, ResourceViewHolder> =
+    override fun createAdapter(): RecyclerViewAdapter<TData, ResourceViewHolder> =
             ResourceItemAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         button_fetch.setOnClickListener {
-            fetchData()
+
+            val dialog = ProgressDialog.show(activity, "", "Loading. Please wait...", true)
+
+            try {
+                fetchData { response ->
+
+                    if (response.isSuccessful) {
+
+                        val items = response.resource?.items!!
+
+                        activity.runOnUiThread {
+                            typedAdapter.setItems(items)
+                        }
+                    }
+                    else {
+                        print(response.error)
+                    }
+
+                    dialog.cancel()
+                }
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+                dialog.cancel()
+            }
         }
 
         button_clear.setOnClickListener {
@@ -48,15 +79,72 @@ abstract class ResourceListFragment : RecyclerViewListFragment<Resource, Resourc
         }
     }
 
-    abstract fun fetchData()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 
-    open fun getItem(id: String) = Unit
+        inflater.inflate(R.menu.menu_resource, menu)
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            R.id.action_create -> {
+                beginResourceCreation()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    open fun fetchData(callback: (ResourceListResponse<TData>) -> Unit) {}
+
+    open fun getItem(id: String, callback: (ResourceResponse<TData>) -> Unit) {}
+
+    open fun createResource(resourceId: String, callback: (ResourceResponse<TData>) -> Unit) {}
+
+    private fun beginResourceCreation() {
+
+        val editTextView = layoutInflater.inflate(R.layout.edit_text, null)
+        val editText = editTextView.findViewById<EditText>(R.id.editText)
+        val messageTextView = editTextView.findViewById<TextView>(R.id.messageText)
+        messageTextView.setText(R.string.resource_dialog)
+
+        AlertDialog.Builder(activity)
+                .setView(editTextView)
+                .setPositiveButton("Create", { dialog, whichButton ->
+
+                    val resourceId = editText.text.toString()
+                    val progressDialog = ProgressDialog.show(activity, "", "Creating. Please wait...", true)
+
+                    createResource(resourceId) { response ->
+
+                        if (response.isSuccessful) {
+
+                            val resource = response.resource
+
+                            println("Created DB successfully: ${resource?.id}")
+
+                            activity.runOnUiThread {
+                                fetchData {
+
+                                }
+                            }
+                        } else {
+                            println(response.error)
+                        }
+                    }
+
+                    progressDialog.cancel()
+                })
+                .setNegativeButton("Cancel", { dialog, whichButton -> }).show()
+    }
 
 //    override fun onItemClick(view: View, item: Resource, position: Int) {
 //        super.onItemClick(view, item, position)
 //    }
 
-    override fun onItemLongClick(view: View, item: Resource, position: Int) {
+    override fun onItemLongClick(view: View, item: TData, position: Int) {
 
         super.onItemLongClick(view, item, position)
 
@@ -93,21 +181,49 @@ abstract class ResourceListFragment : RecyclerViewListFragment<Resource, Resourc
 
         try {
             val selectedItems = typedAdapter.getSelectedItems()
+            val items = mutableListOf<TData>()
+            var count = 0
 
             for (resourceItem in selectedItems) {
 
                 // let the derived fragments do their own Get implementation here
-                getItem(resourceItem.id)
-            }
+                getItem(resourceItem.id) { response ->
 
-            Toast.makeText(activity, "GET operation succeeded for ${selectedItems.size} resources", Toast.LENGTH_LONG).show()
+                    count++
+
+                    if (response.isSuccessful && response.resource != null) {
+
+                        response.resource?.let {
+                            items.add(it)
+                            println("GET operation succeeded for resource ${it.id}")
+                        }
+                    }
+                    else {
+                        println(response.error)
+                    }
+
+                    if (count == selectedItems.size) {
+
+                        if (items.size == selectedItems.size) {
+                            activity.runOnUiThread {
+                                dialog.cancel()
+                                Toast.makeText(activity, "GET operation succeeded for ${selectedItems.size} resources", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        else {
+                            throw Exception("Error getting resource with id: ${resourceItem.id}")
+                        }
+                    }
+                }
+            }
         }
         catch (e: Exception) {
             println(e)
-            Toast.makeText(activity, "GET operation failed for 1 or more resources", Toast.LENGTH_LONG).show()
+            activity.runOnUiThread {
+                dialog.cancel()
+                Toast.makeText(activity, "GET operation failed for 1 or more resources", Toast.LENGTH_LONG).show()
+            }
         }
-
-        dialog.cancel()
     }
 
     //region ActionMode.ICallback Members
