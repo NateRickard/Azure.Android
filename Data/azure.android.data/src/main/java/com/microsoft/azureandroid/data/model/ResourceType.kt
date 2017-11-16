@@ -4,8 +4,9 @@ import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
 /**
- * Created by nater on 10/31/17.
- */
+* Created by Nate Rickard on 10/31/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 enum class ResourceType(val path: String, val fullname: String, val type: Type) {
 
@@ -18,7 +19,7 @@ enum class ResourceType(val path: String, val fullname: String, val type: Type) 
     UDF("udfs", "UserDefinedFunction", object : TypeToken<Database>() {}.type),
     DOCUMENT("docs", "Document", object : TypeToken<Document>() {}.type),
     ATTACHMENT("attachments", "Attachment", object : TypeToken<Database>() {}.type),
-    OFFER("offers", "Offer", object : TypeToken<Database>() {}.type);
+    OFFER("offers", "Offer", object : TypeToken<Offer>() {}.type);
 
     val listName: String = "${fullname}s"
 }

@@ -72,6 +72,10 @@ class AzureData {
     fun offers(callback: (ResourceListResponse<Offer>) -> Unit) =
             cosmosService.offers(callback)
 
+    // get
+    fun getOffer (offerId: String, callback: (ResourceResponse<Offer>) -> Unit) =
+            cosmosService.getOffer(offerId, callback)
+
 
     companion object {
 

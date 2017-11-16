@@ -14,8 +14,9 @@ import okhttp3.*
 import java.io.IOException
 
 /**
- * Created by nater on 10/31/17.
- */
+* Created by Nate Rickard on 10/31/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class CosmosService(private val baseUri: ResourceUri, key: String, keyType: TokenType = TokenType.MASTER) {
 
@@ -93,7 +94,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
         val resourceUri = baseUri.forDatabase()
 
-        resources(resourceUri, ResourceType.DATABASE, callback)
+        return resources(resourceUri, ResourceType.DATABASE, callback)
     }
 
     // delete
@@ -162,7 +163,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
         val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
 
-        sendResourceRequest(request, resourceType, callback)
+        return sendResourceRequest(request, resourceType, callback)
     }
 
     // create
@@ -178,7 +179,15 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
-        sendResourceListRequest(request, resourceType, callback)
+        return sendResourceListRequest(request, resourceType, callback)
+    }
+
+    // get
+    private fun<T: Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
+
+        val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
+
+        return sendResourceRequest(request, resourceType, callback)
     }
 
     // list
@@ -205,7 +214,15 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
 
         val resourceUri = baseUri.forOffer()
 
-        resources(resourceUri, ResourceType.OFFER, callback)
+        return resources(resourceUri, ResourceType.OFFER, callback)
+    }
+
+    // get
+    fun getOffer(offerId: String, callback: (ResourceResponse<Offer>) -> Unit): Any {
+
+        val resourceUri = baseUri.forOffer(offerId)
+
+        return resource(resourceUri, ResourceType.OFFER, callback)
     }
 
 

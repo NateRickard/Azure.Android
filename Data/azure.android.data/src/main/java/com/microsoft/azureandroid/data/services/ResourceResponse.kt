@@ -7,8 +7,9 @@ import okhttp3.Request
 import okhttp3.Response
 
 /**
- * Created by nater on 11/7/17.
- */
+* Created by Nate Rickard on 11/7/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class ResourceResponse<T: Resource>(
         // The URL request sent to the server.

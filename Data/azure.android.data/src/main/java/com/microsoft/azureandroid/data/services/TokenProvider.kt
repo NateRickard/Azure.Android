@@ -22,21 +22,9 @@ import javax.crypto.spec.SecretKeySpec
 
 class TokenProvider(private var key: String, private var keyType: TokenType = TokenType.MASTER, private var tokenVersion: String = "1.0") {
 
-    //    let dateFormatter: DateFormatter = {
-//
-//        let formatter = DateFormatter()
-//        formatter.locale = Locale(identifier: "en_US_POSIX")
-//        formatter.dateFormat = "E, dd MMM yyyy HH:mm:ss zzz"
-//        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-//
-//        return formatter
-//    }()
-
-    private val dateFormatter : SimpleDateFormat
-
+    private val dateFormatter : SimpleDateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.ROOT)
 
     init {
-        dateFormatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss")
         dateFormatter.timeZone = TimeZone.getTimeZone("GMT")
     }
 
@@ -44,7 +32,6 @@ class TokenProvider(private var key: String, private var keyType: TokenType = To
     fun getToken(verb: ApiValues.HttpMethod, resourceType: ResourceType, resourceLink: String) : Token {
 
         val dateString = String.format("%s %s", dateFormatter.format(Date()), "GMT")
-//        val dateString = dateFormatter.string(from: Date())
 
         val payload = String.format("%s\n%s\n%s\n%s\n%s\n",
                 verb.name.toLowerCase(Locale.ROOT),
@@ -52,17 +39,11 @@ class TokenProvider(private var key: String, private var keyType: TokenType = To
                 resourceLink,
                 dateString.toLowerCase(Locale.ROOT), "")
 
-//        val payload = "${httpMethod.toLowerCase()}\n${resourceType.toLowerCase()}\n$resourceLink\n${dateString.toLowerCase()}\n\n"
-
         print(payload)
 
-        val signature = hmac(payload) // .hmac(algorithm: .SHA256, identifier: identifier)
-
-//        val authString = "type=$keyType&ver=$tokenVersion&sig=$signature"
+        val signature = hmac(payload)
 
         val authStringEncoded = URLEncoder.encode(String.format("type=%s&ver=%s&sig=%s", keyType, tokenVersion, signature), "UTF-8")
-
-//        val authStringEncoded = authString.addingPercentEncoding(withAllowedCharacters: CharacterSet.alphanumerics)!
 
         return Token(authStringEncoded, dateString)
     }
