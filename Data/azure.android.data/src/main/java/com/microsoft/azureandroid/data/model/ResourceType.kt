@@ -11,8 +11,8 @@ import java.lang.reflect.Type
 enum class ResourceType(val path: String, val fullname: String, val type: Type) {
 
     DATABASE("dbs", "Database", object : TypeToken<Database>() {}.type),
-    USER("users", "User", object : TypeToken<Database>() {}.type),
-    PERMISSION("permissions", "Permission", object : TypeToken<Database>() {}.type),
+    USER("users", "User", object : TypeToken<User>() {}.type),
+    PERMISSION("permissions", "Permission", object : TypeToken<Permission>() {}.type),
     COLLECTION("colls", "DocumentCollection", object : TypeToken<DocumentCollection>() {}.type),
     STORED_PROCEDURE("sprocs", "StoredProcedure", object : TypeToken<Database>() {}.type),
     TRIGGER("triggers", "Trigger", object : TypeToken<Database>() {}.type),

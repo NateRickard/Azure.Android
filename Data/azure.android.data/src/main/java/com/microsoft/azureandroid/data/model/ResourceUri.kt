@@ -12,35 +12,58 @@ class ResourceUri(databaseName: String) {
 
     private val host: String = "$databaseName.documents.azure.com"
 
-    fun forDatabase(resourceId: String? = null) : UrlLink {
+    fun forDatabase(databaseId: String? = null) : UrlLink {
 
         val baseLink = ""
-        val itemLink = getItemLink(ResourceType.DATABASE, baseLink, resourceId)
+        val itemLink = getItemLink(ResourceType.DATABASE, baseLink, databaseId)
 
-        return getUrlLink(baseLink, itemLink, resourceId)
+        return getUrlLink(baseLink, itemLink, databaseId)
     }
 
-    fun forCollection(databaseId: String, resourceId: String? = null) : UrlLink {
+    fun forUser(databaseId: String, userId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId"
-        val itemLink = getItemLink(ResourceType.COLLECTION, baseLink, resourceId)
+        val itemLink = getItemLink(ResourceType.USER, baseLink, userId)
 
-        return getUrlLink(baseLink, itemLink, resourceId)
+        return getUrlLink(baseLink, itemLink, userId)
     }
 
-    fun forDocument(databaseId: String, collectionId: String, resourceId: String? = null) : UrlLink {
+    fun forPermission(databaseId: String, userId: String, permissionId: String? = null): UrlLink {
 
-        val baseLink = "dbs/$databaseId/colls/$collectionId"
-        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, resourceId)
+        val baseLink = "dbs/$databaseId/users/$userId"
+        val itemLink = getItemLink(ResourceType.PERMISSION, baseLink, permissionId)
 
-        return getUrlLink(baseLink, itemLink, resourceId)
+        return getUrlLink(baseLink, itemLink, permissionId)
     }
 
-    fun forDocument(baseLink: String, resourceId: String? = null) : UrlLink {
+    fun forPermission(baseLink: String, resourceId: String?): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, resourceId)
+        val itemLink = getItemLink(ResourceType.PERMISSION, baseLink, resourceId)
 
         return getUrlLinkForSelf(baseLink, itemLink, resourceId)
+    }
+
+    fun forCollection(databaseId: String, collectionId: String? = null) : UrlLink {
+
+        val baseLink = "dbs/$databaseId"
+        val itemLink = getItemLink(ResourceType.COLLECTION, baseLink, collectionId)
+
+        return getUrlLink(baseLink, itemLink, collectionId)
+    }
+
+    fun forDocument(databaseId: String, collectionId: String, documentId: String? = null) : UrlLink {
+
+        val baseLink = "dbs/$databaseId/colls/$collectionId"
+        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, documentId)
+
+        return getUrlLink(baseLink, itemLink, documentId)
+    }
+
+    fun forDocument(baseLink: String, documentId: String? = null) : UrlLink {
+
+        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, documentId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, documentId)
     }
 
     fun forOffer() : UrlLink {

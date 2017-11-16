@@ -1,8 +1,9 @@
 package com.microsoft.azureandroid.data.constants
 
 /**
- * Created by nater on 11/2/17.
- */
+* Created by Nate Rickard on 11/2/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 sealed class ApiValues {
 

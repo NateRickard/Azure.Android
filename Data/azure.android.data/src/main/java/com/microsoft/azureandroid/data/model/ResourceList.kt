@@ -15,18 +15,6 @@ class ResourceList<T: Resource>(resourceType: ResourceType, json: JsonObject) {
 
     lateinit var items: ArrayList<T>
 
-//    init?(_ resourceType: String, json dict: [String:Any]) {
-//        if let resourceId   = dict[resourceIdKey]   as? String { self.resourceId = resourceId } else { return nil }
-//        count       = dict[countKey]        as? Int ?? 0
-//        if let resourceDicts = dict[resourceType] as? [[String:Any]] {
-//            for resourceDict in resourceDicts {
-//                if let resource = T(fromJson: resourceDict) {
-//                self.items.append(resource)
-//            }
-//            }
-//        }
-//    }
-
     init {
         resourceId  = json[resourceIdKey]?.asString
         count       = json[countKey]?.asInt

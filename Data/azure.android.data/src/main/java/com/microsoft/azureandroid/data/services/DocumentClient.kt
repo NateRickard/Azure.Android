@@ -18,7 +18,7 @@ import java.io.IOException
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-class CosmosService(private val baseUri: ResourceUri, key: String, keyType: TokenType = TokenType.MASTER) {
+class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: TokenType = TokenType.MASTER) {
 
     private val tokenProvider: TokenProvider = TokenProvider(key, keyType, "1.0")
 
@@ -46,8 +46,8 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
             val pInfo = pkgManager.getPackageInfo(pkgName, 0);
 
             val appName = pInfo?.applicationInfo?.loadLabel(pkgManager) ?: "Unknown"
-            val appVersion = pInfo?.versionName                         ?: "Unknown"
-            val appVersionCode = pInfo?.versionCode                     ?: "Unknown"
+            val appVersion = pInfo?.versionName ?: "Unknown"
+            val appVersionCode = pInfo?.versionCode ?: "Unknown"
             var os = "Android"
 
             if (pkgManager.hasSystemFeature(PackageManager.FEATURE_WATCH)) {
@@ -62,8 +62,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
             print(userAgent)
 
             builder.add(ApiValues.HttpRequestHeader.USERAGENT.value, userAgent)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             builder.add(ApiValues.HttpRequestHeader.USERAGENT.value, "AzureMobile.Data")
         }
 
@@ -77,20 +76,15 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     // Database
 
     // create
-    fun createDatabase (databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
-
-        if (!databaseId.isValidResourceId()) {
-            return callback(ResourceResponse(invalidIdError))
-        }
+    fun createDatabase(databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
 
         val resourceUri = baseUri.forDatabase()
-        val jsonBody = JsonHelper.Gson.toJson(mapOf("id" to databaseId))
 
-        return create(resourceUri, ResourceType.DATABASE, jsonBody, callback = callback)
+        return create(databaseId, resourceUri, ResourceType.DATABASE, callback = callback)
     }
 
     // list
-    fun databases (callback: (ResourceListResponse<Database>) -> Unit) {
+    fun databases(callback: (ResourceListResponse<Database>) -> Unit) {
 
         val resourceUri = baseUri.forDatabase()
 
@@ -106,7 +100,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
     // delete
-    fun deleteDatabase (databaseId: String, callback: (Boolean) -> Unit) {
+    fun deleteDatabase(databaseId: String, callback: (Boolean) -> Unit) {
 
         val resourceUri = baseUri.forDatabase(databaseId)
 
@@ -117,16 +111,11 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     // Collections
 
     // create
-    fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
-
-        if (!collectionId.isValidResourceId()) {
-            return callback(ResourceResponse(invalidIdError))
-        }
+    fun createCollection(collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
 
         val resourceUri = baseUri.forCollection(databaseId)
-        val jsonBody = JsonHelper.Gson.toJson(mapOf("id" to collectionId))
 
-        return create(resourceUri, ResourceType.COLLECTION, jsonBody, callback = callback)
+        return create(collectionId, resourceUri, ResourceType.COLLECTION, callback = callback)
     }
 
     // list
@@ -137,8 +126,16 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return resources(resourceUri, ResourceType.COLLECTION, callback)
     }
 
+    // get
+    fun getCollection(collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
+
+        val resourceUri = baseUri.forCollection(databaseId, collectionId)
+
+        return resource(resourceUri, ResourceType.COLLECTION, callback)
+    }
+
     // delete
-    fun deleteCollection (collectionId: String, databaseId: String, callback: (Boolean) -> Unit) {
+    fun deleteCollection(collectionId: String, databaseId: String, callback: (Boolean) -> Unit) {
 
         val resourceUri = baseUri.forCollection(databaseId, collectionId)
 
@@ -149,14 +146,14 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     // Documents
 
     // list
-    fun<T: Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
+    fun <T : Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
 
         return resources(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
-    fun<T: Document> getDocumentsAs(collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
+    fun <T : Document> getDocumentsAs(collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(collection.selfLink!!)
 
@@ -164,18 +161,134 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
 
-    // Resources
+    // Users
 
     // create
-    private fun<T: Resource> create (resourceUri: UrlLink, resourceType: ResourceType, jsonBody: String, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    fun createUser(userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) {
 
-        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
+        val resourceUri = baseUri.forUser(databaseId)
 
-        return sendResourceRequest(request, resourceType, callback)
+        return create(userId, resourceUri, ResourceType.USER, callback = callback)
+    }
+
+    // list
+    fun getUsers(databaseId: String, callback: (ResourceListResponse<User>) -> Unit) {
+
+        val resourceUri = baseUri.forUser(databaseId)
+
+        return resources(resourceUri, ResourceType.USER, callback)
+    }
+
+    // get
+    fun getUser(userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) {
+
+        val resourceUri = baseUri.forUser(databaseId, userId)
+
+        return resource(resourceUri, ResourceType.USER, callback)
+    }
+
+
+    // Permissions
+
+    // create
+    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(databaseId, userId)
+
+        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
+
+        return create(permission, resourceUri, ResourceType.PERMISSION, callback = callback)
     }
 
     // create
-    private fun<T: Resource> createAsync (resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null) : Deferred<ResourceListResponse<T>> {
+    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionId)
+
+        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
+
+        return create(permission, resourceUri, ResourceType.PERMISSION, callback = callback)
+    }
+
+    // list
+    fun getPermissions(userId: String, databaseId: String, callback: (ResourceListResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(databaseId, userId)
+
+        return resources(resourceUri, ResourceType.PERMISSION, callback)
+    }
+
+    // list
+    fun getPermissions(user: User, callback: (ResourceListResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(user.selfLink!!, null)
+
+        return resources(resourceUri, ResourceType.PERMISSION, callback)
+    }
+
+    // get
+    fun getPermission(permissionId: String, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(databaseId, userId, permissionId)
+
+        return resource(resourceUri, ResourceType.PERMISSION, callback)
+    }
+
+    // get
+    fun getPermission(permissionId: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionId)
+
+        return resource(resourceUri, ResourceType.PERMISSION, callback)
+    }
+
+
+    // Offers
+
+    // list
+    fun offers(callback: (ResourceListResponse<Offer>) -> Unit) {
+
+        val resourceUri = baseUri.forOffer()
+
+        return resources(resourceUri, ResourceType.OFFER, callback)
+    }
+
+    // get
+    fun getOffer(offerId: String, callback: (ResourceResponse<Offer>) -> Unit): Any {
+
+        val resourceUri = baseUri.forOffer(offerId)
+
+        return resource(resourceUri, ResourceType.OFFER, callback)
+    }
+
+
+    // Resources
+
+    // create
+    private fun <T : Resource> create(resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        if (!resource.id.isValidResourceId()) {
+            return callback(ResourceResponse(invalidIdError))
+        }
+
+        createOrReplace(resource, resourceUri, resourceType, false, additionalHeaders, callback)
+    }
+
+    // create
+    private fun <T : Resource> create(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, data: MutableMap<String, String?>? = null, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        if (!resourceId.isValidResourceId()) {
+            return callback(ResourceResponse(invalidIdError))
+        }
+
+        val map = data ?: mutableMapOf()
+        map["id"] = resourceId
+
+        createOrReplace(map, resourceUri, resourceType, false, additionalHeaders, callback)
+    }
+
+    // create
+    private fun <T : Resource> createAsync(resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null): Deferred<ResourceListResponse<T>> {
 
         val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
 
@@ -183,7 +296,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
     // list
-    private fun<T: Resource> resources (resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+    private fun <T : Resource> resources(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
@@ -191,7 +304,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
     // get
-    private fun<T: Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
@@ -199,7 +312,7 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
     }
 
     // list
-    private fun<T: Resource> getResourcesAsync (resourceUri: UrlLink, resourceType: ResourceType) : Deferred<ResourceListResponse<T>> {
+    private fun <T : Resource> getResourcesAsync(resourceUri: UrlLink, resourceType: ResourceType): Deferred<ResourceListResponse<T>> {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
@@ -214,23 +327,32 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return sendRequest(request, callback)
     }
 
+    // create or replace
+    private fun <T : Resource, R> createOrReplace(body: R, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
-    // Offers
+        try {
+            val jsonBody = JsonHelper.Gson.toJson(body)
 
-    // list
-    fun offers (callback: (ResourceListResponse<Offer>) -> Unit) {
+            val request = createRequest(if (replacing) ApiValues.HttpMethod.PUT else ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
 
-        val resourceUri = baseUri.forOffer()
+            return sendResourceRequest(request, resourceType, callback)
 
-        return resources(resourceUri, ResourceType.OFFER, callback)
+        } catch (e: Exception) {
+            callback(ResourceResponse(DataError(e)))
+        }
     }
 
-    // get
-    fun getOffer(offerId: String, callback: (ResourceResponse<Offer>) -> Unit): Any {
+    private fun<T: Resource> createOrReplace(body: Map<String, String?>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
-        val resourceUri = baseUri.forOffer(offerId)
+        try {
+            val jsonBody = JsonHelper.Gson.toJson(body)
 
-        return resource(resourceUri, ResourceType.OFFER, callback)
+            val request = createRequest(if (replacing) ApiValues.HttpMethod.PUT else ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
+
+            return sendResourceRequest(request, resourceType, callback)
+        } catch (e: Exception) {
+            callback(ResourceResponse(DataError(e)))
+        }
     }
 
 

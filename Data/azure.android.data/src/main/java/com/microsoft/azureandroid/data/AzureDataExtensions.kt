@@ -14,7 +14,7 @@ class AzureDataExtensions {
     // Database
 
     fun Database.getCollections(callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
-        return AzureData.instance.getCollectionsIn(this.id, callback)
+        return AzureData.instance.getCollections(this.id, callback)
     }
 
     fun Database.deleteCollection(collection: DocumentCollection, callback: (Boolean) -> Unit) {
