@@ -1,6 +1,8 @@
 package com.microsoft.azureandroiddatasample.fragment
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Offer
 import com.microsoft.azureandroid.data.services.ResourceListResponse
@@ -42,5 +44,11 @@ class OffersFragment : ResourceListFragment<Offer>() {
         catch (ex: Exception) {
             ex.printStackTrace()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear() //no "Add" command for Offers r.n.
     }
 }
