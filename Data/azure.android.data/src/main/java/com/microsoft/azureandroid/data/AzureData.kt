@@ -27,6 +27,9 @@ class AzureData {
     fun databases(callback: (ResourceListResponse<Database>) -> Unit) =
             cosmosService.databases(callback)
 
+    fun getDatabase(databaseId: String, callback: (ResourceResponse<Database>) -> Unit) =
+            cosmosService.getDatabase (databaseId, callback)
+
     // delete
     fun deleteDatabase (database: Database, callback: (Boolean) -> Unit) =
             cosmosService.deleteDatabase (database.id, callback)

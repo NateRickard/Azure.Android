@@ -97,6 +97,14 @@ class CosmosService(private val baseUri: ResourceUri, key: String, keyType: Toke
         return resources(resourceUri, ResourceType.DATABASE, callback)
     }
 
+    // get
+    fun getDatabase(databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
+
+        val resourceUri = baseUri.forDatabase(databaseId)
+
+        return resource(resourceUri, ResourceType.DATABASE, callback)
+    }
+
     // delete
     fun deleteDatabase (databaseId: String, callback: (Boolean) -> Unit) {
 
