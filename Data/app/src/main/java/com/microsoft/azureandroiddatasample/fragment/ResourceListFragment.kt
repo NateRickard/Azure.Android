@@ -47,31 +47,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         button_fetch.setOnClickListener {
-
-            val dialog = ProgressDialog.show(activity, "", "Loading. Please wait...", true)
-
-            try {
-                fetchData { response ->
-
-                    if (response.isSuccessful) {
-
-                        val items = response.resource?.items!!
-
-                        activity.runOnUiThread {
-                            typedAdapter.setItems(items)
-                        }
-                    }
-                    else {
-                        print(response.error)
-                    }
-
-                    dialog.cancel()
-                }
-            }
-            catch (ex: Exception) {
-                ex.printStackTrace()
-                dialog.cancel()
-            }
+            loadAllItems()
         }
 
         button_clear.setOnClickListener {
@@ -94,6 +70,38 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun loadAllItems() {
+
+        val dialog = ProgressDialog.show(activity, "", "Loading. Please wait...", true)
+
+        try {
+            fetchData { response ->
+
+                if (response.isSuccessful) {
+
+                    val items = response.resource?.items!!
+
+                    activity.runOnUiThread {
+                        typedAdapter.setItems(items)
+                    }
+                }
+                else {
+                    print(response.error)
+
+                    activity.runOnUiThread {
+                        Toast.makeText(activity, "Failed to load resource(s)", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+                dialog.cancel()
+            }
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
+            dialog.cancel()
         }
     }
 
@@ -126,9 +134,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                             println("Created DB successfully: ${resource?.id}")
 
                             activity.runOnUiThread {
-                                fetchData {
-
-                                }
+                                loadAllItems()
                             }
                         } else {
                             println(response.error)
@@ -170,7 +176,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
             actionMode?.finish ()
         }
         else {
-            actionMode?.title = "$count items"
+            actionMode?.title = "$count item${if (count == 1) "" else "s"}"
             actionMode?.invalidate ()
         }
     }
@@ -207,7 +213,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                         if (items.size == selectedItems.size) {
                             activity.runOnUiThread {
                                 dialog.cancel()
-                                Toast.makeText(activity, "GET operation succeeded for ${selectedItems.size} resources", Toast.LENGTH_LONG).show()
+                                Toast.makeText(activity, "GET operation succeeded for ${selectedItems.size} resource(s)", Toast.LENGTH_LONG).show()
                             }
                         }
                         else {
@@ -221,10 +227,32 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
             println(e)
             activity.runOnUiThread {
                 dialog.cancel()
-                Toast.makeText(activity, "GET operation failed for 1 or more resources", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "GET operation failed for 1 or more resource(s)", Toast.LENGTH_LONG).show()
             }
         }
     }
+
+//    val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Deleting. Please wait...", true)
+//
+//    try {
+//        AzureData.instance.deleteDatabase(dbId) { result ->
+//
+//            println("deleteDatabase result: $result")
+//
+//            if (result) {
+//
+//                runOnUiThread {
+//                    finish()
+//                }
+//            }
+//        }
+//    }
+//    catch (ex: Exception) {
+//        ex.printStackTrace()
+//    }
+//
+//    adapter.clear()
+//    dialog.cancel()
 
     //region ActionMode.ICallback Members
 

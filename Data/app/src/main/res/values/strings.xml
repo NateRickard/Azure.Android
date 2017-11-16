@@ -19,4 +19,7 @@
     <string name="offers">Offers</string>
     <string name="get">Get</string>
     <string name="add">Add</string>
+    <string name="collections">Collections</string>
+    <string name="users">Users</string>
+    <string name="permissions">Permissions</string>
 </resources>

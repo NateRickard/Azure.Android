@@ -6,7 +6,7 @@ import android.support.design.widget.TabLayout
 import android.view.MenuItem
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.TabFragmentPagerAdapter
-import com.microsoft.azureandroiddatasample.fragment.DatabaseFragment
+import com.microsoft.azureandroiddatasample.fragment.DatabasesFragment
 import com.microsoft.azureandroiddatasample.fragment.OffersFragment
 
 import kotlinx.android.synthetic.main.tab_layout.*
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         pagerAdapter = TabFragmentPagerAdapter (this, supportFragmentManager)
 
         with(pagerAdapter) {
-            addFragment (DatabaseFragment (), getString(R.string.databases).toUpperCase())
+            addFragment (DatabasesFragment(), getString(R.string.databases).toUpperCase())
             addFragment (OffersFragment (), getString(R.string.offers).toUpperCase())
         }
 

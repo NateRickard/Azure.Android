@@ -6,14 +6,14 @@ import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Database
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
-import com.microsoft.azureandroiddatasample.activity.CollectionsActivity
+import com.microsoft.azureandroiddatasample.activity.DatabaseActivity
 
 /**
  * Created by Nate Rickard on 11/14/17.
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class DatabaseFragment : ResourceListFragment<Database>() {
+class DatabasesFragment : ResourceListFragment<Database>() {
 
     override fun fetchData(callback: (ResourceListResponse<Database>) -> Unit) {
 
@@ -57,7 +57,7 @@ class DatabaseFragment : ResourceListFragment<Database>() {
 
         val db = typedAdapter.getItem(position)
 
-        val intent = Intent(activity.baseContext, CollectionsActivity::class.java)
+        val intent = Intent(activity.baseContext, DatabaseActivity::class.java)
         intent.putExtra("db_id", db.id)
         startActivity(intent)
     }
