@@ -89,6 +89,14 @@ class AzureData {
     fun getUser (userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
             documentClient.getUser(userId, databaseId, callback)
 
+    // delete
+    fun deleteUser (userId: String, databaseId: String, callback: (Boolean) -> Unit) =
+            documentClient.deleteUser(userId, databaseId, callback)
+
+    // delete
+    fun deleteUser(user: User, databaseId: String, callback: (Boolean) -> Unit) =
+            documentClient.deleteUser(user.id, databaseId, callback)
+
 
     // Permissions
 
@@ -114,6 +122,18 @@ class AzureData {
     // get
     fun getPermission(permissionId: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
             documentClient.getPermission(permissionId, user, callback)
+
+    // delete
+    fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (Boolean) -> Unit) =
+            documentClient.deletePermission(permissionId, userId, databaseId, callback)
+
+    // delete
+    fun deletePermission(permission: Permission, userId: String, databaseId: String, callback: (Boolean) -> Unit) =
+            documentClient.deletePermission(permission.id, userId, databaseId, callback)
+
+    // delete
+    fun deletePermission(permission: Permission, user: User, callback: (Boolean) -> Unit) =
+            documentClient.deletePermission(permission, user, callback)
 
 
     // Offers

@@ -107,6 +107,12 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.DATABASE, callback)
     }
 
+    // delete
+    fun deleteDatabase(database: Database, callback: (Boolean) -> Unit) {
+
+        deleteDatabase(database.id, callback)
+    }
+
 
     // Collections
 
@@ -187,6 +193,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return resource(resourceUri, ResourceType.USER, callback)
     }
 
+    // delete
+    fun deleteUser(userId: String, databaseId: String, callback: (Boolean) -> Unit) {
+
+        val resourceUri = baseUri.forUser(databaseId, userId)
+
+        return delete(resourceUri, ResourceType.USER, callback)
+    }
+
 
     // Permissions
 
@@ -240,6 +254,22 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         val resourceUri = baseUri.forPermission(user.selfLink!!, permissionId)
 
         return resource(resourceUri, ResourceType.PERMISSION, callback)
+    }
+
+    // delete
+    fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (Boolean) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(databaseId, userId, permissionId)
+
+        return delete(resourceUri, ResourceType.PERMISSION, callback)
+    }
+
+    // delete
+    fun deletePermission(permission: Permission, user: User, callback: (Boolean) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(user.selfLink!!, permission.id)
+
+        return delete(resourceUri, ResourceType.PERMISSION, callback)
     }
 
 
