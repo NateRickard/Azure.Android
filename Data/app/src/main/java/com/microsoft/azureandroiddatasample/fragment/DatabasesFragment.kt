@@ -7,6 +7,8 @@ import com.microsoft.azureandroid.data.model.Database
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.activity.DatabaseActivity
+import com.microsoft.azureandroiddatasample.model.ResourceAction
+import java.util.*
 
 /**
  * Created by Nate Rickard on 11/14/17.
@@ -14,6 +16,8 @@ import com.microsoft.azureandroiddatasample.activity.DatabaseActivity
  */
 
 class DatabasesFragment : ResourceListFragment<Database>() {
+
+    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Get, ResourceAction.Create, ResourceAction.Delete)
 
     override fun fetchData(callback: (ResourceListResponse<Database>) -> Unit) {
 
@@ -47,6 +51,17 @@ class DatabasesFragment : ResourceListFragment<Database>() {
             }
         }
         catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    override fun deleteItem(resourceId: String, callback: (Boolean) -> Unit) {
+
+        try {
+            AzureData.instance.deleteDatabase(resourceId) { result ->
+                callback(result)
+            }
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }

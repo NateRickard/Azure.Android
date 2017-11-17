@@ -19,8 +19,10 @@ import android.widget.EditText
 import android.widget.TextView
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroiddatasample.model.ResourceAction
 
 import kotlinx.android.synthetic.main.resource_list_fragment.*
+import java.util.*
 
 /**
  * Created by Nate Rickard on 11/15/17.
@@ -32,6 +34,8 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
     private var actionMode: ActionMode? = null
 
     override val viewResourceId: Int = R.layout.resource_list_fragment
+
+    open val actionSupport: EnumSet<ResourceAction> = EnumSet.noneOf(ResourceAction::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +62,8 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 
         inflater.inflate(R.menu.menu_resource, menu)
+
+        menu.findItem(R.id.action_create).isVisible = actionSupport.contains(ResourceAction.Create)
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -110,6 +116,8 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
     open fun getItem(id: String, callback: (ResourceResponse<TData>) -> Unit) {}
 
     open fun createResource(resourceId: String, callback: (ResourceResponse<TData>) -> Unit) {}
+
+    open fun deleteItem(resourceId: String, callback: (Boolean) -> Unit) {}
 
     private fun beginResourceCreation() {
 
@@ -217,7 +225,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                             }
                         }
                         else {
-                            throw Exception("Error getting resource with id: ${resourceItem.id}")
+                            throw Exception("Failed to retrieve all items")
                         }
                     }
                 }
@@ -232,27 +240,53 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
         }
     }
 
-//    val dialog = ProgressDialog.show(this@CollectionsActivity, "", "Deleting. Please wait...", true)
-//
-//    try {
-//        AzureData.instance.deleteDatabase(dbId) { result ->
-//
-//            println("deleteDatabase result: $result")
-//
-//            if (result) {
-//
-//                runOnUiThread {
-//                    finish()
-//                }
-//            }
-//        }
-//    }
-//    catch (ex: Exception) {
-//        ex.printStackTrace()
-//    }
-//
-//    adapter.clear()
-//    dialog.cancel()
+    private fun deleteSelectedItems() {
+
+        val dialog = ProgressDialog.show(activity, "", "Deleting. Please wait...", true)
+
+        try {
+            val selectedItems = typedAdapter.getSelectedItems()
+            var itemsSucceeded = 0
+            var count = 0
+
+            for (resourceItem in selectedItems) {
+
+                // let the derived fragments do their own Get implementation here
+                deleteItem(resourceItem.id) { result ->
+
+                    count++
+
+                    if (result) {
+                        itemsSucceeded++
+                    }
+
+                    println("Delete result for resource with id ${resourceItem.id} : $result")
+
+                    if (count == selectedItems.size) {
+
+                        if (itemsSucceeded == selectedItems.size) {
+                            activity.runOnUiThread {
+                                dialog.cancel()
+                                Toast.makeText(activity, "Delete succeeded for ${selectedItems.size} resource(s)", Toast.LENGTH_LONG).show()
+                                loadAllItems()
+                            }
+                        }
+                        else {
+                            throw Exception("Failed to delete all resources")
+                        }
+                    }
+                }
+            }
+        }
+        catch (e: Exception) {
+            println(e)
+            activity.runOnUiThread {
+                dialog.cancel()
+                Toast.makeText(activity, "Delete failed for 1 or more resource(s)", Toast.LENGTH_LONG).show()
+                loadAllItems()
+            }
+        }
+    }
 
     //region ActionMode.ICallback Members
 
@@ -260,8 +294,11 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
         mode.menuInflater.inflate (R.menu.menu_resource_actions, menu)
 
+        menu.findItem(R.id.action_get).isVisible = actionSupport.contains(ResourceAction.Get)
+        menu.findItem(R.id.action_delete).isVisible = actionSupport.contains(ResourceAction.Delete)
+
         //disable pull to refresh if action mode is enabled
-        swipeRefreshLayout?.isEnabled = false
+//        swipeRefreshLayout?.isEnabled = false
 
         return true
     }
@@ -277,13 +314,18 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                     mode.finish ()
                     true
                 }
+                R.id.action_delete -> {
+                    deleteSelectedItems()
+                    mode.finish ()
+                    true
+                }
                 else -> false
             }
 
     override fun onDestroyActionMode (mode: ActionMode) {
 
         typedAdapter.clearSelectedItems ()
-        swipeRefreshLayout?.isEnabled = true
+//        swipeRefreshLayout?.isEnabled = true
         actionMode = null
     }
 

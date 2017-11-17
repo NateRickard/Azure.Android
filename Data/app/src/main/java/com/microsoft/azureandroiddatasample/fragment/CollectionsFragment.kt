@@ -8,6 +8,8 @@ import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.activity.DocumentsActivity
+import com.microsoft.azureandroiddatasample.model.ResourceAction
+import java.util.*
 
 /**
  * Created by Nate Rickard on 11/16/17.
@@ -17,6 +19,8 @@ import com.microsoft.azureandroiddatasample.activity.DocumentsActivity
 class CollectionsFragment : ResourceListFragment<DocumentCollection>() {
 
     private lateinit var databaseId: String
+
+    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Get, ResourceAction.Create, ResourceAction.Delete)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -57,6 +61,17 @@ class CollectionsFragment : ResourceListFragment<DocumentCollection>() {
             }
         }
         catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    override fun deleteItem(resourceId: String, callback: (Boolean) -> Unit) {
+
+        try {
+            AzureData.instance.deleteCollection(resourceId, databaseId) { result ->
+                callback(result)
+            }
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }

@@ -7,6 +7,8 @@ import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Offer
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroiddatasample.model.ResourceAction
+import java.util.*
 
 /**
  * Created by Nate Rickard on 11/14/17.
@@ -14,6 +16,8 @@ import com.microsoft.azureandroid.data.services.ResourceResponse
  */
 
 class OffersFragment : ResourceListFragment<Offer>() {
+
+    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Get)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
