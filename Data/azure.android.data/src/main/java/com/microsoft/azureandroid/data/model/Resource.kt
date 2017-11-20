@@ -24,9 +24,6 @@ abstract class Resource(id: String? = UUID.randomUUID().toString()) {
     @SerializedName(timestampKey)
     var timestamp: Date? = null
 
-    init {
-    }
-
     companion object {
 
         const val resourceIdKey =  "_rid"

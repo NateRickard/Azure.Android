@@ -24,6 +24,6 @@ class Offer : Resource() {
 
         const val resourceLinkKey = "resource"
     }
-}
 
-data class OfferContent(var offerThroughput: Int = 1000, var offerIsRUPerMinuteThroughputEnabled: Boolean?)
+    data class OfferContent(var offerThroughput: Int = 1000, var offerIsRUPerMinuteThroughputEnabled: Boolean?)
+}

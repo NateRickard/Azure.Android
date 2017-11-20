@@ -3,8 +3,9 @@ package com.microsoft.azureandroid.data.util
 import android.content.Context
 
 /**
- * Created by nater on 11/3/17.
- */
+* Created by Nate Rickard on 11/3/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class ContextProvider {
 

@@ -3,17 +3,15 @@ package com.microsoft.azureandroid.data.util
 import com.microsoft.azureandroid.data.model.DataError
 
 /**
- * Created by nater on 11/11/17.
- */
+* Created by Nate Rickard on 11/11/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
-fun String.toError(): DataError {
-    return JsonHelper.Gson.fromJson(this, DataError::class.java)
-}
+fun String.toError(): DataError =
+        JsonHelper.Gson.fromJson(this, DataError::class.java)
 
-fun String.isValidResourceId() : Boolean {
-
-    return !this.isBlank() && this.matches(RegEx.whitespaceRegex) && this.length <= 255
-}
+fun String.isValidResourceId() : Boolean =
+        !this.isBlank() && this.matches(RegEx.whitespaceRegex) && this.length <= 255
 
 object RegEx {
 
