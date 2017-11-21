@@ -5,8 +5,9 @@ import okhttp3.Request
 import okhttp3.Response
 
 /**
- * Created by nater on 11/7/17.
- */
+* Created by Nate Rickard on 11/7/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class ResourceListResponse<T: Resource>(
         // The URL request sent to the server.
@@ -25,7 +26,7 @@ class ResourceListResponse<T: Resource>(
     val resource: ResourceList<T>? get() = result?.resource
 
     // Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    val error: Error? get() = result?.error
+    val error: DataError? get() = result?.error
 
     // Returns `true` if the result is a success, `false` otherwise.
     val isSuccessful get() = error == null

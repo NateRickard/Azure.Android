@@ -104,8 +104,8 @@ class AzureData {
     fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
             documentClient.createPermission(permissionId, permissionMode, resource, userId, databaseId, callback)
 
-    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
-            documentClient.createPermission(permissionId, permissionMode, resource, user, callback)
+    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
+            documentClient.createPermission(permissionId, permissionMode, resource, user.id, databaseId, callback)
 
     // list
     fun getPermissions(userId: String, databaseId: String, callback: (ResourceListResponse<Permission>) -> Unit) =

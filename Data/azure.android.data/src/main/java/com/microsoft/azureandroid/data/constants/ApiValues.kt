@@ -38,15 +38,13 @@ sealed class ApiValues {
         ACCEPTLANGUAGE("Accept-Language"),
         SLUG("Slug");
 
-        fun isRequired() : Boolean {
-            return when (this) {
-                AUTHORIZATION -> true
-                CONTENTTYPE -> true
-                XMSDATE -> true
-                XMSSESSIONTOKEN -> true
-                XMSVERSION -> true
-                else -> false
-            }
+        fun isRequired() : Boolean = when (this) {
+            AUTHORIZATION -> true
+            CONTENTTYPE -> true
+            XMSDATE -> true
+            XMSSESSIONTOKEN -> true
+            XMSVERSION -> true
+            else -> false
         }
     }
 
@@ -56,9 +54,7 @@ sealed class ApiValues {
         API_VERSION("2017-02-22"),
 
         // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
-        ACCEPT_ENCODING("gzip;q=1.0, compress;q=0.5"),
-
-        ACCEPT_JSON("${MediaTypes.JSON}; charset=utf-8")
+        ACCEPT_ENCODING("gzip;q=1.0, compress;q=0.5")
     }
 
     enum class MediaTypes(val value: String) {

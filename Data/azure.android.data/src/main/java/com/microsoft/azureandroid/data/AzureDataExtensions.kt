@@ -6,8 +6,9 @@ import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 
 /**
- * Created by nater on 11/11/17.
- */
+* Created by Nate Rickard on 11/11/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 class AzureDataExtensions {
 

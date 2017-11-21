@@ -5,7 +5,7 @@ package com.microsoft.azureandroid.data.model
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-class DataError(message: String?, val code: Int? = null) : Error(message) {
+class DataError(val message: String?, val code: String? = null) {
 
     constructor(error: Error) : this(error.message)
 

@@ -5,4 +5,4 @@ package com.microsoft.azureandroid.data.model
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-class ListResult<T: Resource>(val resource: ResourceList<T>? = null, val error: Error? = null)
+class ListResult<T: Resource>(val resource: ResourceList<T>? = null, val error: DataError? = null)

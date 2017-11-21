@@ -207,7 +207,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     // create
     fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
 
-        val resourceUri = baseUri.forPermission(databaseId, userId)
+        val resourceUri = baseUri.forPermission(databaseId, userId, null)
 
         val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
 
@@ -215,19 +215,21 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
-
-        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionId)
-
-        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
-
-        return create(permission, resourceUri, ResourceType.PERMISSION, callback = callback)
-    }
+//    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
+//
+////        val resourceUri = baseUri.forPermission(user.selfLink!!, null)
+//
+//        val resourceUri = baseUri.forPermission(databaseId, user.id, null)
+//
+//        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
+//
+//        return create(permission, resourceUri, ResourceType.PERMISSION, callback = callback)
+//    }
 
     // list
     fun getPermissions(userId: String, databaseId: String, callback: (ResourceListResponse<Permission>) -> Unit) {
 
-        val resourceUri = baseUri.forPermission(databaseId, userId)
+        val resourceUri = baseUri.forPermission(databaseId, userId, null)
 
         return resources(resourceUri, ResourceType.PERMISSION, callback)
     }
@@ -429,7 +431,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
         catch (e: Exception) {
 
-            println(e)
+            e.printStackTrace()
 
             throw e
         }
@@ -496,24 +498,19 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     private fun<T: Resource> sendResourceListRequest(request: Request, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
-
         try {
             client.newCall(request)
                     .enqueue(object : Callback {
 
-                        override fun onFailure(call: Call, e: IOException) {
-                            // Error
-                            return callback(ResourceListResponse(DataError(e)))
-                        }
+                        // only transpprt errors handled here
+                        override fun onFailure(call: Call, e: IOException) =
+                                callback(ResourceListResponse(DataError(e)))
 
                         @Throws(IOException::class)
-                        override fun onResponse(call: Call, response: Response) {
-
-                            return callback(processListResponse(request, response, resourceType))
-                        }
+                        override fun onResponse(call: Call, response: Response) =
+                                callback(processListResponse(request, response, resourceType))
                     })
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             logIfVerbose(e)
             callback(ResourceListResponse(DataError(e)))
         }
@@ -528,11 +525,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             logIfVerbose(json)
 
-            val resource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
+            //check http return code
+            if (response.isSuccessful) {
+                val resource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
 
-            val result = Result(resource)
+                val result = Result(resource)
 
-            return ResourceResponse(request, response, json, result)
+                return ResourceResponse(request, response, json, result)
+            }
+            else {
+                return ResourceResponse(json.toError())
+            }
         }
         catch (e: Exception) {
             return ResourceResponse(DataError(e))
@@ -548,20 +551,26 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             logIfVerbose(json)
 
-            val jsonParser = JsonParser()
-            val jsonObject = jsonParser.parse(json).asJsonObject
+            if (response.isSuccessful) {
 
-            //                            var resourceList = Gson().fromJson(json, ResourceList::class.java)
+                val jsonParser = JsonParser()
+                val jsonObject = jsonParser.parse(json).asJsonObject
 
-            val resourceList = ResourceList<T>(resourceType, jsonObject)
+                //                            var resourceList = Gson().fromJson(json, ResourceList::class.java)
 
-            if (!resourceList.isPopuated) {
+                val resourceList = ResourceList<T>(resourceType, jsonObject)
+
+                if (!resourceList.isPopuated) {
+                    return ResourceListResponse(json.toError())
+                }
+
+                val result = ListResult(resourceList)
+
+                return ResourceListResponse(request, response, json, result)
+            }
+            else {
                 return ResourceListResponse(json.toError())
             }
-
-            val result = ListResult(resourceList)
-
-            return ResourceListResponse(request, response, json, result)
         }
         catch (e: Exception) {
             return ResourceListResponse(DataError(e))
@@ -583,6 +592,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val invalidIdError : DataError = DataError("Cosmos DB Resource IDs must not exceed 255 characters and cannot contain whitespace")
 
-        val jsonMediaType = MediaType.parse(ApiValues.HttpRequestHeaderValue.ACCEPT_JSON.value)
+        val jsonMediaType = MediaType.parse(ApiValues.MediaTypes.JSON.value)
     }
 }

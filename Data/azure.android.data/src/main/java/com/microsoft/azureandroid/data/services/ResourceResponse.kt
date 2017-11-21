@@ -28,7 +28,7 @@ class ResourceResponse<T: Resource>(
     val resource: T? get() = result?.resource
 
     // Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    val error: Error? get() = result?.error
+    val error: DataError? get() = result?.error
 
     // Returns `true` if the result is a success, `false` otherwise.
     val isSuccessful get() = error == null

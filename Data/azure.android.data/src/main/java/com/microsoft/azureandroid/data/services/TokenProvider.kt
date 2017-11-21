@@ -33,11 +33,11 @@ class TokenProvider(private var key: String, private var keyType: TokenType = To
 
         val dateString = String.format("%s %s", dateFormatter.format(Date()), "GMT")
 
-        val payload = String.format("%s\n%s\n%s\n%s\n%s\n",
+        val payload = String.format("%s\n%s\n%s\n%s\n\n",
                 verb.name.toLowerCase(Locale.ROOT),
                 resourceType.path.toLowerCase(Locale.ROOT),
                 resourceLink,
-                dateString.toLowerCase(Locale.ROOT), "")
+                dateString.toLowerCase(Locale.ROOT))
 
         print(payload)
 

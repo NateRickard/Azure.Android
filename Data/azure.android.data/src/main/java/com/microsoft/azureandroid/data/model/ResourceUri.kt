@@ -1,5 +1,6 @@
 package com.microsoft.azureandroid.data.model
 
+import android.net.Uri
 import okhttp3.HttpUrl
 
 /**
@@ -28,7 +29,7 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, userId)
     }
 
-    fun forPermission(databaseId: String, userId: String, permissionId: String? = null): UrlLink {
+    fun forPermission(databaseId: String, userId: String, permissionId: String?): UrlLink {
 
         val baseLink = "dbs/$databaseId/users/$userId"
         val itemLink = getItemLink(ResourceType.PERMISSION, baseLink, permissionId)
@@ -87,28 +88,35 @@ class ResourceUri(databaseName: String) {
         var fragment = ""
 
         resourceId?.let {
-            fragment = "/$resourceId"
+            fragment = "$resourceId"
         }
 
-        return when (resourceType) {
-            ResourceType.DATABASE           -> "dbs$fragment"
-            ResourceType.USER               -> "$baseLink/users$fragment"
-            ResourceType.PERMISSION         -> "$baseLink/permissions$fragment"
-            ResourceType.COLLECTION         -> "$baseLink/colls$fragment"
-            ResourceType.STORED_PROCEDURE   -> "$baseLink/sprocs$fragment"
-            ResourceType.TRIGGER            -> "$baseLink/triggers$fragment"
-            ResourceType.UDF                -> "$baseLink/udfs$fragment"
-            ResourceType.DOCUMENT           -> "$baseLink/docs$fragment"
-            ResourceType.ATTACHMENT         -> "$baseLink/attachments$fragment"
-            ResourceType.OFFER              -> "offers$fragment"
-        }
+        val builder = Uri.Builder()
+                .appendEncodedPath(baseLink.trim('/'))
+                .appendEncodedPath(resourceType.path)
+                .appendEncodedPath(fragment)
+
+//        when (resourceType) {
+//            ResourceType.DATABASE           -> builder.appendPath("dbs")
+//            ResourceType.USER               -> builder.appendPath("users") // "$baseLink/users$fragment"
+//            ResourceType.PERMISSION         -> builder.appendPath("permissions") // "$baseLink/permissions$fragment"
+//            ResourceType.COLLECTION         -> "$baseLink/colls$fragment"
+//            ResourceType.STORED_PROCEDURE   -> "$baseLink/sprocs$fragment"
+//            ResourceType.TRIGGER            -> "$baseLink/triggers$fragment"
+//            ResourceType.UDF                -> "$baseLink/udfs$fragment"
+//            ResourceType.DOCUMENT           -> "$baseLink/docs$fragment"
+//            ResourceType.ATTACHMENT         -> "$baseLink/attachments$fragment"
+//            ResourceType.OFFER              -> "offers$fragment"
+//        }
+
+        return builder.build().path.trim('/')
     }
 
     private fun getUrlLink(baseLink: String, itemLink: String, resourceId: String? = null) : UrlLink {
         val url = HttpUrl.Builder()
                 .scheme("https")
                 .host(host)
-                .addPathSegment(itemLink)
+                .addPathSegment(itemLink.trimStart('/'))
                 .build()
 
         return UrlLink(url, if (resourceId != null) itemLink else baseLink)
