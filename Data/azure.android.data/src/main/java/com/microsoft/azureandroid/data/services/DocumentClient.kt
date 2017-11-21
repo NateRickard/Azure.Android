@@ -166,6 +166,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return resources(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
+    // get
+    fun <T : Document> getDocument(documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(databaseId, collectionId, documentId)
+
+        return resource(resourceUri, ResourceType.DOCUMENT, callback)
+    }
+
 
     // Users
 

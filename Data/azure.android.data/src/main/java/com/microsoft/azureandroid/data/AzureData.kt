@@ -48,11 +48,11 @@ class AzureData {
             documentClient.createCollection (collectionId, databaseId, callback)
 
     // list
-    fun getCollections(databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) =
+    fun getCollections (databaseId: String, callback: (ResourceListResponse<DocumentCollection>) -> Unit) =
             documentClient.getCollectionsIn(databaseId, callback)
 
     // get
-    fun getCollection(collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) =
+    fun getCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) =
             documentClient.getCollection (collectionId, databaseId, callback)
 
     // delete
@@ -73,6 +73,10 @@ class AzureData {
     // list
     fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) =
             documentClient.getDocumentsAs(collection, callback)
+
+    // get
+    fun<T: Document> getDocument (documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
+            documentClient.getDocument(documentId, collectionId, databaseId, callback)
 
 
     // Users
