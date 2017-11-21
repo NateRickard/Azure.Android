@@ -11,8 +11,23 @@
         android:padding="10dp"/>
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/editTextId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:inputType="text"
+        android:hint="@string/permission_id_no_spaces" />
+
+    <Spinner
+        android:id="@+id/spinnerUsers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp" />
+
+    <Spinner
+        android:id="@+id/spinnerModes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" />
+
 </LinearLayout>

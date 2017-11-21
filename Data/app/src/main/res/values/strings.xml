@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Azure.Android.Data.Sample</string>
     <string name="button_run_scheduler">Azure.Android.Data.Sample</string>
-    <string name="resource_dialog">Enter a name of the new resource</string>
+    <string name="resource_dialog">Enter a name for the new resource</string>
     <string name="document_collection_dialog">Enter a name of the new document collection</string>
     <string name="clear">Clear</string>
     <string name="fetch">Fetch</string>
@@ -23,4 +23,8 @@
     <string name="users">Users</string>
     <string name="permissions">Permissions</string>
     <string name="delete">Delete</string>
+    <string name="read">Read</string>
+    <string name="read_or_all">\'Read\' or \'All\'</string>
+    <string name="create_new_permission">Create new permission</string>
+    <string name="permission_id_no_spaces">Permission Id (no spaces)</string>
 </resources>

@@ -2,10 +2,12 @@ package com.microsoft.azureandroiddatasample.fragment
 
 import android.content.Intent
 import android.view.View
+import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Database
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.activity.DatabaseActivity
 import com.microsoft.azureandroiddatasample.model.ResourceAction
 import java.util.*
@@ -21,48 +23,32 @@ class DatabasesFragment : ResourceListFragment<Database>() {
 
     override fun fetchData(callback: (ResourceListResponse<Database>) -> Unit) {
 
-        try {
-            AzureData.instance.databases { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.databases { response ->
+            callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<Database>) -> Unit) {
 
-        try {
-            AzureData.instance.getDatabase(id) { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.getDatabase(id) { response ->
+            callback(response)
         }
     }
 
-    override fun createResource(resourceId: String, callback: (ResourceResponse<Database>) -> Unit) {
+    override fun createResource(dialogView: View, callback: (ResourceResponse<Database>) -> Unit) {
 
-        try {
-            AzureData.instance.createDatabase(resourceId) { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        val editText = dialogView.findViewById<EditText>(R.id.editText)
+        val resourceId = editText.text.toString()
+
+        AzureData.instance.createDatabase(resourceId) { response ->
+            callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (Boolean) -> Unit) {
 
-        try {
-            AzureData.instance.deleteDatabase(resourceId) { result ->
-                callback(result)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.deleteDatabase(resourceId) { result ->
+            callback(result)
         }
     }
 

@@ -9,5 +9,6 @@ enum class ResourceAction {
 
     Get,
     Create,
-    Delete
+    Delete,
+    CreatePermission
 }

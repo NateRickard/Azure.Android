@@ -144,6 +144,20 @@ abstract class RecyclerViewAdapter<TData, TViewHolder: ViewHolder<TData>>(privat
         return item
     }
 
+    fun removeItem (item: TData) : Boolean
+    {
+        val index = dataSet.indexOf(item)
+
+        if (index >= 0) {
+            dataSet.removeAt (index)
+            notifyItemRemoved (index)
+
+            return true
+        }
+
+        return false
+    }
+
     fun addItem (position: Int, item: TData)
     {
         dataSet.add (position, item)

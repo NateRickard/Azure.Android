@@ -28,31 +28,22 @@ class OffersFragment : ResourceListFragment<Offer>() {
 
     override fun fetchData(callback: (ResourceListResponse<Offer>) -> Unit) {
 
-        try {
-            AzureData.instance.offers { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.offers { response ->
+            callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<Offer>) -> Unit) {
 
-        try {
-            AzureData.instance.getOffer(id) { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.getOffer(id) { response ->
+            callback(response)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 
         super.onCreateOptionsMenu(menu, inflater)
+
         menu.clear() //no "Add" command for Offers r.n.
     }
 }

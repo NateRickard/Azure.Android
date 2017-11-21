@@ -121,7 +121,7 @@ abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> 
     // Gets the item animator that will be used for this RecyclerView.  Defaults to DefaultItemAnimator
     open fun getItemAnimator (): RecyclerView.ItemAnimator = DefaultItemAnimator ()
 
-    open fun onLoadData () { //dataLoadCompleteCallback: () -> Unit
+    open fun onLoadData () {
 
         //TODO: //need to push this to background thread
 
@@ -134,8 +134,6 @@ abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> 
         //only start a content refresh if there isn't on running already
         if (swipeRefreshLayout?.isRefreshing == false) {
             swipeRefreshLayout?.isRefreshing = true
-
-            println ("Starting data refresh")
 
             onLoadData ()
         }
@@ -159,7 +157,9 @@ abstract class RecyclerViewListFragment<TData, TViewHolder : ViewHolder<TData>> 
     }
 
     override fun onRefresh() {
-        doLoadData ()
+
+        println ("Starting data refresh")
+        onLoadData ()
     }
 
     // Transitions to activity, optionally with a shared element transition.

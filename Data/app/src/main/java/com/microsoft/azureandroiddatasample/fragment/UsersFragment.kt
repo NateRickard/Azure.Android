@@ -3,10 +3,12 @@ package com.microsoft.azureandroiddatasample.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.User
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.activity.UserActivity
 import com.microsoft.azureandroiddatasample.model.ResourceAction
 import java.util.*
@@ -17,8 +19,6 @@ import java.util.*
  */
 
 class UsersFragment : ResourceListFragment<User>() {
-
-    private lateinit var databaseId: String
 
     override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Get, ResourceAction.Create, ResourceAction.Delete)
 
@@ -31,48 +31,32 @@ class UsersFragment : ResourceListFragment<User>() {
 
     override fun fetchData(callback: (ResourceListResponse<User>) -> Unit) {
 
-        try {
-            AzureData.instance.getUsers(databaseId) { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.getUsers(databaseId) { response ->
+            callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<User>) -> Unit) {
 
-        try {
-            AzureData.instance.getUser(id, databaseId) { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.getUser(id, databaseId) { response ->
+            callback(response)
         }
     }
 
-    override fun createResource(resourceId: String, callback: (ResourceResponse<User>) -> Unit) {
+    override fun createResource(dialogView: View, callback: (ResourceResponse<User>) -> Unit) {
 
-        try {
-            AzureData.instance.createUser(resourceId, databaseId) { response ->
-                callback(response)
-            }
-        }
-        catch (ex: Exception) {
-            ex.printStackTrace()
+        val editText = dialogView.findViewById<EditText>(R.id.editText)
+        val resourceId = editText.text.toString()
+
+        AzureData.instance.createUser(resourceId, databaseId) { response ->
+            callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (Boolean) -> Unit) {
 
-        try {
-            AzureData.instance.deleteUser(resourceId, databaseId) { result ->
-                callback(result)
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        AzureData.instance.deleteUser(resourceId, databaseId) { result ->
+            callback(result)
         }
     }
 
