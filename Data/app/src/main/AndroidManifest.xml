@@ -23,6 +23,7 @@
         <activity android:name=".activity.DocumentsActivity" />
         <activity android:name=".activity.DatabaseActivity" />
         <activity android:name=".activity.UserActivity" />
+        <activity android:name=".activity.CollectionActivity" />
     </application>
 
 </manifest>

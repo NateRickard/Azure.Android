@@ -15,17 +15,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import android.view.MenuInflater
-import android.widget.Spinner
 import android.widget.TextView
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.model.ResourceAction
 import java.util.*
-import android.R.array
 import android.widget.ArrayAdapter
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Permission
-import com.microsoft.azureandroid.data.model.User
 
 import kotlinx.android.synthetic.main.dialog_create_permission.view.*
 
