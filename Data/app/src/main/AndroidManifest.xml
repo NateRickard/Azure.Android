@@ -20,7 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.DocumentsActivity" />
         <activity android:name=".activity.DatabaseActivity" />
         <activity android:name=".activity.UserActivity" />
         <activity android:name=".activity.CollectionActivity" />

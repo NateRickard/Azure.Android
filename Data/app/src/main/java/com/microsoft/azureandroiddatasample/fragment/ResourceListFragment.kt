@@ -23,6 +23,8 @@ import java.util.*
 import android.widget.ArrayAdapter
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Permission
+import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroiddatasample.extensions.updateItemEnabledStatus
 
 import kotlinx.android.synthetic.main.dialog_create_permission.view.*
 
@@ -52,20 +54,17 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
         inflater.inflate(R.menu.menu_resource, menu)
 
-        menu.findItem(R.id.action_create).isVisible = actionSupport.contains(ResourceAction.Create)
+        menu.updateItemEnabledStatus(R.id.action_create, actionSupport.contains(ResourceAction.Create))
 
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return when (item.itemId) {
-            R.id.action_create -> {
-                beginResourceCreation()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.action_create -> {
+            beginResourceCreation()
+            true
         }
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onLoadData() {
@@ -104,7 +103,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
     open fun createResource(dialogView: View, callback: (ResourceResponse<TData>) -> Unit) {}
 
-    open fun deleteItem(resourceId: String, callback: (Boolean) -> Unit) {}
+    open fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {}
 
     open fun getResourceCreationDialog() : View {
 
@@ -151,7 +150,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                                     throw Exception(response.error?.toString())
                                 }
                             } catch (e: Exception) {
-                                println(e)
+                                e.printStackTrace()
                                 progressDialog.cancel()
                             }
                         }
@@ -210,7 +209,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                                 progressDialog.show()
 
                                 val permissionId = dialogView.editTextId.text.toString()
-                                val user = users[dialogView.spinnerModes.selectedItemPosition]
+                                val user = users[dialogView.spinnerUsers.selectedItemPosition]
                                 val mode = Permission.PermissionMode.valueOf(dialogView.spinnerModes.selectedItem.toString())
 
                                 val selectedItems = typedAdapter.getSelectedItems()
@@ -342,18 +341,20 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
         for (resourceItem in selectedItems) {
 
             // let the derived fragments do their own Get implementation here
-            deleteItem(resourceItem.id) { result ->
+            deleteItem(resourceItem.id) { response ->
 
                 try {
-                    if (result) {
-                        itemsSucceeded++
-                    }
-
-                    println("Delete result for resource with id ${resourceItem.id} : $result")
+                    println("Delete result for resource with id ${resourceItem.id} :: success: ${response.isSuccessful} response: ${response.jsonData}")
 
                     activity.runOnUiThread {
 
-                        typedAdapter.removeItem(resourceItem)
+                        if (response.isSuccessful) {
+                            typedAdapter.removeItem(resourceItem)
+                            itemsSucceeded++
+                        }
+                        else {
+                            println(response.error)
+                        }
 
                         if (resourceItem == selectedItems.last()) {
 
@@ -380,9 +381,9 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
         mode.menuInflater.inflate (R.menu.menu_resource_actions, menu)
 
-        menu.findItem(R.id.action_get).isVisible = actionSupport.contains(ResourceAction.Get)
-        menu.findItem(R.id.action_new_permission).isVisible = actionSupport.contains(ResourceAction.CreatePermission)
-        menu.findItem(R.id.action_delete).isVisible = actionSupport.contains(ResourceAction.Delete)
+        menu.updateItemEnabledStatus(R.id.action_get, actionSupport.contains(ResourceAction.Get))
+        menu.updateItemEnabledStatus(R.id.action_new_permission, actionSupport.contains(ResourceAction.CreatePermission))
+        menu.updateItemEnabledStatus(R.id.action_delete, actionSupport.contains(ResourceAction.Delete))
 
         //disable pull to refresh if action mode is enabled
         swipeRefreshLayout?.isEnabled = false
@@ -394,7 +395,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
         val count = typedAdapter.selectedItemCount
 
-        menu.findItem(R.id.action_new_permission).isVisible = count == 1
+        menu.updateItemEnabledStatus(R.id.action_new_permission, count == 1)
 
         return true
     }
