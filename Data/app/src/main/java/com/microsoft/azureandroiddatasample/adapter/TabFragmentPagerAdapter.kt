@@ -23,7 +23,7 @@ open class TabFragmentPagerAdapter(private val context: Context, manager: Fragme
     private val tabList: MutableList<TabConfig> = mutableListOf()
 
     // Gets or sets the resource ID of the Tab item layout to use.  Defaults to 'stacked_tab_layout'
-    open val tabViewResourceId : Int = R.layout.stacked_tab_layout;
+    open val tabViewResourceId : Int = R.layout.stacked_tab_layout
 
     override fun getCount(): Int = tabList.size
 
@@ -40,37 +40,37 @@ open class TabFragmentPagerAdapter(private val context: Context, manager: Fragme
     open fun inflateTabView (position: Int) : View
     {
         //get the item view and set the text + icon/image
-        val tabItemView = LayoutInflater.from (context).inflate (tabViewResourceId, null);
-        val tabText = tabItemView.findViewById<TextView> (R.id.tabText);
-//        var tabImage = tabItemView.findViewById<ImageView> (Resource.Id.tabIcon);
+        val tabItemView = LayoutInflater.from (context).inflate (tabViewResourceId, null)
+        val tabText = tabItemView.findViewById<TextView> (R.id.tabText)
+//        var tabImage = tabItemView.findViewById<ImageView> (Resource.Id.tabIcon)
 
-        val tab = tabList [position];
+        val tab = tabList [position]
 
-        tabText.text = tab.title;
+        tabText.text = tab.title
 
 //        if (!tab.ShowTitle)
 //        {
-//            tabText.Visibility = ViewStates.Gone;
-//            tabImage.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent;
+//            tabText.Visibility = ViewStates.Gone
+//            tabImage.LayoutParameters.Height = ViewGroup.LayoutParams.MatchParent
 //        }
 
-//        val icon = tab.iconResource;
+//        val icon = tab.iconResource
 
 //        if (icon > -1)
 //        {
-//            tabImage.SetImageResource (icon);
+//            tabImage.SetImageResource (icon)
 //
-//            //tabImage.SetBackgroundResource (icon);
+//            //tabImage.SetBackgroundResource (icon)
 //        }
 
-        tabItemView.layoutParams = ViewGroup.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        tabItemView.layoutParams = ViewGroup.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
         if (position == 0)
         {
-            tabItemView.isSelected = true;
+            tabItemView.isSelected = true
         }
 
-        return tabItemView;
+        return tabItemView
     }
 
     // Fills the tab layout with the tab fragments that have been added to this adapter.

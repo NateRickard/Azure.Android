@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Document
+import com.microsoft.azureandroid.data.model.StoredProcedure
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
@@ -19,11 +20,11 @@ import java.util.*
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class DocumentsFragment : ResourceListFragment<Document>() {
+class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
 
     private lateinit var collectionId: String
 
-    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Get, ResourceAction.Create, ResourceAction.Delete, ResourceAction.CreatePermission)
+    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Create, ResourceAction.Delete, ResourceAction.CreatePermission)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -33,60 +34,51 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         collectionId = activity.intent.extras.getString("coll_id")
     }
 
-    override fun fetchData(callback: (ResourceListResponse<Document>) -> Unit) {
+    override fun fetchData(callback: (ResourceListResponse<StoredProcedure>) -> Unit) {
 
-        AzureData.instance.getDocumentsAs<Document>(collectionId, databaseId) { response ->
+        AzureData.instance.getStoredProcedures(collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
-    override fun getItem(id: String, callback: (ResourceResponse<Document>) -> Unit) {
+//    override fun getItem(id: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+//
+//        AzureData.instance.getStoredProcedure(id, collectionId, databaseId) { response ->
+//            callback(response)
+//        }
+//    }
 
-        AzureData.instance.getDocument<Document>(id, collectionId, databaseId) { response ->
-            callback(response)
-
-            //test doc properties came back
-            if (response.isSuccessful) {
-                response.result?.let {
-                    it.resource?.let {
-                        println(it["testNumber"])
-                        println(it["testString"])
-                        println(it["testDate"])
-                    }
-                }
-            }
-        }
-    }
-
-    override fun createResource(dialogView: View, callback: (ResourceResponse<Document>) -> Unit) {
+    override fun createResource(dialogView: View, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
 
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         val resourceId = editText.text.toString()
 
-        val doc = Document(resourceId)
+        val storedProcedure = """
+        function () {
+            var context = getContext();
+            var r = context.getResponse();
 
-        //set some test doc properties
-        doc["testNumber"] = 1_000_000
-        doc["testString"] = "Yeah baby\nRock n Roll"
-        doc["testDate"]   = Date()
+            r.setBody(\"Hello World!\");
+        }
+        """
 
-        AzureData.instance.createDocument(doc, collectionId, databaseId) { response ->
+        AzureData.instance.createStoredProcedure(resourceId, storedProcedure, collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteDocument(resourceId, collectionId, databaseId) { result ->
+        AzureData.instance.deleteStoredProcedure(resourceId, collectionId, databaseId) { result ->
             callback(result)
         }
     }
 
-    override fun onItemClick(view: View, item: Document, position: Int) {
+    override fun onItemClick(view: View, item: StoredProcedure, position: Int) {
 
         super.onItemClick(view, item, position)
 
-        val doc = typedAdapter.getItem(position)
+        val sproc = typedAdapter.getItem(position)
 
 //        val intent = Intent(activity.baseContext, CollectionActivity::class.java)
 //        intent.putExtra("db_id", databaseId)

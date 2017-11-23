@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.adapter.TabFragmentPagerAdapter
 import com.microsoft.azureandroiddatasample.fragment.DocumentsFragment
+import com.microsoft.azureandroiddatasample.fragment.StoredProceduresFragment
 import kotlinx.android.synthetic.main.tab_layout.*
 
 /**
@@ -43,6 +44,7 @@ class CollectionActivity : AppCompatActivity() {
 
         with(pagerAdapter) {
             addFragment (DocumentsFragment (), getString(R.string.documents).toUpperCase())
+            addFragment (StoredProceduresFragment (), "Stored${System.getProperty("line.separator")}Procedures".toUpperCase())
         }
 
         viewPager.adapter = pagerAdapter
