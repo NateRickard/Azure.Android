@@ -6,8 +6,9 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.view.ViewGroup
 
 /**
- * Created by nater on 11/14/17.
- */
+* Created by Nate Rickard on 11/14/17.
+* Copyright © 2017 Nate Rickard. All rights reserved.
+*/
 
 abstract class FragmentPagerAdapterBase(private val manager: FragmentManager) : FragmentPagerAdapter(manager) {
 
