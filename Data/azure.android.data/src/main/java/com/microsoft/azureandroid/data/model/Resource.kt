@@ -10,7 +10,7 @@ import java.util.*
 
 abstract class Resource(id: String? = null) {
 
-    lateinit var id: String
+    var id: String = id ?: UUID.randomUUID().toString()
 
     @SerializedName(resourceIdKey)
     var resourceId: String = ""
@@ -23,10 +23,6 @@ abstract class Resource(id: String? = null) {
 
     @SerializedName(timestampKey)
     var timestamp: Date? = null
-
-    init {
-        this.id = id ?: UUID.randomUUID().toString()
-    }
 
     companion object {
 

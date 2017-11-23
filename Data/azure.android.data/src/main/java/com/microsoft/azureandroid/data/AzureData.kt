@@ -16,10 +16,7 @@ import com.microsoft.azureandroid.data.util.ContextProvider
 
 class AzureData {
 
-    init {
-    }
-
-    // Databases
+    //region Databases
 
     // create
     fun createDatabase ( databaseId: String, callback: (ResourceResponse<Database>) -> Unit) =
@@ -41,8 +38,9 @@ class AzureData {
     fun deleteDatabase (databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteDatabase (databaseId, callback)
 
+    //endregion
 
-    // Collections
+    //region Collections
 
     // create
     fun createCollection (collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) =
@@ -64,8 +62,9 @@ class AzureData {
     fun deleteCollection (collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteCollection (collectionId, databaseId, callback)
 
+    //endregion
 
-    // Documents
+    //region Documents
 
     // create
     fun <T : Document> createDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
@@ -91,8 +90,41 @@ class AzureData {
     fun deleteDocument(document: Document, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteDocument(document.id, collectionId, databaseId, callback)
 
+    //endregion
 
-    // Users
+    //region Stored Procedures
+
+    // create
+    fun createStoredProcedure(storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
+            documentClient.createStoredProcedure(storedProcedureId, procedure, collectionId, databaseId, callback)
+
+    // create
+    fun createStoredProcedure(storedProcedureId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
+            documentClient.createStoredProcedure(storedProcedureId, procedure, collection, callback)
+
+    // list
+    fun getStoredProcedures (collectionId: String, databaseId: String, callback: (ResourceListResponse<StoredProcedure>) -> Unit) =
+            documentClient.getStoredProcedures(collectionId, databaseId, callback)
+
+    // list
+    fun getStoredProcedures (collection: DocumentCollection, callback: (ResourceListResponse<StoredProcedure>) -> Unit) =
+            documentClient.getStoredProcedures(collection, callback)
+
+    // delete
+    fun deleteStoredProcedure (storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteStoredProcedure(storedProcedure, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteStoredProcedure (storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (DataResponse) -> Unit) =
+            documentClient.deleteStoredProcedure(storedProcedure, collection, callback)
+
+    // delete
+    fun deleteStoredProcedure (storedProcedureId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteStoredProcedure(storedProcedureId, collectionId, databaseId, callback)
+
+    //endregion
+
+    //region Users
 
     // create
     fun createUser (userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
@@ -114,8 +146,9 @@ class AzureData {
     fun deleteUser(user: User, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteUser(user.id, databaseId, callback)
 
+    //endregion
 
-    // Permissions
+    //region Permissions
 
     // create
     fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
@@ -152,8 +185,9 @@ class AzureData {
     fun deletePermission(permission: Permission, user: User, callback: (DataResponse) -> Unit) =
             documentClient.deletePermission(permission, user, callback)
 
+    //endregion
 
-    // Offers
+    //region Offers
 
     // list
     fun offers(callback: (ResourceListResponse<Offer>) -> Unit) =
@@ -163,6 +197,7 @@ class AzureData {
     fun getOffer (offerId: String, callback: (ResourceResponse<Offer>) -> Unit) =
             documentClient.getOffer(offerId, callback)
 
+    //endregion
 
     companion object {
 

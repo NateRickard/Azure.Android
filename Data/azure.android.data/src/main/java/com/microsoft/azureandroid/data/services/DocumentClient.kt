@@ -194,6 +194,98 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     //endregion
 
+    //region Stored Procedures
+
+    // create
+    fun createStoredProcedure(storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId)
+
+        return create(storedProcedureId, resourceUri, ResourceType.STORED_PROCEDURE, mutableMapOf("body" to procedure), callback = callback)
+    }
+
+    // create
+    fun createStoredProcedure (storedProcedureId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!)
+
+        return create(storedProcedureId, resourceUri, ResourceType.STORED_PROCEDURE, mutableMapOf("body" to procedure), callback = callback)
+    }
+
+    // list
+    fun getStoredProcedures (collectionId: String, databaseId: String, callback: (ResourceListResponse<StoredProcedure>) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId)
+
+        return resources(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+    }
+
+    // list
+    fun getStoredProcedures (collection: DocumentCollection, callback: (ResourceListResponse<StoredProcedure>) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!)
+
+        return resources(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+    }
+
+    // delete
+    fun deleteStoredProcedure (storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedure.id)
+
+        return delete(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+    }
+
+    // delete
+    fun deleteStoredProcedure (storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedure.id)
+
+        return delete(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+    }
+
+    // delete
+    fun deleteStoredProcedure (storedProcedureId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
+
+        return delete(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+    }
+
+    // replace
+//    fun replaceStoredProcedure (storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+//
+//        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
+//
+//        return replace(storedProcedureId, mapOf("body" to procedure), resourceUri, callback)
+//    }
+
+    // replace
+//    fun replaceStoredProcedure (storedProcedureId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+//
+//        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId)
+//
+//        return replace(storedProcedureId, mapOf("body" to procedure), resourceUri, callback)
+//    }
+
+    // execute
+//    fun executeStoredProcedure (storedProcedureId: String, parameters: List<String>?, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+//
+//        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
+//
+//        return execute(parameters, resourceUri, callback)
+//    }
+
+    // execute
+//    fun executeStoredProcedure (storedProcedureId: String, parameters: List<String>?, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+//
+//        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId)
+//
+//        return execute(parameters, resourceUri, callback)
+//    }
+
+    //endregion
+
     //region Users
 
     // create
@@ -337,14 +429,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-    private fun <T : Resource> create(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, data: MutableMap<String, String?>? = null, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> create(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, data: MutableMap<String, String>? = null, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resourceId.isValidResourceId()) {
             return callback(ResourceResponse(invalidIdError))
         }
 
-        val map = data ?: mutableMapOf("id" to resourceId)
-//        map["id"] = resourceId
+        val map = data ?: mutableMapOf()
+        map["id"] = resourceId
 
         createOrReplace(map, resourceUri, resourceType, false, additionalHeaders, callback)
     }

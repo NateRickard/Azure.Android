@@ -67,6 +67,21 @@ class ResourceUri(databaseName: String) {
         return getUrlLinkForSelf(baseLink, itemLink, documentId)
     }
 
+    fun forStoredProcedure(databaseId: String, collectionId: String, storedProcedureId: String? = null) : UrlLink {
+
+        val baseLink = "dbs/$databaseId/colls/$collectionId"
+        val itemLink = getItemLink(ResourceType.STORED_PROCEDURE, baseLink, storedProcedureId)
+
+        return getUrlLink(baseLink, itemLink, storedProcedureId)
+    }
+
+    fun forStoredProcedure(baseLink: String, storedProcedureId: String? = null) : UrlLink {
+
+        val itemLink = getItemLink(ResourceType.STORED_PROCEDURE, baseLink, storedProcedureId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, storedProcedureId)
+    }
+
     fun forOffer() : UrlLink {
 
         val baseLink = ""

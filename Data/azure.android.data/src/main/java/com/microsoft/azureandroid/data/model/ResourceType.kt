@@ -14,7 +14,7 @@ enum class ResourceType(val path: String, val fullname: String, val type: Type) 
     USER("users", "User", object : TypeToken<User>() {}.type),
     PERMISSION("permissions", "Permission", object : TypeToken<Permission>() {}.type),
     COLLECTION("colls", "DocumentCollection", object : TypeToken<DocumentCollection>() {}.type),
-    STORED_PROCEDURE("sprocs", "StoredProcedure", object : TypeToken<Database>() {}.type),
+    STORED_PROCEDURE("sprocs", "StoredProcedure", object : TypeToken<StoredProcedure>() {}.type),
     TRIGGER("triggers", "Trigger", object : TypeToken<Database>() {}.type),
     UDF("udfs", "UserDefinedFunction", object : TypeToken<Database>() {}.type),
     DOCUMENT("docs", "Document", object : TypeToken<Document>() {}.type),
