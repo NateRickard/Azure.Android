@@ -15,7 +15,7 @@ abstract class Resource(id: String? = UUID.randomUUID().toString()) {
     @SerializedName(resourceIdKey)
     var resourceId: String = ""
 
-    @SerializedName(selfLinkKey)    
+    @SerializedName(selfLinkKey)
     var selfLink: String? = null
 
     @SerializedName(etagKey)
@@ -26,9 +26,12 @@ abstract class Resource(id: String? = UUID.randomUUID().toString()) {
 
     companion object {
 
-        const val resourceIdKey =  "_rid"
-        const val selfLinkKey =    "_self"
-        const val etagKey =        "_etag"
-        const val timestampKey =   "_ts"
+        const val idKey =           "id"
+        const val resourceIdKey =   "_rid"
+        const val selfLinkKey =     "_self"
+        const val etagKey =         "_etag"
+        const val timestampKey =    "_ts"
+
+        val sysKeys = mutableListOf(idKey, resourceIdKey, selfLinkKey, etagKey, timestampKey)
     }
 }

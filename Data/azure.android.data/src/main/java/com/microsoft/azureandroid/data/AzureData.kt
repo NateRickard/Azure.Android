@@ -3,6 +3,7 @@ package com.microsoft.azureandroid.data
 import android.content.Context
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.*
+import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.DocumentClient
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
@@ -33,11 +34,11 @@ class AzureData {
             documentClient.getDatabase (databaseId, callback)
 
     // delete
-    fun deleteDatabase (database: Database, callback: (Boolean) -> Unit) =
+    fun deleteDatabase (database: Database, callback: (DataResponse) -> Unit) =
             documentClient.deleteDatabase (database.id, callback)
 
     // delete
-    fun deleteDatabase (databaseId: String, callback: (Boolean) -> Unit) =
+    fun deleteDatabase (databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteDatabase (databaseId, callback)
 
 
@@ -56,15 +57,19 @@ class AzureData {
             documentClient.getCollection (collectionId, databaseId, callback)
 
     // delete
-    fun deleteCollection (collection: DocumentCollection, databaseId: String, callback: (Boolean) -> Unit) =
+    fun deleteCollection (collection: DocumentCollection, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteCollection (collection.id, databaseId, callback)
 
     // delete
-    fun deleteCollection (collectionId: String, databaseId: String, callback: (Boolean) -> Unit) =
+    fun deleteCollection (collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteCollection (collectionId, databaseId, callback)
 
 
     // Documents
+
+    // create
+    fun <T : Document> createDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
+            documentClient.createDocument(document, collectionId, databaseId, callback)
 
     // list
     fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) =
@@ -77,6 +82,14 @@ class AzureData {
     // get
     fun<T: Document> getDocument (documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
             documentClient.getDocument(documentId, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteDocument(documentId, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteDocument(document: Document, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteDocument(document.id, collectionId, databaseId, callback)
 
 
     // Users
@@ -94,11 +107,11 @@ class AzureData {
             documentClient.getUser(userId, databaseId, callback)
 
     // delete
-    fun deleteUser (userId: String, databaseId: String, callback: (Boolean) -> Unit) =
+    fun deleteUser (userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteUser(userId, databaseId, callback)
 
     // delete
-    fun deleteUser(user: User, databaseId: String, callback: (Boolean) -> Unit) =
+    fun deleteUser(user: User, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteUser(user.id, databaseId, callback)
 
 
@@ -128,15 +141,15 @@ class AzureData {
             documentClient.getPermission(permissionId, user, callback)
 
     // delete
-    fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (Boolean) -> Unit) =
+    fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deletePermission(permissionId, userId, databaseId, callback)
 
     // delete
-    fun deletePermission(permission: Permission, userId: String, databaseId: String, callback: (Boolean) -> Unit) =
+    fun deletePermission(permission: Permission, userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deletePermission(permission.id, userId, databaseId, callback)
 
     // delete
-    fun deletePermission(permission: Permission, user: User, callback: (Boolean) -> Unit) =
+    fun deletePermission(permission: Permission, user: User, callback: (DataResponse) -> Unit) =
             documentClient.deletePermission(permission, user, callback)
 
 

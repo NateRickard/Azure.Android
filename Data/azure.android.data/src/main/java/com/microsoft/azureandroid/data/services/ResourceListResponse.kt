@@ -11,13 +11,13 @@ import okhttp3.Response
 
 class ResourceListResponse<T: Resource>(
         // The URL request sent to the server.
-        var request: Request? = null,
+        val request: Request? = null,
         // The server's response to the URL request.
-        var response: Response? = null,
+        val response: Response? = null,
         // The json data returned by the server.
-        var jsonData: String? = null,
+        val jsonData: String? = null,
         // The result of response deserialization.
-        var result: ListResult<T>? = null
+        val result: ListResult<T>? = null
 ) {
 
     constructor(error: DataError) : this(result = ListResult(error = error))

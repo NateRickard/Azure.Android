@@ -1,17 +1,16 @@
 package com.microsoft.azureandroid.data.services
 
 import com.microsoft.azureandroid.data.model.DataError
-import com.microsoft.azureandroid.data.model.Resource
-import com.microsoft.azureandroid.data.model.Result
+import com.microsoft.azureandroid.data.model.DataResult
 import okhttp3.Request
 import okhttp3.Response
 
 /**
-* Created by Nate Rickard on 11/7/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Created by Nate Rickard on 11/22/17.
+ * Copyright © 2017 Nate Rickard. All rights reserved.
+ */
 
-class ResourceResponse<T: Resource>(
+class DataResponse (
         // The URL request sent to the server.
         val request: Request? = null,
         // The server's response to the URL request.
@@ -19,16 +18,13 @@ class ResourceResponse<T: Resource>(
         // The data returned by the server.
         val jsonData: String? = null,
         // The result of response deserialization.
-        val result: Result<T>? = null
-        ) {
+        val result: DataResult
+) {
 
-    constructor(error: DataError) : this(result = Result(error = error))
-
-    // Returns the associated value of the result if it is a success, null otherwise.
-    val resource: T? get() = result?.resource
+    constructor(error: DataError) : this(result = DataResult(error = error))
 
     // Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    val error: DataError? get() = result?.error
+    val error: DataError? get() = result.error
 
     // Returns `true` if the result is a success, `false` otherwise.
     val isSuccessful get() = error == null

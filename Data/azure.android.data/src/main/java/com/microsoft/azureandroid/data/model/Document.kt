@@ -9,15 +9,35 @@ import com.google.gson.annotations.SerializedName
 
 open class Document : Resource() {
 
-//    var baseKeys: List<String> = listOf(idKey, resourceIdKey, selfLinkKey, etagKey, timestampKey, attachmentsLinkKey)
-
+    // Gets the self-link corresponding to attachments of the document from the Azure Cosmos DB service.
     @SerializedName(attachmentsLinkKey)
     var attachmentsLink: String? = null
 
-    var data: Map<String, Any>? = null
+    // Gets or sets the time to live in seconds of the document in the Azure Cosmos DB service.
+    var timeToLive: Int? = null
 
+    val data: MutableMap<String, Any?> = mutableMapOf()
 
-//    override init() { super.init() }
+    // will be mapped to indexer, i.e. doc[key]
+    operator fun get(key: String): Any? = data[key]
+
+    // will be mapped to indexer, i.e. doc[key] = value
+    operator fun set(key: String, value: Any?) {
+
+        if (this.javaClass != Document::class.java) {
+            throw Exception("Error: Indexing operation cannot be used on a child type of Document")
+        }
+
+        if (sysKeys.contains(key) || key == attachmentsLinkKey) {
+            throw Exception("Error: Cannot use [key] = value syntax to set the following system generated properties: ${sysKeys.joinToString()}")
+        }
+
+        data[key] = value
+    }
+
+//    init {
+//        super.sysKeys.add(attachmentsLinkKey)
+//    }
 
 //    override init(_ id: String) { super.init(id) }
 
@@ -28,7 +48,6 @@ open class Document : Resource() {
 //
 //        data = dict.filter{ x in !baseKeys.contains(x.key) }
 //    }
-
 
 //    override var dictionary: [String : Any] {
 //        return super.dictionary.merging([
