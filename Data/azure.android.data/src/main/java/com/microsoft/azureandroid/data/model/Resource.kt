@@ -8,9 +8,9 @@ import java.util.*
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-abstract class Resource(id: String? = UUID.randomUUID().toString()) {
+abstract class Resource(id: String? = null) {
 
-    var id: String = id!!
+    lateinit var id: String
 
     @SerializedName(resourceIdKey)
     var resourceId: String = ""
@@ -24,9 +24,13 @@ abstract class Resource(id: String? = UUID.randomUUID().toString()) {
     @SerializedName(timestampKey)
     var timestamp: Date? = null
 
+    init {
+        this.id = id ?: UUID.randomUUID().toString()
+    }
+
     companion object {
 
-        const val idKey =           "id"
+        private const val idKey =   "id"
         const val resourceIdKey =   "_rid"
         const val selfLinkKey =     "_self"
         const val etagKey =         "_etag"

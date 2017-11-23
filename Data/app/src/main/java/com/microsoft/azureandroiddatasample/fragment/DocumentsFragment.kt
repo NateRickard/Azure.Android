@@ -44,6 +44,16 @@ class DocumentsFragment : ResourceListFragment<Document>() {
 
         AzureData.instance.getDocument<Document>(id, collectionId, databaseId) { response ->
             callback(response)
+
+            if (response.isSuccessful) {
+                response.result?.let {
+                    it.resource?.let {
+                        println(it["testNumber"])
+                        println(it["testString"])
+                        println(it["testDate"])
+                    }
+                }
+            }
         }
     }
 
@@ -52,13 +62,13 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         val resourceId = editText.text.toString()
 
-        val doc = Document()
+        val doc = Document(resourceId)
 
         doc["testNumber"] = 1_000_000
         doc["testString"] = "Yeah baby\nRock n Roll"
         doc["testDate"]   = Date()
 
-        AzureData.instance.createDocument(doc, resourceId, databaseId) { response ->
+        AzureData.instance.createDocument(doc, collectionId, databaseId) { response ->
             callback(response)
         }
     }
