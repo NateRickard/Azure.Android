@@ -72,8 +72,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         builder.build()
     }
 
-
-    // Database
+    //region Database
 
     // create
     fun createDatabase(databaseId: String, callback: (ResourceResponse<Database>) -> Unit) {
@@ -113,8 +112,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         deleteDatabase(database.id, callback)
     }
 
+    //endregion
 
-    // Collections
+    //region Collections
 
     // create
     fun createCollection(collectionId: String, databaseId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
@@ -148,8 +148,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.COLLECTION, callback)
     }
 
+    //endregion
 
-    // Documents
+    //region Documents
 
     // create
     fun <T : Document> createDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) {
@@ -191,8 +192,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.DOCUMENT, callback)
     }
 
+    //endregion
 
-    // Users
+    //region Users
 
     // create
     fun createUser(userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) {
@@ -226,8 +228,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.USER, callback)
     }
 
+    //endregion
 
-    // Permissions
+    //region Permissions
 
     // create
     fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
@@ -299,8 +302,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.PERMISSION, callback)
     }
 
+    //endregion
 
-    // Offers
+    //region Offers
 
     // list
     fun offers(callback: (ResourceListResponse<Offer>) -> Unit) {
@@ -318,8 +322,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return resource(resourceUri, ResourceType.OFFER, callback)
     }
 
+    //endregion
 
-    // Resources
+    //region Resource operations
 
     // create
     private fun <T : Resource> create(resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
@@ -412,6 +417,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
+    //endregion
 
     //region Network plumbing
 
