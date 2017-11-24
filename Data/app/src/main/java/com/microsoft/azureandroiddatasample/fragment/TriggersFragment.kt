@@ -2,13 +2,10 @@ package com.microsoft.azureandroiddatasample.fragment
 
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.model.StoredProcedure
+import com.microsoft.azureandroid.data.model.Trigger
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
-import com.microsoft.azureandroid.data.services.ResourceResponse
-import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.model.ResourceAction
 import java.util.*
 
@@ -17,11 +14,11 @@ import java.util.*
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
+class TriggersFragment : ResourceListFragment<Trigger>() {
 
     private lateinit var collectionId: String
 
-    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Create, ResourceAction.Delete, ResourceAction.CreatePermission)
+    override val actionSupport: EnumSet<ResourceAction> = EnumSet.of(ResourceAction.Delete, ResourceAction.CreatePermission)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -31,9 +28,9 @@ class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
         collectionId = activity.intent.extras.getString("coll_id")
     }
 
-    override fun fetchData(callback: (ResourceListResponse<StoredProcedure>) -> Unit) {
+    override fun fetchData(callback: (ResourceListResponse<Trigger>) -> Unit) {
 
-        AzureData.instance.getStoredProcedures(collectionId, databaseId) { response ->
+        AzureData.instance.getTriggers(collectionId, databaseId) { response ->
             callback(response)
         }
     }
@@ -45,37 +42,37 @@ class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
 //        }
 //    }
 
-    override fun createResource(dialogView: View, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
-
-        val editText = dialogView.findViewById<EditText>(R.id.editText)
-        val resourceId = editText.text.toString()
-
-        val storedProcedure = """
-        function () {
-            var context = getContext();
-            var r = context.getResponse();
-
-            r.setBody(\"Hello World!\");
-        }
-        """
-
-        AzureData.instance.createStoredProcedure(resourceId, storedProcedure, collectionId, databaseId) { response ->
-            callback(response)
-        }
-    }
+//    override fun createResource(dialogView: View, callback: (ResourceResponse<Trigger>) -> Unit) {
+//
+//        val editText = dialogView.findViewById<EditText>(R.id.editText)
+//        val resourceId = editText.text.toString()
+//
+//        val storedProcedure = """
+//        function () {
+//            var context = getContext();
+//            var r = context.getResponse();
+//
+//            r.setBody(\"Hello World!\");
+//        }
+//        """
+//
+//        AzureData.instance.createTrigger(resourceId, storedProcedure, collectionId, databaseId) { response ->
+//            callback(response)
+//        }
+//    }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteStoredProcedure(resourceId, collectionId, databaseId) { result ->
+        AzureData.instance.deleteTrigger(resourceId, collectionId, databaseId) { result ->
             callback(result)
         }
     }
 
-    override fun onItemClick(view: View, item: StoredProcedure, position: Int) {
+    override fun onItemClick(view: View, item: Trigger, position: Int) {
 
         super.onItemClick(view, item, position)
 
-        val sproc = typedAdapter.getItem(position)
+        val trigger = typedAdapter.getItem(position)
 
 //        val intent = Intent(activity.baseContext, CollectionActivity::class.java)
 //        intent.putExtra("db_id", databaseId)

@@ -27,4 +27,6 @@
     <string name="read_or_all">\'Read\' or \'All\'</string>
     <string name="create_new_permission">Create new permission</string>
     <string name="permission_id_no_spaces">Permission Id (no spaces)</string>
+    <string name="stored_procedures">Stored\nProcedures</string>
+    <string name="triggers">Triggers</string>
 </resources>
