@@ -253,20 +253,20 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-//    fun replaceStoredProcedure (storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
-//
-//        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
-//
-//        return replace(storedProcedureId, mapOf("body" to procedure), resourceUri, callback)
-//    }
+    fun replaceStoredProcedure (storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
+
+        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.STORED_PROCEDURE, callback = callback)
+    }
 
     // replace
-//    fun replaceStoredProcedure (storedProcedureId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
-//
-//        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId)
-//
-//        return replace(storedProcedureId, mapOf("body" to procedure), resourceUri, callback)
-//    }
+    fun replaceStoredProcedure (storedProcedureId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
+
+        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.STORED_PROCEDURE, callback = callback)
+    }
 
     // execute
 //    fun executeStoredProcedure (storedProcedureId: String, parameters: List<String>?, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
@@ -283,6 +283,74 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 //
 //        return execute(parameters, resourceUri, callback)
 //    }
+
+    //endregion
+
+    //region Triggers
+
+    // create
+    fun createTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Trigger>) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(databaseId, collectionId)
+
+        return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+    }
+
+    // create
+    fun createTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = triggerId)
+
+        return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+    }
+
+    // list
+    fun getTriggers (collectionId: String, databaseId: String, callback: (ResourceListResponse<Trigger>) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(databaseId, collectionId)
+
+        return resources(resourceUri, ResourceType.TRIGGER, callback)
+    }
+
+    // list
+    fun getTriggers (collection: DocumentCollection, callback: (ResourceListResponse<Trigger>) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!)
+
+        return resources(resourceUri, ResourceType.TRIGGER, callback)
+    }
+
+    // delete
+    fun deleteTrigger (triggerId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(databaseId, collectionId, triggerId)
+
+        return delete(resourceUri, ResourceType.TRIGGER, callback)
+    }
+
+    // delete
+    fun deleteTrigger (trigger: Trigger, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = trigger.id)
+
+        return delete(resourceUri, ResourceType.TRIGGER, callback)
+    }
+
+    // replace
+    fun replaceTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Trigger>) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(databaseId, collectionId, triggerId)
+
+        return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+    }
+
+    // replace
+    fun replaceTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) {
+
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = triggerId)
+
+        return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+    }
 
     //endregion
 
@@ -419,7 +487,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     //region Resource operations
 
     // create
-    private fun <T : Resource> create(resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun<T : Resource> create(resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resource.id.isValidResourceId()) {
             return callback(ResourceResponse(invalidIdError))
@@ -429,7 +497,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-    private fun <T : Resource> create(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, data: MutableMap<String, String>? = null, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun<T : Resource> create(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, data: MutableMap<String, String>? = null, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resourceId.isValidResourceId()) {
             return callback(ResourceResponse(invalidIdError))
@@ -442,7 +510,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-//    private fun <T : Resource> createAsync(resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null): Deferred<ResourceResponse<T>> {
+//    private fun<T : Resource> createAsync(resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null): Deferred<ResourceResponse<T>> {
 //
 //        val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, jsonBody)
 //
@@ -450,7 +518,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 //    }
 
     // list
-    private fun <T : Resource> resources(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+    private fun<T : Resource> resources(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
@@ -458,7 +526,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // get
-    private fun <T : Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
+    private fun<T : Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
@@ -466,7 +534,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // list
-    private fun <T : Resource> getResourcesAsync(resourceUri: UrlLink, resourceType: ResourceType): Deferred<ResourceListResponse<T>> {
+    private fun<T : Resource> getResourcesAsync(resourceUri: UrlLink, resourceType: ResourceType): Deferred<ResourceListResponse<T>> {
 
         val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType)
 
@@ -481,8 +549,31 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return sendRequest(request, callback)
     }
 
+    // replace
+    private fun<T : Resource> replace (resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        if (!resource.id.isValidResourceId()) {
+            return callback(ResourceResponse(invalidIdError))
+        }
+
+        createOrReplace(resource, resourceUri, resourceType, true, additionalHeaders, callback)
+    }
+
+    // replace
+    private fun<T : Resource> replace (resourceId: String, data: MutableMap<String, String>? = null, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        if (!resourceId.isValidResourceId()) {
+            return callback(ResourceResponse(invalidIdError))
+        }
+
+        val map = data ?: mutableMapOf()
+        map["id"] = resourceId
+
+        createOrReplace(map, resourceUri, resourceType, true, additionalHeaders, callback)
+    }
+
     // create or replace
-    private fun <T : Resource, R> createOrReplace(body: R, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun<T : Resource> createOrReplace(body: T, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         try {
             val jsonBody = JsonHelper.Gson.toJson(body)
@@ -496,7 +587,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun <T : Resource> createOrReplace(body: Map<String, String?>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun<T : Resource> createOrReplace(body: Map<String, String>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         try {
             val jsonBody = JsonHelper.Gson.toJson(body)

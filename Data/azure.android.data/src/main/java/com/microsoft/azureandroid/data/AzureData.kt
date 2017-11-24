@@ -124,6 +124,46 @@ class AzureData {
 
     //endregion
 
+    //region Triggers
+
+    // create
+    fun createTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Trigger>) -> Unit) =
+            documentClient.createTrigger(triggerId, operation, triggerType, triggerBody, collectionId, databaseId, callback)
+
+    // create
+    fun createTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) =
+            documentClient.createTrigger(triggerId, operation, triggerType, triggerBody, collection, callback)
+
+    // list
+    fun getTriggers (collectionId: String, databaseId: String, callback: (ResourceListResponse<Trigger>) -> Unit) =
+            documentClient.getTriggers(collectionId, databaseId, callback)
+
+    // list
+    fun getTriggers (collection: DocumentCollection, callback: (ResourceListResponse<Trigger>) -> Unit) =
+            documentClient.getTriggers(collection, callback)
+
+    // delete
+    fun deleteTrigger (triggerId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteTrigger(triggerId, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteTrigger (trigger: Trigger, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteTrigger(trigger.id, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteTrigger (trigger: Trigger, collection: DocumentCollection, callback: (DataResponse) -> Unit) =
+            documentClient.deleteTrigger(trigger, collection, callback)
+
+    // replace
+    fun replaceTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Trigger>) -> Unit) =
+            documentClient.replaceTrigger(triggerId, operation, triggerType, triggerBody, collectionId, databaseId, callback)
+
+    // replace
+    fun replaceTrigger (triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) =
+            documentClient.replaceTrigger(triggerId, operation, triggerType, triggerBody, collection, callback)
+
+    //endregion
+
     //region Users
 
     // create

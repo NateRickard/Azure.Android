@@ -8,19 +8,38 @@ import java.util.*
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
+/**
+ * Represents a resource type in the Azure Cosmos DB service.
+ * All Azure Cosmos DB resources, such as `Database`, `DocumentCollection`, and `Document` are derived from this class.
+ */
 abstract class Resource(id: String? = null) {
 
+    /**
+     * Gets or sets the Id of the resource in the Azure Cosmos DB service.
+     */
     var id: String = id ?: UUID.randomUUID().toString()
 
+    /**
+     * Gets or sets the Resource Id associated with the resource in the Azure Cosmos DB service.
+     */
     @SerializedName(resourceIdKey)
     var resourceId: String = ""
 
+    /**
+     * Gets the self-link associated with the resource from the Azure Cosmos DB service.
+     */
     @SerializedName(selfLinkKey)
     var selfLink: String? = null
 
+    /**
+     * Gets the entity tag associated with the resource from the Azure Cosmos DB service.
+     */
     @SerializedName(etagKey)
     var etag: String? = null
 
+    /**
+     * Gets the last modified timestamp associated with the resource from the Azure Cosmos DB service.
+     */
     @SerializedName(timestampKey)
     var timestamp: Date? = null
 

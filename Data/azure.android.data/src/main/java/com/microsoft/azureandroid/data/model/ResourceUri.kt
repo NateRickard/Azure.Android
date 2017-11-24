@@ -82,6 +82,21 @@ class ResourceUri(databaseName: String) {
         return getUrlLinkForSelf(baseLink, itemLink, storedProcedureId)
     }
 
+    fun forTrigger(databaseId: String, collectionId: String, triggerId: String? = null): UrlLink {
+
+        val baseLink = "dbs/$databaseId/colls/$collectionId"
+        val itemLink = getItemLink(ResourceType.TRIGGER, baseLink, triggerId)
+
+        return getUrlLink(baseLink, itemLink, triggerId)
+    }
+
+    fun forTrigger(baseLink: String, triggerId: String? = null): UrlLink {
+
+        val itemLink = getItemLink(ResourceType.TRIGGER, baseLink, triggerId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, triggerId)
+    }
+
     fun forOffer() : UrlLink {
 
         val baseLink = ""

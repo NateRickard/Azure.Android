@@ -8,14 +8,14 @@ import java.lang.reflect.Type
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-enum class ResourceType(val path: String, val fullname: String, val type: Type) {
+enum class ResourceType(val path: String, fullname: String, val type: Type) {
 
     DATABASE("dbs", "Database", object : TypeToken<Database>() {}.type),
     USER("users", "User", object : TypeToken<User>() {}.type),
     PERMISSION("permissions", "Permission", object : TypeToken<Permission>() {}.type),
     COLLECTION("colls", "DocumentCollection", object : TypeToken<DocumentCollection>() {}.type),
     STORED_PROCEDURE("sprocs", "StoredProcedure", object : TypeToken<StoredProcedure>() {}.type),
-    TRIGGER("triggers", "Trigger", object : TypeToken<Database>() {}.type),
+    TRIGGER("triggers", "Trigger", object : TypeToken<Trigger>() {}.type),
     UDF("udfs", "UserDefinedFunction", object : TypeToken<Database>() {}.type),
     DOCUMENT("docs", "Document", object : TypeToken<Document>() {}.type),
     ATTACHMENT("attachments", "Attachment", object : TypeToken<Database>() {}.type),
