@@ -9,9 +9,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        application = this
 
-        AzureData.init(App.context, "mobile", "GET A KEY", TokenType.MASTER, true)
+        AzureData.init(applicationContext, "mobile", "GET A KEY", TokenType.MASTER, true)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
@@ -46,9 +45,6 @@ class App : Application() {
         var isActivityVisible: Boolean = false
             private set
 
-        var application: Application? = null
-            private set
-
         private val TAG = "AppDelegate"
         private val KEY_APP_CRASHED = "KEY_APP_CRASHED"
 
@@ -58,8 +54,5 @@ class App : Application() {
         fun clearIsRestartedFromCrash() {
             isRestartedFromCrash = false
         }
-
-        val context: Context
-            get() = application!!.applicationContext
     }
 }
