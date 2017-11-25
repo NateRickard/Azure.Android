@@ -124,6 +124,46 @@ class AzureData {
 
     //endregion
 
+    //region User Defined Functions
+
+    // create
+    fun createUserDefinedFunction (functionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+            documentClient.createUserDefinedFunction(functionId, function, collectionId, databaseId, callback)
+
+    // create
+    fun createUserDefinedFunction (functionId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+            documentClient.createUserDefinedFunction(functionId, function, collection, callback)
+
+    // list
+    fun getUserDefinedFunctions (collectionId: String, databaseId: String, callback: (ResourceListResponse<UserDefinedFunction>) -> Unit) =
+            documentClient.getUserDefinedFunctions(collectionId, databaseId, callback)
+
+    // list
+    fun getUserDefinedFunctions (collection: DocumentCollection, callback: (ResourceListResponse<UserDefinedFunction>) -> Unit) =
+            documentClient.getUserDefinedFunctions(collection, callback)
+
+    // delete
+    fun deleteUserDefinedFunction (userDefinedFunctionId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteUserDefinedFunction(userDefinedFunctionId, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteUserDefinedFunction (userDefinedFunction: UserDefinedFunction, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteUserDefinedFunction(userDefinedFunction.id, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteUserDefinedFunction (userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (DataResponse) -> Unit) =
+            documentClient.deleteUserDefinedFunction(userDefinedFunction, collection, callback)
+
+    // replace
+    fun replaceUserDefinedFunction (functionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+            documentClient.replaceUserDefinedFunction(functionId, function, collectionId, databaseId, callback)
+
+    // replace
+    fun replaceUserDefinedFunction (functionId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+            documentClient.replaceUserDefinedFunction(functionId, function, collection, callback)
+
+    //endregion
+
     //region Triggers
 
     // create

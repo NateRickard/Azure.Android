@@ -286,6 +286,74 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     //endregion
 
+    //region User Defined Functions
+
+    // create
+    fun createUserDefinedFunction (functionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(databaseId, collectionId)
+
+        return create(functionId, resourceUri, ResourceType.UDF, mutableMapOf("body" to function), callback = callback)
+    }
+
+    // create
+    fun createUserDefinedFunction (functionId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = functionId)
+
+        return create(functionId, resourceUri, ResourceType.UDF, mutableMapOf("body" to function), callback = callback)
+    }
+
+    // list
+    fun getUserDefinedFunctions (collectionId: String, databaseId: String, callback: (ResourceListResponse<UserDefinedFunction>) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(databaseId, collectionId)
+
+        return resources(resourceUri, ResourceType.UDF, callback)
+    }
+
+    // list
+    fun getUserDefinedFunctions (collection: DocumentCollection, callback: (ResourceListResponse<UserDefinedFunction>) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(collection.selfLink!!)
+
+        return resources(resourceUri, ResourceType.UDF, callback)
+    }
+
+    // delete
+    fun deleteUserDefinedFunction (userDefinedFunctionId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(databaseId, collectionId, udfId = userDefinedFunctionId)
+
+        return delete(resourceUri, ResourceType.UDF, callback)
+    }
+
+    // delete
+    fun deleteUserDefinedFunction (userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = userDefinedFunction.id)
+
+        return delete(resourceUri, ResourceType.UDF, callback)
+    }
+
+    // replace
+    fun replaceUserDefinedFunction (functionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(databaseId, collectionId, udfId = functionId)
+
+        return replace(functionId, mutableMapOf("body" to function), resourceUri, ResourceType.UDF, callback = callback)
+    }
+
+    // replace
+    fun replaceUserDefinedFunction (functionId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+
+        val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = functionId)
+
+        return replace(functionId, mutableMapOf("body" to function), resourceUri, ResourceType.UDF, callback = callback)
+    }
+
+    //endregion
+
     //region Triggers
 
     // create

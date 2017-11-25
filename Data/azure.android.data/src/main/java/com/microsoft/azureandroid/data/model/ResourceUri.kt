@@ -97,6 +97,21 @@ class ResourceUri(databaseName: String) {
         return getUrlLinkForSelf(baseLink, itemLink, triggerId)
     }
 
+    fun forUdf(databaseId: String, collectionId: String, udfId: String? = null): UrlLink {
+
+        val baseLink = "dbs/$databaseId/colls/$collectionId"
+        val itemLink = getItemLink(ResourceType.UDF, baseLink, udfId)
+
+        return getUrlLink(baseLink, itemLink, udfId)
+    }
+
+    fun forUdf(baseLink: String, udfId: String? = null): UrlLink {
+
+        val itemLink = getItemLink(ResourceType.UDF, baseLink, udfId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, udfId)
+    }
+
     fun forOffer() : UrlLink {
 
         val baseLink = ""
