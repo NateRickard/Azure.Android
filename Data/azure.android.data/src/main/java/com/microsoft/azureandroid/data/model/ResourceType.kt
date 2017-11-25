@@ -18,7 +18,7 @@ enum class ResourceType(val path: String, fullname: String, val type: Type) {
     TRIGGER("triggers", "Trigger", object : TypeToken<Trigger>() {}.type),
     UDF("udfs", "UserDefinedFunction", object : TypeToken<UserDefinedFunction>() {}.type),
     DOCUMENT("docs", "Document", object : TypeToken<Document>() {}.type),
-    ATTACHMENT("attachments", "Attachment", object : TypeToken<Database>() {}.type),
+    ATTACHMENT("attachments", "Attachment", object : TypeToken<Attachment>() {}.type),
     OFFER("offers", "Offer", object : TypeToken<Offer>() {}.type);
 
     val listName: String = "${fullname}s"

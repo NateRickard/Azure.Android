@@ -67,6 +67,21 @@ class ResourceUri(databaseName: String) {
         return getUrlLinkForSelf(baseLink, itemLink, documentId)
     }
 
+    fun forAttachment(databaseId: String, collectionId: String, documentId: String, attachmentId: String? = null) : UrlLink {
+
+        val baseLink = "dbs/$databaseId/colls/$collectionId/docs/$documentId"
+        val itemLink = getItemLink(ResourceType.ATTACHMENT, baseLink, attachmentId)
+
+        return getUrlLink(baseLink, itemLink, attachmentId)
+    }
+
+    fun forAttachment(baseLink: String, attachmentId: String? = null) : UrlLink {
+
+        val itemLink = getItemLink(ResourceType.ATTACHMENT, baseLink, attachmentId)
+
+        return getUrlLinkForSelf(baseLink, itemLink, attachmentId)
+    }
+
     fun forStoredProcedure(databaseId: String, collectionId: String, storedProcedureId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId/colls/$collectionId"
@@ -140,19 +155,6 @@ class ResourceUri(databaseName: String) {
                 .appendEncodedPath(baseLink.trim('/'))
                 .appendEncodedPath(resourceType.path)
                 .appendEncodedPath(fragment)
-
-//        when (resourceType) {
-//            ResourceType.DATABASE           -> builder.appendPath("dbs")
-//            ResourceType.USER               -> builder.appendPath("users") // "$baseLink/users$fragment"
-//            ResourceType.PERMISSION         -> builder.appendPath("permissions") // "$baseLink/permissions$fragment"
-//            ResourceType.COLLECTION         -> "$baseLink/colls$fragment"
-//            ResourceType.STORED_PROCEDURE   -> "$baseLink/sprocs$fragment"
-//            ResourceType.TRIGGER            -> "$baseLink/triggers$fragment"
-//            ResourceType.UDF                -> "$baseLink/udfs$fragment"
-//            ResourceType.DOCUMENT           -> "$baseLink/docs$fragment"
-//            ResourceType.ATTACHMENT         -> "$baseLink/attachments$fragment"
-//            ResourceType.OFFER              -> "offers$fragment"
-//        }
 
         return builder.build().path.trim('/')
     }

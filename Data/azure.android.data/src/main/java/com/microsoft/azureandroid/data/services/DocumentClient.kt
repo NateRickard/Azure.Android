@@ -194,6 +194,122 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     //endregion
 
+    //region Attachments
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
+
+        return create(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+    }
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
+        val headers = Headers.Builder()
+                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
+                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .build()
+
+        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, additionalHeaders = headers, callback = callback)
+    }
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(document.selfLink!!)
+
+        return create(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+    }
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(document.selfLink!!)
+        val headers = Headers.Builder()
+                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
+                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .build()
+
+        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, additionalHeaders = headers, callback = callback)
+    }
+
+    // list
+    fun getAttachments(documentId: String, collectionId: String, databaseId: String, callback: (ResourceListResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
+
+        return resources(resourceUri, ResourceType.ATTACHMENT, callback)
+    }
+
+    // list
+    fun getAttachments(document: Document, callback: (ResourceListResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(document.selfLink!!)
+
+        return resources(resourceUri, ResourceType.ATTACHMENT, callback)
+    }
+
+    // delete
+    fun deleteAttachment(attachment: Attachment, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachment.id)
+
+        return delete(resourceUri, ResourceType.ATTACHMENT, callback)
+    }
+
+    // delete
+    fun deleteAttachment(attachment: Attachment, document: Document, callback: (DataResponse) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachment.id)
+
+        return delete(resourceUri, ResourceType.ATTACHMENT, callback)
+    }
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
+
+        return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+    }
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
+        val headers = Headers.Builder()
+                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
+                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .build()
+
+        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, replacing = true, additionalHeaders = headers, callback = callback)
+    }
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentId)
+
+        return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+    }
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentId)
+        val headers = Headers.Builder()
+                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
+                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .build()
+
+        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, replacing = true, additionalHeaders = headers, callback = callback)
+    }
+
+    //endregion
+
     //region Stored Procedures
 
     // create
@@ -668,45 +784,31 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
+    private fun<T : Resource> createOrReplace(body: ByteArray, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+
+        try {
+            val request = createRequest(if (replacing) ApiValues.HttpMethod.PUT else ApiValues.HttpMethod.POST, resourceUri, resourceType, additionalHeaders, body)
+
+            return sendResourceRequest(request, resourceType, callback)
+        } catch (e: Exception) {
+            callback(ResourceResponse(DataError(e)))
+        }
+    }
+
     //endregion
 
     //region Network plumbing
 
-    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, jsonBody: String? = null, forQuery: Boolean = false): Request {
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, forQuery: Boolean = false): Request {
 
         try {
-            val token = tokenProvider.getToken(method, resourceType, resourceUri.link)
-
-            val builder = Request.Builder()
-                    .headers(headers) //base headers
-                    .url(resourceUri.url)
+            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
 
             when (method) {
                 ApiValues.HttpMethod.GET -> builder.get()
-                ApiValues.HttpMethod.POST -> builder.post(RequestBody.create(jsonMediaType, jsonBody!!))
                 ApiValues.HttpMethod.HEAD -> builder.head()
-                ApiValues.HttpMethod.PUT -> builder.put(RequestBody.create(jsonMediaType, jsonBody!!))
                 ApiValues.HttpMethod.DELETE -> builder.delete()
-            }
-
-            builder.addHeader(ApiValues.HttpRequestHeader.XMSDATE.value, token.date)
-            builder.addHeader(ApiValues.HttpRequestHeader.AUTHORIZATION.value, token.authString)
-
-            if (forQuery) {
-                builder.addHeader(ApiValues.HttpRequestHeader.XMSDOCUMENTDBISQUERY.value, "true")
-                builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.QUERY_JSON.value)
-            } else if ((method == ApiValues.HttpMethod.POST || method == ApiValues.HttpMethod.PUT) && resourceType != ResourceType.ATTACHMENT) {
-                // For POST on query operations, it must be application/query+json
-                // For attachments, must be set to the Mime type of the attachment.
-                // For all other tasks, must be application/json.
-                builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.JSON.value)
-            }
-
-            //if we have additional headers, let's add them in here
-            additionalHeaders?.let {
-                for (headerName in additionalHeaders.names()) {
-                    builder.addHeader(headerName, additionalHeaders[headerName]!!)
-                }
+                else  -> throw Exception("POST and PUT requests must use an overload that provides the content body")
             }
 
             return builder.build()
@@ -716,6 +818,77 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             throw e
         }
+    }
+
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, jsonBody: String, forQuery: Boolean = false): Request {
+
+        try {
+            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
+
+            when (method) {
+                ApiValues.HttpMethod.POST -> builder.post(RequestBody.create(jsonMediaType, jsonBody))
+                ApiValues.HttpMethod.PUT -> builder.put(RequestBody.create(jsonMediaType, jsonBody))
+                else  -> throw Exception("GET, HEAD, and DELETE requests must use an overload that without a content body")
+            }
+
+            return builder.build()
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            throw e
+        }
+    }
+
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, body: ByteArray, forQuery: Boolean = false): Request {
+
+        try {
+            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
+
+            when (method) {
+                ApiValues.HttpMethod.POST -> builder.post(RequestBody.create(jsonMediaType, body))
+                ApiValues.HttpMethod.PUT -> builder.put(RequestBody.create(jsonMediaType, body))
+                else  -> throw Exception("GET, HEAD, and DELETE requests must use an overload that without a content body")
+            }
+
+            return builder.build()
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            throw e
+        }
+    }
+
+    private fun createRequestBuilder(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, forQuery: Boolean = false): Request.Builder {
+
+        val token = tokenProvider.getToken(method, resourceType, resourceUri.link)
+
+        val builder = Request.Builder()
+                .headers(headers) //base headers
+                .url(resourceUri.url)
+
+        builder.addHeader(ApiValues.HttpRequestHeader.XMSDATE.value, token.date)
+        builder.addHeader(ApiValues.HttpRequestHeader.AUTHORIZATION.value, token.authString)
+
+        if (forQuery) {
+            builder.addHeader(ApiValues.HttpRequestHeader.XMSDOCUMENTDBISQUERY.value, "true")
+            builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.QUERY_JSON.value)
+        } else if ((method == ApiValues.HttpMethod.POST || method == ApiValues.HttpMethod.PUT) && resourceType != ResourceType.ATTACHMENT) {
+            // For POST on query operations, it must be application/query+json
+            // For attachments, must be set to the Mime type of the attachment.
+            // For all other tasks, must be application/json.
+            builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.JSON.value)
+        }
+
+        //if we have additional headers, let's add them in here
+        additionalHeaders?.let {
+            for (headerName in additionalHeaders.names()) {
+                builder.addHeader(headerName, additionalHeaders[headerName]!!)
+            }
+        }
+
+        return builder
     }
 
     private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
