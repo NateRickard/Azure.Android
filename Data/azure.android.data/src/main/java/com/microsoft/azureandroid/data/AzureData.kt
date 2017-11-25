@@ -8,6 +8,9 @@ import com.microsoft.azureandroid.data.services.DocumentClient
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroid.data.util.ContextProvider
+import okhttp3.HttpUrl
+import java.net.URI
+import java.net.URL
 
 /**
 * Created by Nate Rickard on 10/24/17.
@@ -89,6 +92,90 @@ class AzureData {
     // delete
     fun deleteDocument(document: Document, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteDocument(document.id, collectionId, databaseId, callback)
+
+    //endregion
+
+    //region Attachments
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaUrl, documentId, collectionId, databaseId, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: String, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.parse(mediaUrl)!!, documentId, collectionId, databaseId, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: URL, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.get(mediaUrl)!!, documentId, collectionId, databaseId, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaName, media, documentId, collectionId, databaseId, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaUrl, document, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: String, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.parse(mediaUrl)!!, document, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaUrl: URL, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.get(mediaUrl)!!, document, callback)
+
+    // create
+    fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaName, media, document, callback)
+
+    // list
+    fun getAttachments(documentId: String, collectionId: String, databaseId: String, callback: (ResourceListResponse<Attachment>) -> Unit) =
+            documentClient.getAttachments(documentId, collectionId, databaseId, callback)
+
+    // list
+    fun getAttachments(document: Document, callback: (ResourceListResponse<Attachment>) -> Unit) =
+            documentClient.getAttachments(document, callback)
+
+    // delete
+    fun deleteAttachment(attachment: Attachment, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+            documentClient.deleteAttachment(attachment, documentId, collectionId, databaseId, callback)
+
+    // delete
+    fun deleteAttachment(attachment: Attachment, document: Document, callback: (DataResponse) -> Unit) =
+            documentClient.deleteAttachment(attachment, document, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaUrl, documentId, collectionId, databaseId, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: String, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.parse(mediaUrl)!!, documentId, collectionId, databaseId, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: URL, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.get(mediaUrl)!!, documentId, collectionId, databaseId, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaName, media, documentId, collectionId, databaseId, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaUrl, document, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: String, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.parse(mediaUrl)!!, document, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: URL, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, HttpUrl.get(mediaUrl)!!, document, callback)
+
+    // replace
+    fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+            documentClient.createAttachment(attachmentId, contentType, mediaName, media, document, callback)
 
     //endregion
 
