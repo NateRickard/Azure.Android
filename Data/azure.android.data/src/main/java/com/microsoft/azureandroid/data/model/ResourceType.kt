@@ -22,4 +22,15 @@ enum class ResourceType(val path: String, fullname: String, val type: Type) {
     OFFER("offers", "Offer", object : TypeToken<Offer>() {}.type);
 
     val listName: String = "${fullname}s"
+
+    companion object {
+
+        fun<T> fromType() : ResourceType? {
+            val type = object : TypeToken<T>() {}.type
+
+            return ResourceType.values().find {
+                it.type == type
+            }
+        }
+    }
 }
