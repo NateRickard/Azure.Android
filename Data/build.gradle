@@ -22,6 +22,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
     }
 
     ext {
@@ -41,7 +44,7 @@ allprojects {
         okhttpVersion = "3.9.0"
 
         // Unit tests
-        mockitoVersion = "2.8.47"
+//        mockitoVersion = "2.8.47"
 
     }
 }
