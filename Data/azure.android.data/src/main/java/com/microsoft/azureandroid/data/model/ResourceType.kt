@@ -25,12 +25,16 @@ enum class ResourceType(val path: String, fullname: String, val type: Type) {
 
     companion object {
 
-        fun<T> fromType() : ResourceType? {
-            val type = object : TypeToken<T>() {}.type
+        fun<T: Resource> fromType(clazz: Class<T>) : ResourceType {
+
+            //is this a Document?
+            if (Document::class.java.isAssignableFrom(clazz)) {
+                return DOCUMENT
+            }
 
             return ResourceType.values().find {
-                it.type == type
-            }
+                it.type == clazz
+            } ?: throw Exception("Unable to determine resource type requested")
         }
     }
 }

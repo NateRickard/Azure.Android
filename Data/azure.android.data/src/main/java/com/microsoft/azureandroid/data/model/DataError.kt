@@ -11,8 +11,15 @@ class DataError(val message: String?, val code: String? = null) {
 
     constructor(error: Exception) : this(error.message)
 
+    constructor(errorType: ErrorType) : this(errorType.message)
+
     constructor() : this("")
 
     override fun toString(): String =
             "\r\nError\r\n\t$message\r\n${if (code != null) "\t$code\r\n" else ""}"
+
+    companion object {
+
+        fun fromType(errorType: ErrorType) : DataError = DataError(errorType)
+    }
 }

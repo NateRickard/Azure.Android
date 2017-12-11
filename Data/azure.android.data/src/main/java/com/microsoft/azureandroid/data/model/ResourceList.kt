@@ -13,7 +13,7 @@ class ResourceList<T: Resource>(resourceType: ResourceType, json: JsonObject) {
     var resourceId: String? = null
     var count: Int? = null
 
-    lateinit var items: ArrayList<T>
+    lateinit var items: List<T>
 
     init {
         resourceId  = json[resourceIdKey]?.asString
@@ -21,13 +21,10 @@ class ResourceList<T: Resource>(resourceType: ResourceType, json: JsonObject) {
 
         json[resourceType.listName]?.asJsonArray?.let {
 
-            items = ArrayList(it.size())
-
-            for (item in it) {
-//                val resource = type.newInstance()
-                val resource = JsonHelper.Gson.fromJson<T>(item, resourceType.type)
-                items.add(resource)
-            }
+            items = it
+                    .map {
+                        JsonHelper.Gson.fromJson<T>(it, resourceType.type)
+                    }
         }
     }
 

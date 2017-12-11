@@ -366,6 +366,13 @@ class AzureData {
 
     //endregion
 
+    //region Resources
+
+    fun <T : Resource> refresh(resource: T, callback: (ResourceResponse<T>) -> Unit) =
+            documentClient.refresh(resource, callback)
+
+    //endregion
+
     companion object {
 
         val instance: AzureData by lazy {
@@ -381,6 +388,11 @@ class AzureData {
 
             baseUri = ResourceUri(name)
             documentClient = DocumentClient(baseUri, key, keyType)
+
+            isSetup = true
         }
+
+        var isSetup: Boolean = false
+            private set
     }
 }

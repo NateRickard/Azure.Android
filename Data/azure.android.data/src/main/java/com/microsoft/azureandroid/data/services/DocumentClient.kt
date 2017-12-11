@@ -675,7 +675,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T : Resource> create(resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resource.id.isValidResourceId()) {
-            return callback(ResourceResponse(invalidIdError))
+            return callback(ResourceResponse(DataError.fromType(ErrorType.InvalidId)))
         }
 
         createOrReplace(resource, resourceUri, resourceType, false, additionalHeaders, callback)
@@ -685,7 +685,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T : Resource> create(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, data: MutableMap<String, String>? = null, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resourceId.isValidResourceId()) {
-            return callback(ResourceResponse(invalidIdError))
+            return callback(ResourceResponse(DataError.fromType(ErrorType.InvalidId)))
         }
 
         val map = data ?: mutableMapOf()
@@ -726,6 +726,28 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return sendAsync(request, resourceType)
     }
 
+    // refresh
+    fun <T: Resource> refresh(resource: T, callback: (ResourceResponse<T>) -> Unit) {
+
+        try {
+
+            val resourceUri = baseUri.forResource(resource)
+
+            val resourceType = ResourceType.fromType(resource.javaClass)
+
+            val headers = Headers.Builder()
+                    .add(ApiValues.HttpRequestHeader.IFNONEMATCH.value, resource.etag!!)
+                    .build()
+
+            val request = createRequest(ApiValues.HttpMethod.GET, resourceUri, resourceType, headers)
+
+            return sendResourceRequest(request, resourceType, resource, callback)
+        }
+        catch (e: Exception) {
+            return callback(ResourceResponse(DataError(e)))
+        }
+    }
+
     // delete
     private fun delete(resourceUri: UrlLink, resourceType: ResourceType, callback: (DataResponse) -> Unit) {
 
@@ -738,7 +760,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T : Resource> replace(resource: T, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resource.id.isValidResourceId()) {
-            return callback(ResourceResponse(invalidIdError))
+            return callback(ResourceResponse(DataError.fromType(ErrorType.InvalidId)))
         }
 
         createOrReplace(resource, resourceUri, resourceType, true, additionalHeaders, callback)
@@ -748,7 +770,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T : Resource> replace(resourceId: String, data: MutableMap<String, String>? = null, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resourceId.isValidResourceId()) {
-            return callback(ResourceResponse(invalidIdError))
+            return callback(ResourceResponse(DataError.fromType(ErrorType.InvalidId)))
         }
 
         val map = data ?: mutableMapOf()
@@ -799,14 +821,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // query
-    private fun <T : Resource> query(query: Query, resourceUri: UrlLink, callback: (ResourceListResponse<T>) -> Unit) {
+    private fun <T : Resource> query(query: Query, resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
 
         logIfVerbose(query.printQuery())
 
         try {
 //            var type = object : TypeToken<T>() {}.type
 
-            val resourceType = ResourceType.fromType<T>() ?: throw Exception("Unable to determine resource type requested for query")
+//            val resourceType = ResourceType.fromType<T>(T)
             val json = JsonHelper.Gson.toJson(query)
 
             val request = createRequest(ApiValues.HttpMethod.POST, resourceUri, resourceType, forQuery = true, jsonBody = json)
@@ -930,7 +952,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return builder
     }
 
-    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit)
+        = sendResourceRequest(request, resourceType, null, callback = callback)
+
+    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, resource: T?, callback: (ResourceResponse<T>) -> Unit) {
+
+        if (ContextProvider.verboseLogging) {
+            println("***")
+            println("Sending ${request.method()} request for Data to ${request.url()}")
+            println("\tBody : ${request.body()?.toString()}")
+        }
+
         try {
             client.newCall(request)
                     .enqueue(object : Callback {
@@ -942,7 +974,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
                         @Throws(IOException::class)
                         override fun onResponse(call: Call, response: Response) =
-                                callback(processResponse(request, response, resourceType))
+                                callback(processResponse(request, response, resourceType, resource))
                     })
         } catch (e: Exception) {
             logIfVerbose(e)
@@ -988,6 +1020,13 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     private fun <T : Resource> sendResourceListRequest(request: Request, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+
+        if (ContextProvider.verboseLogging) {
+            println("***")
+            println("Sending ${request.method()} request for Data to ${request.url()}")
+            println("\tBody : ${request.body()?.toString()}")
+        }
+
         try {
             client.newCall(request)
                     .enqueue(object : Callback {
@@ -1006,7 +1045,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun <T : Resource> processResponse(request: Request, response: Response, resourceType: ResourceType): ResourceResponse<T> {
+    private fun <T : Resource> processResponse(request: Request, response: Response, resourceType: ResourceType, resource: T?): ResourceResponse<T> {
 
         try {
             val body = response.body() ?: return ResourceResponse(DataError("Empty response body received"))
@@ -1016,12 +1055,15 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             //check http return code
             if (response.isSuccessful) {
-                val resource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
+                val returnedResource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
 
-                val result = Result(resource)
-
-                return ResourceResponse(request, response, json, result)
-            } else {
+                return ResourceResponse(request, response, json, Result(returnedResource))
+            }
+            else if (response.code() == ApiValues.StatusCode.NotModified.code) {
+                //return the original resource
+                return ResourceResponse(request, response, json, Result(resource))
+            }
+            else {
                 return ResourceResponse(json.toError())
             }
         } catch (e: Exception) {
@@ -1092,8 +1134,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     companion object {
 
         val client = OkHttpClient()
-
-        val invalidIdError: DataError = DataError("Cosmos DB Resource IDs must not exceed 255 characters and cannot contain whitespace")
 
         val jsonMediaType = MediaType.parse(ApiValues.MediaTypes.JSON.value)
     }

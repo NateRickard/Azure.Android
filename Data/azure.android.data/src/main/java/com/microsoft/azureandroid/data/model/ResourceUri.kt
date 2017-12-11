@@ -143,6 +143,21 @@ class ResourceUri(databaseName: String) {
         return getUrlLinkForSelf(baseLink, itemLink, resourceId)
     }
 
+    fun forResource (resource: Resource) : UrlLink {
+
+        if (resource.selfLink.isNullOrEmpty() || resource.resourceId.isEmpty()) {
+            throw Exception(ErrorType.IncompleteIds.message)
+        }
+
+        val url = HttpUrl.Builder()
+                .scheme("https")
+                .host(host)
+                .addPathSegment(resource.selfLink!!.trimStart('/'))
+                .build()
+
+        return UrlLink(url, resource.resourceId.toLowerCase())
+    }
+
     private fun getItemLink(resourceType: ResourceType, baseLink: String, resourceId: String? = null) : String {
 
         var fragment = ""

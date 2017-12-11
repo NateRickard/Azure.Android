@@ -69,6 +69,7 @@ sealed class ApiValues {
         OK(200),
         CREATED(201),
         NO_CONTENT(204),
+        NotModified(304), //not documented, but 304 can be returned when specifying IfNoneMatch header with etag value
         BAD_REQUEST(400),
         UNAUTHORIZED(401),
         FORBIDDEN(403),
