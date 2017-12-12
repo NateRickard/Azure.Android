@@ -51,10 +51,10 @@ sealed class ApiValues {
     enum class HttpRequestHeaderValue(val value: String) {
 
         // https://docs.microsoft.com/en-us/rest/api/documentdb/#supported-rest-api-versions
-        API_VERSION("2017-02-22"),
+        ApiVersion("2017-02-22"),
 
         // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
-        ACCEPT_ENCODING("gzip;q=1.0, compress;q=0.5")
+        AcceptEncoding("gzip;q=1.0, compress;q=0.5")
     }
 
     enum class MediaTypes(val value: String) {

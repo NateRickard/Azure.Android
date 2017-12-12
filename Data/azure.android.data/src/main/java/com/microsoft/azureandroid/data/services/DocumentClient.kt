@@ -27,7 +27,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         val builder = Headers.Builder()
 
         //set the accept encoding header
-        builder.add(ApiValues.HttpRequestHeader.AcceptEncoding.value, ApiValues.HttpRequestHeaderValue.ACCEPT_ENCODING.value)
+        builder.add(ApiValues.HttpRequestHeader.AcceptEncoding.value, ApiValues.HttpRequestHeaderValue.AcceptEncoding.value)
 
         val currentLocale = LocaleHelper.getCurrentLocale(ContextProvider.appContext)
 
@@ -67,7 +67,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
 
         //set the api version
-        builder.add(ApiValues.HttpRequestHeader.XMSVersion.value, ApiValues.HttpRequestHeaderValue.API_VERSION.value)
+        builder.add(ApiValues.HttpRequestHeader.XMSVersion.value, ApiValues.HttpRequestHeaderValue.ApiVersion.value)
 
         builder.build()
     }
