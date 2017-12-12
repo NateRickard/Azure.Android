@@ -59,8 +59,8 @@ sealed class ApiValues {
 
     enum class MediaTypes(val value: String) {
 
-        JSON("application/json"),
-        QUERY_JSON("application/query+json")
+        Json("application/json"),
+        QueryJson("application/query+json")
     }
 
 

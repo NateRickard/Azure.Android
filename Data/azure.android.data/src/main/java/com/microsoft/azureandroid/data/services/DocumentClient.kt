@@ -948,12 +948,12 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         if (forQuery) {
             builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
-            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QUERY_JSON.value)
+            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QueryJson.value)
         } else if ((method == ApiValues.HttpMethod.Post || method == ApiValues.HttpMethod.Put) && resourceType != ResourceType.Attachment) {
             // For Post on query operations, it must be application/query+json
             // For attachments, must be set to the Mime type of the attachment.
             // For all other tasks, must be application/json.
-            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.JSON.value)
+            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.Json.value)
         }
 
         //if we have additional headers, let's add them in here
@@ -1149,6 +1149,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val client = OkHttpClient()
 
-        val jsonMediaType = MediaType.parse(ApiValues.MediaTypes.JSON.value)
+        val jsonMediaType = MediaType.parse(ApiValues.MediaTypes.Json.value)
     }
 }

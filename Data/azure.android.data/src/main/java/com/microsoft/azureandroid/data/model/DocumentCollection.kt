@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
  * A collection is a named logical container for documents.
  *
  * - Remark:
- *   A database may contain zero or more named collections and each collection consists of zero or more JSON documents.
+ *   A database may contain zero or more named collections and each collection consists of zero or more Json documents.
  *   Being schema-free, the documents in a collection do not need to share the same structure or fields.
  *   Since collections are application resources, they can be authorized using either the master key or resource keys.
  *   Refer to [collections](http://azure.microsoft.com/documentation/articles/documentdb-resources/#collections) for more details on collections.
@@ -112,7 +112,7 @@ class DocumentCollection : Resource() {
 
 
         /**
-         * Specifies a path within a JSON document to be excluded while indexing data for the Azure Cosmos DB service.
+         * Specifies a path within a Json document to be excluded while indexing data for the Azure Cosmos DB service.
          */
         class ExcludedPath {
 
@@ -124,7 +124,7 @@ class DocumentCollection : Resource() {
 
 
         /**
-         * Specifies a path within a JSON document to be included in the Azure Cosmos DB service.
+         * Specifies a path within a Json document to be included in the Azure Cosmos DB service.
          */
         class IncludedPath {
 
