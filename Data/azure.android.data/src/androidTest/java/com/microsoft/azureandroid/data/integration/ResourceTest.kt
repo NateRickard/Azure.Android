@@ -10,7 +10,8 @@ import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
-import org.awaitility.Awaitility
+import org.awaitility.Awaitility.await
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 
@@ -29,6 +30,8 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
     var resourceListResponse: ResourceListResponse<TResource>? = null
     var dataResponse: DataResponse? = null
 
+    var collection: DocumentCollection? = null
+
     val idWith256Chars = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345"
     val idWithWhitespace = "id value with spaces"
 
@@ -42,14 +45,7 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
             AzureData.init(appContext, "mobile", "gioHmSqPP7J7FE5XlqRgBjmqykWLbm0KnP2FCAOl7gu17ZWlvMTRxOvsUYWQ3YUN2Yvmd077O0hyFyBOIftjOg==", TokenType.MASTER, true)
         }
 
-        var ops = 0
-
-        ops++
-
-        AzureData.instance.deleteDatabase(databaseId) { response ->
-            println("Attempted to delete test database.  Result: ${response.isSuccessful}")
-            ops--
-        }
+        deleteResources()
 
         if (ensureDatabase) {
             ensureDatabase()
@@ -58,17 +54,12 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
         if (ensureCollection) {
             ensureCollection()
         }
+    }
 
-        Awaitility.await().until {
-            ops == 0
-        }
+    @After
+    open fun tearDown() {
 
-//        AzureData.instance.getDatabase(resourceId) { response ->
-//
-//            if (response.isSuccessful && response.resource != null) {
-//
-//            }
-//        }
+        deleteResources()
     }
 
     fun ensureDatabase() : Database {
@@ -79,7 +70,7 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
             dbResponse = it
         }
 
-        Awaitility.await().until {
+        await().until {
             dbResponse != null
         }
 
@@ -97,14 +88,35 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
             collectionResponse = it
         }
 
-        Awaitility.await().until {
+        await().until {
             collectionResponse != null
         }
 
         assertResponseSuccess(collectionResponse)
         assertEquals(collectionId, collectionResponse?.resource?.id)
 
-        return collectionResponse!!.resource!!
+        collection = collectionResponse!!.resource!!
+
+        return collection!!
+    }
+
+    private fun deleteResources() {
+
+        var ops = 2
+
+        AzureData.instance.deleteCollection(collectionId, databaseId) { response ->
+            println("Attempted to delete test collection.  Result: ${response.isSuccessful}")
+            ops--
+        }
+
+        AzureData.instance.deleteDatabase(databaseId) { response ->
+            println("Attempted to delete test database.  Result: ${response.isSuccessful}")
+            ops--
+        }
+
+        await().until {
+            ops == 0
+        }
     }
 
     fun assertResponseSuccess(response: ResourceResponse<*>?) {

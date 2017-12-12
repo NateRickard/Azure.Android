@@ -5,9 +5,13 @@ import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.delete
 import com.microsoft.azureandroid.data.model.Permission
 import com.microsoft.azureandroid.data.model.ResourceType
-import com.microsoft.azureandroid.data.refresh
-import org.awaitility.Awaitility
+import com.microsoft.azureandroid.data.model.User
+import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroid.data.services.ResourceResponse
+import org.awaitility.Awaitility.await
+import org.junit.After
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -17,80 +21,128 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
-class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, false) {
+class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, true) {
+
+    private val userId = "AndroidTest${ResourceType.User.name}"
+    var user: User? = null
+
+    @Before
+    override fun setUp() {
+        super.setUp()
+
+        AzureData.instance.deleteUser(userId, databaseId) { response ->
+            println("Attempted to delete test user.  Result: ${response.isSuccessful}")
+
+            user = ensureUser()
+        }
+
+        await().until {
+            user != null
+        }
+    }
+
+    @After
+    override fun tearDown() {
+
+        var deleteResponse: DataResponse? = null
+
+        AzureData.instance.deleteUser(userId, databaseId) { response ->
+            println("Attempted to delete test user.  Result: ${response.isSuccessful}")
+            deleteResponse = response
+        }
+
+        await().until {
+            deleteResponse != null
+        }
+
+        super.tearDown()
+    }
+
+    private fun ensureUser() : User {
+
+        var userResponse: ResourceResponse<User>? = null
+
+        AzureData.instance.createUser(userId, databaseId) {
+            userResponse = it
+        }
+
+        await().until {
+            userResponse != null
+        }
+
+        assertResponseSuccess(userResponse)
+        Assert.assertEquals(userId, userResponse?.resource?.id)
+
+        return userResponse!!.resource!!
+    }
+
+    private fun createNewPermission() : Permission {
+
+        AzureData.instance.createPermission(resourceId, Permission.PermissionMode.Read, collection!!, user!!, databaseId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        return resourceResponse!!.resource!!
+    }
 
     @Test
     fun createPermission() {
 
-//        ensureCollection()
+        createNewPermission()
     }
 
     @Test
     fun listPermissions() {
 
-//        AzureData.instance.getPermissions(databaseId) {
-//            resourceListResponse = it
-//        }
-//
-//        Awaitility.await().until {
-//            resourceListResponse != null
-//        }
-//
-//        assertResponseSuccess(resourceListResponse)
-//        assert(resourceListResponse?.resource?.count!! > 0)
+        AzureData.instance.getPermissions(userId, databaseId) {
+            resourceListResponse = it
+        }
+
+        await().until {
+            resourceListResponse != null
+        }
+
+        assertResponseSuccess(resourceListResponse)
+        assert(resourceListResponse!!.resource!!.isPopuated)
     }
 
     @Test
     fun getPermission() {
 
-//        ensureCollection()
+        createNewPermission()
 
-//        AzureData.instance.getCollection(resourceId, databaseId) {
-//            resourceResponse = it
-//        }
-//
-//        Awaitility.await().until {
-//            resourceResponse != null
-//        }
-//
-//        assertResponseSuccess(resourceResponse)
-//        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
-    }
+        AzureData.instance.getPermission(resourceId, userId, databaseId) {
+            resourceResponse = it
+        }
 
-    @Test
-    fun refreshPermission() {
+        await().until {
+            resourceResponse != null
+        }
 
-//        val coll = ensureCollection()
-//
-//        coll.refresh {
-//            resourceResponse = it
-//        }
-//
-////        AzureData.instance.refresh(coll) {
-////            resourceResponse = it
-////        }
-//
-//        Awaitility.await().until {
-//            resourceResponse != null
-//        }
-//
-//        assertResponseSuccess(resourceResponse)
-//        Assert.assertEquals(collectionId, resourceResponse?.resource?.id)
+        assertResponseSuccess(resourceResponse)
+        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
     }
 
     @Test
     fun deletePermission() {
 
-//        val coll = ensureCollection()
-//
-//        coll.delete {
-//            dataResponse = it
-//        }
-//
-//        Awaitility.await().until {
-//            dataResponse != null
-//        }
-//
-//        assertResponseSuccess(dataResponse)
+        val permission = createNewPermission()
+
+        permission.delete {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
     }
 }
