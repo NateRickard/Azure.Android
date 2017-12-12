@@ -8,11 +8,11 @@ package com.microsoft.azureandroid.data.constants
 sealed class ApiValues {
 
     enum class HttpMethod {
-        GET,
-        HEAD,
-        POST,
-        PUT,
-        DELETE,
+        Get,
+        Head,
+        Post,
+        Put,
+        Delete
     }
 
     // https://docs.microsoft.com/en-us/rest/api/documentdb/common-documentdb-rest-request-headers

@@ -305,7 +305,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
                         response.resource?.let {
                             items.add(it)
-                            println("GET operation succeeded for resource ${it.id}")
+                            println("Get operation succeeded for resource ${it.id}")
                         }
                     } else {
                         println(response.error)
@@ -317,10 +317,10 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
                         activity.runOnUiThread {
                             if (items.size == selectedItems.size) {
-                                Toast.makeText(activity, "GET operation succeeded for ${selectedItems.size} resource(s)", Toast.LENGTH_LONG).show()
+                                Toast.makeText(activity, "Get operation succeeded for ${selectedItems.size} resource(s)", Toast.LENGTH_LONG).show()
                             }
                             else {
-                                Toast.makeText(activity, "GET operation failed for 1 or more resource(s)", Toast.LENGTH_LONG).show()
+                                Toast.makeText(activity, "Get operation failed for 1 or more resource(s)", Toast.LENGTH_LONG).show()
                             }
                         }
                     }
