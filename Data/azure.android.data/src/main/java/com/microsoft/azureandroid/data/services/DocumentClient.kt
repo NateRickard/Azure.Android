@@ -393,7 +393,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // execute
-    fun executeStoredProcedure (storedProcedureId: String, parameters: List<String>?, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+    fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
 
@@ -564,6 +564,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return resource(resourceUri, ResourceType.User, callback)
     }
 
+    // replace
+    fun replaceUser(userId: String, newUserId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) {
+
+        val resourceUri = baseUri.forUser(databaseId, userId)
+
+        return replace(newUserId, resourceUri, ResourceType.User, callback)
+    }
+
     // delete
     fun deleteUser(userId: String, databaseId: String, callback: (DataResponse) -> Unit) {
 
@@ -726,7 +734,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // refresh
-    fun <T: Resource> refresh(resource: T, callback: (ResourceResponse<T>) -> Unit) {
+    fun <T : Resource> refresh(resource: T, callback: (ResourceResponse<T>) -> Unit) {
 
         try {
 
@@ -740,8 +748,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             val request = createRequest(ApiValues.HttpMethod.Get, resourceUri, resourceType, headers)
 
             return sendResourceRequest(request, resourceType, resource, callback)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             return callback(ResourceResponse(DataError(e)))
         }
     }
@@ -754,7 +761,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return sendRequest(request, callback)
     }
 
-    fun<TResource: Resource> delete(resource: TResource, callback: (DataResponse) -> Unit) {
+    fun <TResource : Resource> delete(resource: TResource, callback: (DataResponse) -> Unit) {
 
         return try {
 
@@ -764,8 +771,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             val request = createRequest(ApiValues.HttpMethod.Delete, resourceUri, resourceType)
 
             sendRequest(request, callback)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             callback(DataResponse(DataError(e)))
         }
     }
@@ -779,6 +785,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         createOrReplace(resource, resourceUri, resourceType, true, additionalHeaders, callback)
     }
+
+    // replace
+    private fun <T : Resource> replace(resourceId: String, resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit)
+            = replace(resourceId, data = null, resourceUri = resourceUri, resourceType = resourceType, callback = callback)
 
     // replace
     private fun <T : Resource> replace(resourceId: String, data: MutableMap<String, String>? = null, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
@@ -967,7 +977,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit)
-        = sendResourceRequest(request, resourceType, null, callback = callback)
+            = sendResourceRequest(request, resourceType, null, callback = callback)
 
     private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, resource: T?, callback: (ResourceResponse<T>) -> Unit) {
 
@@ -1072,12 +1082,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 val returnedResource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
 
                 return ResourceResponse(request, response, json, Result(returnedResource))
-            }
-            else if (response.code() == ApiValues.StatusCode.NotModified.code) {
+            } else if (response.code() == ApiValues.StatusCode.NotModified.code) {
                 //return the original resource
                 return ResourceResponse(request, response, json, Result(resource))
-            }
-            else {
+            } else {
                 return ResourceResponse(json.toError())
             }
         } catch (e: Exception) {

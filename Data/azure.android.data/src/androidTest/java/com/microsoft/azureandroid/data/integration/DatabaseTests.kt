@@ -63,7 +63,7 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
 
         val db = ensureDatabase()
 
-        db.refresh() {
+        db.refresh {
             resourceResponse = it
         }
 

@@ -305,6 +305,10 @@ class AzureData {
     fun getUser (userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
             documentClient.getUser(userId, databaseId, callback)
 
+    // replace
+    fun replaceUser(userId: String, newUserId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
+            documentClient.replaceUser(userId, newUserId, databaseId, callback)
+
     // delete
     fun deleteUser (userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
             documentClient.deleteUser(userId, databaseId, callback)
