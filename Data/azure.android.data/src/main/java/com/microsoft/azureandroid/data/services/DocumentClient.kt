@@ -27,7 +27,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         val builder = Headers.Builder()
 
         //set the accept encoding header
-        builder.add(ApiValues.HttpRequestHeader.ACCEPTENCODING.value, ApiValues.HttpRequestHeaderValue.ACCEPT_ENCODING.value)
+        builder.add(ApiValues.HttpRequestHeader.AcceptEncoding.value, ApiValues.HttpRequestHeaderValue.ACCEPT_ENCODING.value)
 
         val currentLocale = LocaleHelper.getCurrentLocale(ContextProvider.appContext)
 
@@ -37,7 +37,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 //            "${locale};q=$rank"
 //        }.joinToString()
 
-        builder.add(ApiValues.HttpRequestHeader.ACCEPTLANGUAGE.value, currentLocale.language)
+        builder.add(ApiValues.HttpRequestHeader.AcceptLanguage.value, currentLocale.language)
 
         //set the user agent header
         try {
@@ -61,13 +61,13 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             print(userAgent)
 
-            builder.add(ApiValues.HttpRequestHeader.USERAGENT.value, userAgent)
+            builder.add(ApiValues.HttpRequestHeader.UserAgent.value, userAgent)
         } catch (e: Exception) {
-            builder.add(ApiValues.HttpRequestHeader.USERAGENT.value, "AzureMobile.Data")
+            builder.add(ApiValues.HttpRequestHeader.UserAgent.value, "AzureMobile.Data")
         }
 
         //set the api version
-        builder.add(ApiValues.HttpRequestHeader.XMSVERSION.value, ApiValues.HttpRequestHeaderValue.API_VERSION.value)
+        builder.add(ApiValues.HttpRequestHeader.XMSVersion.value, ApiValues.HttpRequestHeaderValue.API_VERSION.value)
 
         builder.build()
     }
@@ -209,8 +209,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
         val headers = Headers.Builder()
-                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
-                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
+                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, additionalHeaders = headers, callback = callback)
@@ -229,8 +229,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!)
         val headers = Headers.Builder()
-                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
-                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
+                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, additionalHeaders = headers, callback = callback)
@@ -281,8 +281,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
         val headers = Headers.Builder()
-                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
-                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
+                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, replacing = true, additionalHeaders = headers, callback = callback)
@@ -301,8 +301,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentId)
         val headers = Headers.Builder()
-                .add(ApiValues.HttpRequestHeader.CONTENTTYPE.value, contentType)
-                .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
+                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, replacing = true, additionalHeaders = headers, callback = callback)
@@ -734,7 +734,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             val resourceType = ResourceType.fromType(resource.javaClass)
 
             val headers = Headers.Builder()
-                    .add(ApiValues.HttpRequestHeader.IFNONEMATCH.value, resource.etag!!)
+                    .add(ApiValues.HttpRequestHeader.IfNoneMatch.value, resource.etag!!)
                     .build()
 
             val request = createRequest(ApiValues.HttpMethod.Get, resourceUri, resourceType, headers)
@@ -943,17 +943,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 .headers(headers) //base headers
                 .url(resourceUri.url)
 
-        builder.addHeader(ApiValues.HttpRequestHeader.XMSDATE.value, token.date)
-        builder.addHeader(ApiValues.HttpRequestHeader.AUTHORIZATION.value, token.authString)
+        builder.addHeader(ApiValues.HttpRequestHeader.XMSDate.value, token.date)
+        builder.addHeader(ApiValues.HttpRequestHeader.Authorization.value, token.authString)
 
         if (forQuery) {
-            builder.addHeader(ApiValues.HttpRequestHeader.XMSDOCUMENTDBISQUERY.value, "true")
-            builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.QUERY_JSON.value)
+            builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
+            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QUERY_JSON.value)
         } else if ((method == ApiValues.HttpMethod.Post || method == ApiValues.HttpMethod.Put) && resourceType != ResourceType.Attachment) {
             // For Post on query operations, it must be application/query+json
             // For attachments, must be set to the Mime type of the attachment.
             // For all other tasks, must be application/json.
-            builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.JSON.value)
+            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.JSON.value)
         }
 
         //if we have additional headers, let's add them in here

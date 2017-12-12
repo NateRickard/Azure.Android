@@ -17,33 +17,33 @@ sealed class ApiValues {
 
     // https://docs.microsoft.com/en-us/rest/api/documentdb/common-documentdb-rest-request-headers
     enum class HttpRequestHeader(val value: String) {
-        AUTHORIZATION("Authorization"),
-        CONTENTTYPE("Content-Type"),
-        IFMATCH("If-Match"),
-        IFNONEMATCH("If-None-Match"),
-        IFMODIFIEDSINCE("If-Modified-Since"),
-        USERAGENT("User-Agent"),
-        XMSACTIVITYID("x-ms-activity-id"),
-        XMSCONSISTENCYLEVEL("x-ms-consistency-level"),
-        XMSCONTINUATION("x-ms-continuation"),
-        XMSDATE("x-ms-date"),
-        XMSMAXITEMCOUNT("x-ms-max-item-count"),
-        XMSDOCUMENTDBPARTITIONKEY("x-ms-documentdb-partitionkey"),
-        XMSDOCUMENTDBISQUERY("x-ms-documentdb-isquery"),
-        XMSSESSIONTOKEN("x-ms-session-token"),
-        XMSVERSION("x-ms-version"),
+        Authorization("Authorization"),
+        ContentType("Content-Type"),
+        IfMatch("If-Match"),
+        IfNoneMatch("If-None-Match"),
+        IfModifiedSince("If-Modified-Since"),
+        UserAgent("User-Agent"),
+        XMSActivityId("x-ms-activity-id"),
+        XMSConsistencyLevel("x-ms-consistency-level"),
+        XMSContinuation("x-ms-continuation"),
+        XMSDate("x-ms-date"),
+        XMSMaxItemCount("x-ms-max-item-count"),
+        XMSDocumentDBPartitionKey("x-ms-documentdb-partitionkey"),
+        XMSDocumentDBIsQuery("x-ms-documentdb-isquery"),
+        XMSSessionToken("x-ms-session-token"),
+        XMSVersion("x-ms-version"),
         AIM("A-IM"),
-        XMSDOCUMENTDBPARTITIONKEYRANGEID("x-ms-documentdb-partitionkeyrangeid"),
-        ACCEPTENCODING("Accept-Encoding"),
-        ACCEPTLANGUAGE("Accept-Language"),
-        SLUG("Slug");
+        XMSDocumentDBPartitionKeyRangeId("x-ms-documentdb-partitionkeyrangeid"),
+        AcceptEncoding("Accept-Encoding"),
+        AcceptLanguage("Accept-Language"),
+        Slug("Slug");
 
         fun isRequired() : Boolean = when (this) {
-            AUTHORIZATION -> true
-            CONTENTTYPE -> true
-            XMSDATE -> true
-            XMSSESSIONTOKEN -> true
-            XMSVERSION -> true
+            Authorization -> true
+            ContentType -> true
+            XMSDate -> true
+            XMSSessionToken -> true
+            XMSVersion -> true
             else -> false
         }
     }
