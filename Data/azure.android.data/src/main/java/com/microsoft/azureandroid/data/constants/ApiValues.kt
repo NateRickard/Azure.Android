@@ -66,21 +66,22 @@ sealed class ApiValues {
 
     // https://docs.microsoft.com/en-us/rest/api/documentdb/http-status-codes-for-documentdb
     enum class StatusCode(val code: Int) {
-        OK(200),
-        CREATED(201),
-        NO_CONTENT(204),
+
+        Ok(200),
+        Created(201),
+        NoContent(204),
         NotModified(304), //not documented, but 304 can be returned when specifying IfNoneMatch header with etag value
-        BAD_REQUEST(400),
-        UNAUTHORIZED(401),
-        FORBIDDEN(403),
-        NOT_FOUND(404),
-        REQUEST_TIMEOUT(408),
-        CONFLICT(409),
-        PRECONDITION_FAILURE(412),
-        ENTITY_TOO_LARGE(413),
-        TOO_MANY_REQUESTS(429),
-        RETRY_WITH(449),
-        INTERNAL_SERVER_ERROR(500),
-        SERVICE_UNAVAILABLE(503)
+        BadRequest(400),
+        Unauthorized(401),
+        Forbidden(403),
+        NotFound(404),
+        RequestTimeout(408),
+        Conflict(409),
+        PreconditionFailure(412),
+        EntityTooLarge(413),
+        TooManyRequests(429),
+        RetryWith(449),
+        InternalServerError(500),
+        ServiceUnavailable(503)
     }
 }
