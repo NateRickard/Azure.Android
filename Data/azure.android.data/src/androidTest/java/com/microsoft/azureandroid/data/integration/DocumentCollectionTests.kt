@@ -2,34 +2,33 @@ package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
 import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.model.Database
+import com.microsoft.azureandroid.data.delete
+import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.refresh
+import org.awaitility.Awaitility.await
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.awaitility.Awaitility.*
-import org.junit.Assert.*
 
 /**
- * Created by Nate Rickard on 12/5/17.
+ * Created by Nate Rickard on 12/11/17.
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
 @RunWith(AndroidJUnit4::class)
-class DatabaseTests : ResourceTest<Database>(ResourceType.DATABASE, false, false) {
+class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.COLLECTION, true, false) {
 
     @Test
-    fun createDatabase() {
+    fun createCollection() {
 
-        ensureDatabase()
+        ensureCollection()
     }
 
     @Test
-    fun listDatabases() {
+    fun listCollections() {
 
-        ensureDatabase()
-
-        AzureData.instance.databases {
+        AzureData.instance.getCollections(databaseId) {
             resourceListResponse = it
         }
 
@@ -42,11 +41,11 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.DATABASE, false, false
     }
 
     @Test
-    fun getDatabase() {
+    fun getCollection() {
 
-        ensureDatabase()
+        ensureCollection()
 
-        AzureData.instance.getDatabase(databaseId) {
+        AzureData.instance.getCollection(resourceId, databaseId) {
             resourceResponse = it
         }
 
@@ -55,32 +54,36 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.DATABASE, false, false
         }
 
         assertResponseSuccess(resourceResponse)
-        assertEquals(databaseId, resourceResponse?.resource?.id)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
     }
 
     @Test
-    fun refreshDatabase() {
+    fun refreshCollection() {
 
-        val db = ensureDatabase()
+        val coll = ensureCollection()
 
-        db.refresh() {
+        coll.refresh {
             resourceResponse = it
         }
+
+//        AzureData.instance.refresh(coll) {
+//            resourceResponse = it
+//        }
 
         await().until {
             resourceResponse != null
         }
 
         assertResponseSuccess(resourceResponse)
-        assertEquals(databaseId, resourceResponse?.resource?.id)
+        assertEquals(collectionId, resourceResponse?.resource?.id)
     }
 
     @Test
-    fun deleteDatabase() {
+    fun deleteCollection() {
 
-        ensureDatabase()
+        val coll = ensureCollection()
 
-        AzureData.instance.deleteDatabase(databaseId) {
+        coll.delete {
             dataResponse = it
         }
 

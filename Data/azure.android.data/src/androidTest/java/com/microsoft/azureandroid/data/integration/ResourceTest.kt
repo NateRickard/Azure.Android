@@ -4,6 +4,7 @@ import android.support.test.InstrumentationRegistry
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.Database
+import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.Resource
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.services.DataResponse
@@ -21,6 +22,7 @@ import org.junit.Before
 open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, val ensureDatabase : Boolean = true, val ensureCollection : Boolean = true) {
 
     val databaseId = "AndroidTest${ResourceType.DATABASE.name}"
+    val collectionId = "AndroidTest${ResourceType.COLLECTION.name}"
     val resourceId = "AndroidTest${resourceType.name}"
 
     var resourceResponse: ResourceResponse<TResource>? = null
@@ -53,6 +55,10 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
             ensureDatabase()
         }
 
+        if (ensureCollection) {
+            ensureCollection()
+        }
+
         Awaitility.await().until {
             ops == 0
         }
@@ -81,6 +87,24 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
         assertEquals(databaseId, dbResponse?.resource?.id)
 
         return dbResponse!!.resource!!
+    }
+
+    fun ensureCollection() : DocumentCollection {
+
+        var collectionResponse: ResourceResponse<DocumentCollection>? = null
+
+        AzureData.instance.createCollection(collectionId, databaseId) {
+            collectionResponse = it
+        }
+
+        Awaitility.await().until {
+            collectionResponse != null
+        }
+
+        assertResponseSuccess(collectionResponse)
+        assertEquals(collectionId, collectionResponse?.resource?.id)
+
+        return collectionResponse!!.resource!!
     }
 
     fun assertResponseSuccess(response: ResourceResponse<*>?) {
