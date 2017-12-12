@@ -16,7 +16,7 @@ import org.junit.Assert.*
  */
 
 @RunWith(AndroidJUnit4::class)
-class DatabaseTests : ResourceTest<Database>(ResourceType.DATABASE, false, false) {
+class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false) {
 
     @Test
     fun createDatabase() {

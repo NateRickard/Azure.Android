@@ -16,7 +16,7 @@ class ResourceUri(databaseName: String) {
     fun forDatabase(databaseId: String? = null) : UrlLink {
 
         val baseLink = ""
-        val itemLink = getItemLink(ResourceType.DATABASE, baseLink, databaseId)
+        val itemLink = getItemLink(ResourceType.Database, baseLink, databaseId)
 
         return getUrlLink(baseLink, itemLink, databaseId)
     }
@@ -24,7 +24,7 @@ class ResourceUri(databaseName: String) {
     fun forUser(databaseId: String, userId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId"
-        val itemLink = getItemLink(ResourceType.USER, baseLink, userId)
+        val itemLink = getItemLink(ResourceType.User, baseLink, userId)
 
         return getUrlLink(baseLink, itemLink, userId)
     }
@@ -32,14 +32,14 @@ class ResourceUri(databaseName: String) {
     fun forPermission(databaseId: String, userId: String, permissionId: String?): UrlLink {
 
         val baseLink = "dbs/$databaseId/users/$userId"
-        val itemLink = getItemLink(ResourceType.PERMISSION, baseLink, permissionId)
+        val itemLink = getItemLink(ResourceType.Permission, baseLink, permissionId)
 
         return getUrlLink(baseLink, itemLink, permissionId)
     }
 
     fun forPermission(baseLink: String, resourceId: String?): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.PERMISSION, baseLink, resourceId)
+        val itemLink = getItemLink(ResourceType.Permission, baseLink, resourceId)
 
         return getUrlLinkForSelf(baseLink, itemLink, resourceId)
     }
@@ -47,7 +47,7 @@ class ResourceUri(databaseName: String) {
     fun forCollection(databaseId: String, collectionId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId"
-        val itemLink = getItemLink(ResourceType.COLLECTION, baseLink, collectionId)
+        val itemLink = getItemLink(ResourceType.Collection, baseLink, collectionId)
 
         return getUrlLink(baseLink, itemLink, collectionId)
     }
@@ -55,14 +55,14 @@ class ResourceUri(databaseName: String) {
     fun forDocument(databaseId: String, collectionId: String, documentId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId/colls/$collectionId"
-        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, documentId)
+        val itemLink = getItemLink(ResourceType.Document, baseLink, documentId)
 
         return getUrlLink(baseLink, itemLink, documentId)
     }
 
     fun forDocument(baseLink: String, documentId: String? = null) : UrlLink {
 
-        val itemLink = getItemLink(ResourceType.DOCUMENT, baseLink, documentId)
+        val itemLink = getItemLink(ResourceType.Document, baseLink, documentId)
 
         return getUrlLinkForSelf(baseLink, itemLink, documentId)
     }
@@ -70,14 +70,14 @@ class ResourceUri(databaseName: String) {
     fun forAttachment(databaseId: String, collectionId: String, documentId: String, attachmentId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId/colls/$collectionId/docs/$documentId"
-        val itemLink = getItemLink(ResourceType.ATTACHMENT, baseLink, attachmentId)
+        val itemLink = getItemLink(ResourceType.Attachment, baseLink, attachmentId)
 
         return getUrlLink(baseLink, itemLink, attachmentId)
     }
 
     fun forAttachment(baseLink: String, attachmentId: String? = null) : UrlLink {
 
-        val itemLink = getItemLink(ResourceType.ATTACHMENT, baseLink, attachmentId)
+        val itemLink = getItemLink(ResourceType.Attachment, baseLink, attachmentId)
 
         return getUrlLinkForSelf(baseLink, itemLink, attachmentId)
     }
@@ -85,14 +85,14 @@ class ResourceUri(databaseName: String) {
     fun forStoredProcedure(databaseId: String, collectionId: String, storedProcedureId: String? = null) : UrlLink {
 
         val baseLink = "dbs/$databaseId/colls/$collectionId"
-        val itemLink = getItemLink(ResourceType.STORED_PROCEDURE, baseLink, storedProcedureId)
+        val itemLink = getItemLink(ResourceType.StoredProcedure, baseLink, storedProcedureId)
 
         return getUrlLink(baseLink, itemLink, storedProcedureId)
     }
 
     fun forStoredProcedure(baseLink: String, storedProcedureId: String? = null) : UrlLink {
 
-        val itemLink = getItemLink(ResourceType.STORED_PROCEDURE, baseLink, storedProcedureId)
+        val itemLink = getItemLink(ResourceType.StoredProcedure, baseLink, storedProcedureId)
 
         return getUrlLinkForSelf(baseLink, itemLink, storedProcedureId)
     }
@@ -100,14 +100,14 @@ class ResourceUri(databaseName: String) {
     fun forTrigger(databaseId: String, collectionId: String, triggerId: String? = null): UrlLink {
 
         val baseLink = "dbs/$databaseId/colls/$collectionId"
-        val itemLink = getItemLink(ResourceType.TRIGGER, baseLink, triggerId)
+        val itemLink = getItemLink(ResourceType.Trigger, baseLink, triggerId)
 
         return getUrlLink(baseLink, itemLink, triggerId)
     }
 
     fun forTrigger(baseLink: String, triggerId: String? = null): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.TRIGGER, baseLink, triggerId)
+        val itemLink = getItemLink(ResourceType.Trigger, baseLink, triggerId)
 
         return getUrlLinkForSelf(baseLink, itemLink, triggerId)
     }
@@ -115,14 +115,14 @@ class ResourceUri(databaseName: String) {
     fun forUdf(databaseId: String, collectionId: String, udfId: String? = null): UrlLink {
 
         val baseLink = "dbs/$databaseId/colls/$collectionId"
-        val itemLink = getItemLink(ResourceType.UDF, baseLink, udfId)
+        val itemLink = getItemLink(ResourceType.Udf, baseLink, udfId)
 
         return getUrlLink(baseLink, itemLink, udfId)
     }
 
     fun forUdf(baseLink: String, udfId: String? = null): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.UDF, baseLink, udfId)
+        val itemLink = getItemLink(ResourceType.Udf, baseLink, udfId)
 
         return getUrlLinkForSelf(baseLink, itemLink, udfId)
     }
@@ -130,7 +130,7 @@ class ResourceUri(databaseName: String) {
     fun forOffer() : UrlLink {
 
         val baseLink = ""
-        val itemLink = getItemLink(ResourceType.OFFER, baseLink)
+        val itemLink = getItemLink(ResourceType.Offer, baseLink)
 
         return getUrlLink(baseLink, itemLink)
     }
@@ -138,7 +138,7 @@ class ResourceUri(databaseName: String) {
     fun forOffer(resourceId: String? = null) : UrlLink {
 
         val baseLink = ""
-        val itemLink = getItemLink(ResourceType.OFFER, baseLink, resourceId)
+        val itemLink = getItemLink(ResourceType.Offer, baseLink, resourceId)
 
         return getUrlLinkForSelf(baseLink, itemLink, resourceId)
     }

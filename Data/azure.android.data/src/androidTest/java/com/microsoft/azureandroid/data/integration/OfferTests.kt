@@ -4,7 +4,6 @@ import android.support.test.runner.AndroidJUnit4
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Offer
 import com.microsoft.azureandroid.data.model.ResourceType
-import org.awaitility.Awaitility
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Test
@@ -16,7 +15,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
-class OfferTests : ResourceTest<Offer>(ResourceType.OFFER, false, false) {
+class OfferTests : ResourceTest<Offer>(ResourceType.Offer, false, false) {
 
     @Test
     fun listOffers() {

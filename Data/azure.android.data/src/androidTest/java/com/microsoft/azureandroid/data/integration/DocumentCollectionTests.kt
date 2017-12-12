@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(AndroidJUnit4::class)
-class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.COLLECTION, true, false) {
+class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Collection, true, false) {
 
     @Test
     fun createCollection() {

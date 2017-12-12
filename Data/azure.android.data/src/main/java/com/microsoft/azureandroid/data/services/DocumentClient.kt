@@ -6,7 +6,6 @@ import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
 import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
 import com.microsoft.azureandroid.data.util.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
@@ -80,7 +79,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDatabase()
 
-        return create(databaseId, resourceUri, ResourceType.DATABASE, callback = callback)
+        return create(databaseId, resourceUri, ResourceType.Database, callback = callback)
     }
 
     // list
@@ -88,7 +87,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDatabase()
 
-        return resources(resourceUri, ResourceType.DATABASE, callback)
+        return resources(resourceUri, ResourceType.Database, callback)
     }
 
     // get
@@ -96,7 +95,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDatabase(databaseId)
 
-        return resource(resourceUri, ResourceType.DATABASE, callback)
+        return resource(resourceUri, ResourceType.Database, callback)
     }
 
     // delete
@@ -104,7 +103,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDatabase(databaseId)
 
-        return delete(resourceUri, ResourceType.DATABASE, callback)
+        return delete(resourceUri, ResourceType.Database, callback)
     }
 
     // delete
@@ -122,7 +121,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forCollection(databaseId)
 
-        return create(collectionId, resourceUri, ResourceType.COLLECTION, callback = callback)
+        return create(collectionId, resourceUri, ResourceType.Collection, callback = callback)
     }
 
     // list
@@ -130,7 +129,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forCollection(databaseId)
 
-        return resources(resourceUri, ResourceType.COLLECTION, callback)
+        return resources(resourceUri, ResourceType.Collection, callback)
     }
 
     // get
@@ -138,7 +137,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forCollection(databaseId, collectionId)
 
-        return resource(resourceUri, ResourceType.COLLECTION, callback)
+        return resource(resourceUri, ResourceType.Collection, callback)
     }
 
     // delete
@@ -146,7 +145,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forCollection(databaseId, collectionId)
 
-        return delete(resourceUri, ResourceType.COLLECTION, callback)
+        return delete(resourceUri, ResourceType.Collection, callback)
     }
 
     //endregion
@@ -158,7 +157,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
 
-        return create(document, resourceUri, ResourceType.DOCUMENT, callback = callback)
+        return create(document, resourceUri, ResourceType.Document, callback = callback)
     }
 
     // list
@@ -166,7 +165,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
 
-        return resources(resourceUri, ResourceType.DOCUMENT, callback)
+        return resources(resourceUri, ResourceType.Document, callback)
     }
 
     // list
@@ -174,7 +173,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDocument(collection.selfLink!!)
 
-        return resources(resourceUri, ResourceType.DOCUMENT, callback)
+        return resources(resourceUri, ResourceType.Document, callback)
     }
 
     // get
@@ -182,7 +181,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId, documentId)
 
-        return resource(resourceUri, ResourceType.DOCUMENT, callback)
+        return resource(resourceUri, ResourceType.Document, callback)
     }
 
     // delete
@@ -190,7 +189,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId, documentId)
 
-        return delete(resourceUri, ResourceType.DOCUMENT, callback)
+        return delete(resourceUri, ResourceType.Document, callback)
     }
 
     //endregion
@@ -202,7 +201,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
 
-        return create(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+        return create(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.Attachment, callback = callback)
     }
 
     // create
@@ -214,7 +213,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
                 .build()
 
-        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, additionalHeaders = headers, callback = callback)
+        return createOrReplace(media, resourceUri, ResourceType.Attachment, additionalHeaders = headers, callback = callback)
     }
 
     // create
@@ -222,7 +221,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!)
 
-        return create(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+        return create(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.Attachment, callback = callback)
     }
 
     // create
@@ -234,7 +233,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
                 .build()
 
-        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, additionalHeaders = headers, callback = callback)
+        return createOrReplace(media, resourceUri, ResourceType.Attachment, additionalHeaders = headers, callback = callback)
     }
 
     // list
@@ -242,7 +241,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
 
-        return resources(resourceUri, ResourceType.ATTACHMENT, callback)
+        return resources(resourceUri, ResourceType.Attachment, callback)
     }
 
     // list
@@ -250,7 +249,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!)
 
-        return resources(resourceUri, ResourceType.ATTACHMENT, callback)
+        return resources(resourceUri, ResourceType.Attachment, callback)
     }
 
     // delete
@@ -258,7 +257,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachment.id)
 
-        return delete(resourceUri, ResourceType.ATTACHMENT, callback)
+        return delete(resourceUri, ResourceType.Attachment, callback)
     }
 
     // delete
@@ -266,7 +265,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!, attachment.id)
 
-        return delete(resourceUri, ResourceType.ATTACHMENT, callback)
+        return delete(resourceUri, ResourceType.Attachment, callback)
     }
 
     // replace
@@ -274,7 +273,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
 
-        return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+        return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.Attachment, callback = callback)
     }
 
     // replace
@@ -286,7 +285,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
                 .build()
 
-        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, replacing = true, additionalHeaders = headers, callback = callback)
+        return createOrReplace(media, resourceUri, ResourceType.Attachment, replacing = true, additionalHeaders = headers, callback = callback)
     }
 
     // replace
@@ -294,7 +293,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentId)
 
-        return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.ATTACHMENT, callback = callback)
+        return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.Attachment, callback = callback)
     }
 
     // replace
@@ -306,7 +305,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 .add(ApiValues.HttpRequestHeader.SLUG.value, mediaName)
                 .build()
 
-        return createOrReplace(media, resourceUri, ResourceType.ATTACHMENT, replacing = true, additionalHeaders = headers, callback = callback)
+        return createOrReplace(media, resourceUri, ResourceType.Attachment, replacing = true, additionalHeaders = headers, callback = callback)
     }
 
     //endregion
@@ -318,7 +317,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId)
 
-        return create(storedProcedureId, resourceUri, ResourceType.STORED_PROCEDURE, mutableMapOf("body" to procedure), callback = callback)
+        return create(storedProcedureId, resourceUri, ResourceType.StoredProcedure, mutableMapOf("body" to procedure), callback = callback)
     }
 
     // create
@@ -326,7 +325,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!)
 
-        return create(storedProcedureId, resourceUri, ResourceType.STORED_PROCEDURE, mutableMapOf("body" to procedure), callback = callback)
+        return create(storedProcedureId, resourceUri, ResourceType.StoredProcedure, mutableMapOf("body" to procedure), callback = callback)
     }
 
     // list
@@ -334,7 +333,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId)
 
-        return resources(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return resources(resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     // list
@@ -342,7 +341,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!)
 
-        return resources(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return resources(resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     // delete
@@ -350,7 +349,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedure.id)
 
-        return delete(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return delete(resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     // delete
@@ -358,7 +357,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedure.id)
 
-        return delete(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return delete(resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     // delete
@@ -366,7 +365,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
 
-        return delete(resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return delete(resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     // replace
@@ -374,7 +373,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
 
-        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.STORED_PROCEDURE, callback = callback)
+        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
     }
 
     // replace
@@ -382,7 +381,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
 
-        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.STORED_PROCEDURE, callback = callback)
+        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
     }
 
     // execute
@@ -390,7 +389,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
 
-        return execute(parameters, resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return execute(parameters, resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     // execute
@@ -398,7 +397,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
 
-        return execute(parameters, resourceUri, ResourceType.STORED_PROCEDURE, callback)
+        return execute(parameters, resourceUri, ResourceType.StoredProcedure, callback)
     }
 
     //endregion
@@ -410,7 +409,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(databaseId, collectionId)
 
-        return create(functionId, resourceUri, ResourceType.UDF, mutableMapOf("body" to function), callback = callback)
+        return create(functionId, resourceUri, ResourceType.Udf, mutableMapOf("body" to function), callback = callback)
     }
 
     // create
@@ -418,7 +417,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = functionId)
 
-        return create(functionId, resourceUri, ResourceType.UDF, mutableMapOf("body" to function), callback = callback)
+        return create(functionId, resourceUri, ResourceType.Udf, mutableMapOf("body" to function), callback = callback)
     }
 
     // list
@@ -426,7 +425,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(databaseId, collectionId)
 
-        return resources(resourceUri, ResourceType.UDF, callback)
+        return resources(resourceUri, ResourceType.Udf, callback)
     }
 
     // list
@@ -434,7 +433,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(collection.selfLink!!)
 
-        return resources(resourceUri, ResourceType.UDF, callback)
+        return resources(resourceUri, ResourceType.Udf, callback)
     }
 
     // delete
@@ -442,7 +441,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(databaseId, collectionId, udfId = userDefinedFunctionId)
 
-        return delete(resourceUri, ResourceType.UDF, callback)
+        return delete(resourceUri, ResourceType.Udf, callback)
     }
 
     // delete
@@ -450,7 +449,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = userDefinedFunction.id)
 
-        return delete(resourceUri, ResourceType.UDF, callback)
+        return delete(resourceUri, ResourceType.Udf, callback)
     }
 
     // replace
@@ -458,7 +457,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(databaseId, collectionId, udfId = functionId)
 
-        return replace(functionId, mutableMapOf("body" to function), resourceUri, ResourceType.UDF, callback = callback)
+        return replace(functionId, mutableMapOf("body" to function), resourceUri, ResourceType.Udf, callback = callback)
     }
 
     // replace
@@ -466,7 +465,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = functionId)
 
-        return replace(functionId, mutableMapOf("body" to function), resourceUri, ResourceType.UDF, callback = callback)
+        return replace(functionId, mutableMapOf("body" to function), resourceUri, ResourceType.Udf, callback = callback)
     }
 
     //endregion
@@ -478,7 +477,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(databaseId, collectionId)
 
-        return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+        return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.Trigger, callback = callback)
     }
 
     // create
@@ -486,7 +485,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = triggerId)
 
-        return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+        return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.Trigger, callback = callback)
     }
 
     // list
@@ -494,7 +493,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(databaseId, collectionId)
 
-        return resources(resourceUri, ResourceType.TRIGGER, callback)
+        return resources(resourceUri, ResourceType.Trigger, callback)
     }
 
     // list
@@ -502,7 +501,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(collection.selfLink!!)
 
-        return resources(resourceUri, ResourceType.TRIGGER, callback)
+        return resources(resourceUri, ResourceType.Trigger, callback)
     }
 
     // delete
@@ -510,7 +509,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(databaseId, collectionId, triggerId)
 
-        return delete(resourceUri, ResourceType.TRIGGER, callback)
+        return delete(resourceUri, ResourceType.Trigger, callback)
     }
 
     // delete
@@ -518,7 +517,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = trigger.id)
 
-        return delete(resourceUri, ResourceType.TRIGGER, callback)
+        return delete(resourceUri, ResourceType.Trigger, callback)
     }
 
     // replace
@@ -526,7 +525,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(databaseId, collectionId, triggerId)
 
-        return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+        return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.Trigger, callback = callback)
     }
 
     // replace
@@ -534,7 +533,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = triggerId)
 
-        return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.TRIGGER, callback = callback)
+        return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.Trigger, callback = callback)
     }
 
     //endregion
@@ -546,7 +545,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUser(databaseId)
 
-        return create(userId, resourceUri, ResourceType.USER, callback = callback)
+        return create(userId, resourceUri, ResourceType.User, callback = callback)
     }
 
     // list
@@ -554,7 +553,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUser(databaseId)
 
-        return resources(resourceUri, ResourceType.USER, callback)
+        return resources(resourceUri, ResourceType.User, callback)
     }
 
     // get
@@ -562,7 +561,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUser(databaseId, userId)
 
-        return resource(resourceUri, ResourceType.USER, callback)
+        return resource(resourceUri, ResourceType.User, callback)
     }
 
     // delete
@@ -570,7 +569,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUser(databaseId, userId)
 
-        return delete(resourceUri, ResourceType.USER, callback)
+        return delete(resourceUri, ResourceType.User, callback)
     }
 
     //endregion
@@ -584,7 +583,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
 
-        return create(permission, resourceUri, ResourceType.PERMISSION, callback = callback)
+        return create(permission, resourceUri, ResourceType.Permission, callback = callback)
     }
 
     // create
@@ -596,7 +595,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 //
 //        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
 //
-//        return create(permission, resourceUri, ResourceType.PERMISSION, callback = callback)
+//        return create(permission, resourceUri, ResourceType.Permission, callback = callback)
 //    }
 
     // list
@@ -604,7 +603,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forPermission(databaseId, userId, null)
 
-        return resources(resourceUri, ResourceType.PERMISSION, callback)
+        return resources(resourceUri, ResourceType.Permission, callback)
     }
 
     // list
@@ -612,7 +611,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forPermission(user.selfLink!!, null)
 
-        return resources(resourceUri, ResourceType.PERMISSION, callback)
+        return resources(resourceUri, ResourceType.Permission, callback)
     }
 
     // get
@@ -620,7 +619,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forPermission(databaseId, userId, permissionId)
 
-        return resource(resourceUri, ResourceType.PERMISSION, callback)
+        return resource(resourceUri, ResourceType.Permission, callback)
     }
 
     // get
@@ -628,7 +627,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forPermission(user.selfLink!!, permissionId)
 
-        return resource(resourceUri, ResourceType.PERMISSION, callback)
+        return resource(resourceUri, ResourceType.Permission, callback)
     }
 
     // delete
@@ -636,7 +635,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forPermission(databaseId, userId, permissionId)
 
-        return delete(resourceUri, ResourceType.PERMISSION, callback)
+        return delete(resourceUri, ResourceType.Permission, callback)
     }
 
     // delete
@@ -644,7 +643,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forPermission(user.selfLink!!, permission.id)
 
-        return delete(resourceUri, ResourceType.PERMISSION, callback)
+        return delete(resourceUri, ResourceType.Permission, callback)
     }
 
     //endregion
@@ -656,7 +655,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forOffer()
 
-        return resources(resourceUri, ResourceType.OFFER, callback)
+        return resources(resourceUri, ResourceType.Offer, callback)
     }
 
     // get
@@ -664,7 +663,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forOffer(offerId)
 
-        return resource(resourceUri, ResourceType.OFFER, callback)
+        return resource(resourceUri, ResourceType.Offer, callback)
     }
 
     //endregion
@@ -950,7 +949,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         if (forQuery) {
             builder.addHeader(ApiValues.HttpRequestHeader.XMSDOCUMENTDBISQUERY.value, "true")
             builder.addHeader(ApiValues.HttpRequestHeader.CONTENTTYPE.value, ApiValues.MediaTypes.QUERY_JSON.value)
-        } else if ((method == ApiValues.HttpMethod.POST || method == ApiValues.HttpMethod.PUT) && resourceType != ResourceType.ATTACHMENT) {
+        } else if ((method == ApiValues.HttpMethod.POST || method == ApiValues.HttpMethod.PUT) && resourceType != ResourceType.Attachment) {
             // For POST on query operations, it must be application/query+json
             // For attachments, must be set to the Mime type of the attachment.
             // For all other tasks, must be application/json.

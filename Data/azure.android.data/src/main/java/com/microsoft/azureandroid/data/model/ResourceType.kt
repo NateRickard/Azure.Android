@@ -10,16 +10,16 @@ import java.lang.reflect.Type
 
 enum class ResourceType(val path: String, fullname: String, val type: Type) {
 
-    DATABASE("dbs", "Database", object : TypeToken<Database>() {}.type),
-    USER("users", "User", object : TypeToken<User>() {}.type),
-    PERMISSION("permissions", "Permission", object : TypeToken<Permission>() {}.type),
-    COLLECTION("colls", "DocumentCollection", object : TypeToken<DocumentCollection>() {}.type),
-    STORED_PROCEDURE("sprocs", "StoredProcedure", object : TypeToken<StoredProcedure>() {}.type),
-    TRIGGER("triggers", "Trigger", object : TypeToken<Trigger>() {}.type),
-    UDF("udfs", "UserDefinedFunction", object : TypeToken<UserDefinedFunction>() {}.type),
-    DOCUMENT("docs", "Document", object : TypeToken<Document>() {}.type),
-    ATTACHMENT("attachments", "Attachment", object : TypeToken<Attachment>() {}.type),
-    OFFER("offers", "Offer", object : TypeToken<Offer>() {}.type);
+    Database("dbs", "Database", object : TypeToken<com.microsoft.azureandroid.data.model.Database>() {}.type),
+    User("users", "User", object : TypeToken<com.microsoft.azureandroid.data.model.User>() {}.type),
+    Permission("permissions", "Permission", object : TypeToken<com.microsoft.azureandroid.data.model.Permission>() {}.type),
+    Collection("colls", "DocumentCollection", object : TypeToken<DocumentCollection>() {}.type),
+    StoredProcedure("sprocs", "StoredProcedure", object : TypeToken<com.microsoft.azureandroid.data.model.StoredProcedure>() {}.type),
+    Trigger("triggers", "Trigger", object : TypeToken<com.microsoft.azureandroid.data.model.Trigger>() {}.type),
+    Udf("udfs", "UserDefinedFunction", object : TypeToken<UserDefinedFunction>() {}.type),
+    Document("docs", "Document", object : TypeToken<com.microsoft.azureandroid.data.model.Document>() {}.type),
+    Attachment("attachments", "Attachment", object : TypeToken<com.microsoft.azureandroid.data.model.Attachment>() {}.type),
+    Offer("offers", "Offer", object : TypeToken<com.microsoft.azureandroid.data.model.Offer>() {}.type);
 
     val listName: String = "${fullname}s"
 
@@ -29,7 +29,7 @@ enum class ResourceType(val path: String, fullname: String, val type: Type) {
 
             //is this a Document?
             if (Document::class.java.isAssignableFrom(clazz)) {
-                return DOCUMENT
+                return Document
             }
 
             return ResourceType.values().find {

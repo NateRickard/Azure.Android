@@ -21,8 +21,8 @@ import org.junit.Before
 
 open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, val ensureDatabase : Boolean = true, val ensureCollection : Boolean = true) {
 
-    val databaseId = "AndroidTest${ResourceType.DATABASE.name}"
-    val collectionId = "AndroidTest${ResourceType.COLLECTION.name}"
+    val databaseId = "AndroidTest${ResourceType.Database.name}"
+    val collectionId = "AndroidTest${ResourceType.Collection.name}"
     val resourceId = "AndroidTest${resourceType.name}"
 
     var resourceResponse: ResourceResponse<TResource>? = null
