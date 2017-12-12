@@ -732,7 +732,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         try {
 
             val resourceUri = baseUri.forResource(resource)
-
             val resourceType = ResourceType.fromType(resource.javaClass)
 
             val headers = Headers.Builder()
@@ -754,6 +753,22 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         val request = createRequest(ApiValues.HttpMethod.DELETE, resourceUri, resourceType)
 
         return sendRequest(request, callback)
+    }
+
+    fun<TResource: Resource> delete(resource: TResource, callback: (DataResponse) -> Unit) {
+
+        return try {
+
+            val resourceUri = baseUri.forResource(resource)
+            val resourceType = ResourceType.fromType(resource.javaClass)
+
+            val request = createRequest(ApiValues.HttpMethod.DELETE, resourceUri, resourceType)
+
+            sendRequest(request, callback)
+        }
+        catch (e: Exception) {
+            callback(DataResponse(DataError(e)))
+        }
     }
 
     // replace

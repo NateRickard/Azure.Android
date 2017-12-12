@@ -368,6 +368,10 @@ class AzureData {
 
     //region Resources
 
+    // delete
+    fun <T : Resource> delete (resource: T, callback: (DataResponse) -> Unit) =
+            documentClient.delete (resource, callback)
+
     fun <T : Resource> refresh(resource: T, callback: (ResourceResponse<T>) -> Unit) =
             documentClient.refresh(resource, callback)
 
