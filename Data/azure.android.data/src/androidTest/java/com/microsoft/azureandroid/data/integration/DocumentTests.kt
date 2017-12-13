@@ -4,6 +4,7 @@ import android.support.test.runner.AndroidJUnit4
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.delete
 import com.microsoft.azureandroid.data.model.Document
+import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.Query
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.refresh
@@ -58,15 +59,27 @@ class DocumentTests : ResourceTest<Document>(ResourceType.Document, true, true) 
         createNewDocument()
     }
 
-    private fun createNewDocument() : Document {
+    @Test
+    fun createDocumentInCollection() {
+
+        createNewDocument(collection)
+    }
+
+    private fun createNewDocument(coll: DocumentCollection? = null) : Document {
 
         val newDocument = Document(resourceId)
 
         newDocument[customStringKey] = customStringValue
         newDocument[customNumberKey] = customNumberValue
 
-        AzureData.createDocument(newDocument, collectionId, databaseId) {
-            resourceResponse = it
+        if (coll != null) {
+            AzureData.createDocument(newDocument, coll) {
+                resourceResponse = it
+            }
+        } else {
+            AzureData.createDocument(newDocument, collectionId, databaseId) {
+                resourceResponse = it
+            }
         }
 
         await().forever().until {

@@ -160,6 +160,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return create(document, resourceUri, ResourceType.Document, callback = callback)
     }
 
+    // create
+    fun <T : Document> createDocument (document: T, collection: DocumentCollection, callback: (ResourceResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(collection.selfLink!!)
+
+        return create(document, resourceUri, ResourceType.Document, callback = callback)
+    }
+
     // list
     fun <T : Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
 

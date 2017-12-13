@@ -91,6 +91,10 @@ class AzureData {
         fun <T : Document> createDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
                 documentClient.createDocument(document, collectionId, databaseId, callback)
 
+        // create
+        fun <T : Document> createDocument (document: T, collection: DocumentCollection, callback: (ResourceResponse<T>) -> Unit) =
+                documentClient.createDocument(document, collection, callback)
+
         // list
         fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) =
                 documentClient.getDocumentsAs(collectionId, databaseId, callback)
