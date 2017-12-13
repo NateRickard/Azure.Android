@@ -42,7 +42,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
 
         var deleteResponse: DataResponse? = null
 
-        AzureData.instance.deleteUser(id, databaseId) { response ->
+        AzureData.deleteUser(id, databaseId) { response ->
             println("Attempted to delete test user.  Result: ${response.isSuccessful}")
             deleteResponse = response
         }
@@ -56,7 +56,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
 
         var userResponse: ResourceResponse<User>? = null
 
-        AzureData.instance.createUser(resourceId, databaseId) {
+        AzureData.createUser(resourceId, databaseId) {
             userResponse = it
         }
 
@@ -82,7 +82,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         //make sure we have at least one user
         createNewUser()
 
-        AzureData.instance.getUsers(databaseId) {
+        AzureData.getUsers(databaseId) {
             resourceListResponse = it
         }
 
@@ -99,7 +99,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
 
         createNewUser()
 
-        AzureData.instance.getUser(resourceId, databaseId) {
+        AzureData.getUser(resourceId, databaseId) {
             resourceResponse = it
         }
 
@@ -134,7 +134,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         val replaceUserId = "Updated_$resourceId"
         val user = createNewUser()
 
-        AzureData.instance.replaceUser(user.id, replaceUserId, databaseId) {
+        AzureData.replaceUser(user.id, replaceUserId, databaseId) {
             resourceResponse = it
         }
 

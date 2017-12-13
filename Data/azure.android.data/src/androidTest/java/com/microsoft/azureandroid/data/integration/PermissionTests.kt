@@ -30,7 +30,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
     override fun setUp() {
         super.setUp()
 
-        AzureData.instance.deleteUser(userId, databaseId) { response ->
+        AzureData.deleteUser(userId, databaseId) { response ->
             println("Attempted to delete test user.  Result: ${response.isSuccessful}")
 
             user = ensureUser()
@@ -46,7 +46,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
 
         var deleteResponse: DataResponse? = null
 
-        AzureData.instance.deleteUser(userId, databaseId) { response ->
+        AzureData.deleteUser(userId, databaseId) { response ->
             println("Attempted to delete test user.  Result: ${response.isSuccessful}")
             deleteResponse = response
         }
@@ -62,7 +62,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
 
         var userResponse: ResourceResponse<User>? = null
 
-        AzureData.instance.createUser(userId, databaseId) {
+        AzureData.createUser(userId, databaseId) {
             userResponse = it
         }
 
@@ -78,7 +78,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
 
     private fun createNewPermission() : Permission {
 
-        AzureData.instance.createPermission(resourceId, Permission.PermissionMode.Read, collection!!, user!!, databaseId) {
+        AzureData.createPermission(resourceId, Permission.PermissionMode.Read, collection!!, user!!, databaseId) {
             resourceResponse = it
         }
 
@@ -101,7 +101,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
     @Test
     fun listPermissions() {
 
-        AzureData.instance.getPermissions(userId, databaseId) {
+        AzureData.getPermissions(userId, databaseId) {
             resourceListResponse = it
         }
 
@@ -118,7 +118,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
 
         createNewPermission()
 
-        AzureData.instance.getPermission(resourceId, userId, databaseId) {
+        AzureData.getPermission(resourceId, userId, databaseId) {
             resourceResponse = it
         }
 

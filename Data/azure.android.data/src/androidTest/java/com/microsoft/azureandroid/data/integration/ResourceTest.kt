@@ -66,7 +66,7 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
 
         var dbResponse: ResourceResponse<Database>? = null
 
-        AzureData.instance.createDatabase(databaseId) {
+        AzureData.createDatabase(databaseId) {
             dbResponse = it
         }
 
@@ -84,7 +84,7 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
 
         var collectionResponse: ResourceResponse<DocumentCollection>? = null
 
-        AzureData.instance.createCollection(collectionId, databaseId) {
+        AzureData.createCollection(collectionId, databaseId) {
             collectionResponse = it
         }
 
@@ -102,20 +102,26 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
 
     private fun deleteResources() {
 
-        var ops = 2
+        var deleteResponse: DataResponse? = null
 
-        AzureData.instance.deleteCollection(collectionId, databaseId) { response ->
+        AzureData.deleteCollection(collectionId, databaseId) { response ->
             println("Attempted to delete test collection.  Result: ${response.isSuccessful}")
-            ops--
-        }
-
-        AzureData.instance.deleteDatabase(databaseId) { response ->
-            println("Attempted to delete test database.  Result: ${response.isSuccessful}")
-            ops--
+            deleteResponse = response
         }
 
         await().until {
-            ops == 0
+            deleteResponse != null
+        }
+
+        deleteResponse = null
+
+        AzureData.deleteDatabase(databaseId) { response ->
+            println("Attempted to delete test database.  Result: ${response.isSuccessful}")
+            deleteResponse = response
+        }
+
+        await().until {
+            deleteResponse != null
         }
     }
 
@@ -125,6 +131,14 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
         assertNotNull(response!!.resource)
         assertTrue(response.isSuccessful)
         assertFalse(response.isErrored)
+    }
+
+    fun assertResponseFailure(response: ResourceResponse<*>?) {
+
+        assertNotNull(response)
+        assertNotNull(response!!.error)
+        assertFalse(response.isSuccessful)
+        assertTrue(response.isErrored)
     }
 
     fun assertResponseSuccess(response: ResourceListResponse<*>?) {

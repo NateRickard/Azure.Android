@@ -29,7 +29,7 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
 
         ensureDatabase()
 
-        AzureData.instance.databases {
+        AzureData.databases {
             resourceListResponse = it
         }
 
@@ -46,7 +46,7 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
 
         ensureDatabase()
 
-        AzureData.instance.getDatabase(databaseId) {
+        AzureData.getDatabase(databaseId) {
             resourceResponse = it
         }
 
@@ -76,11 +76,27 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
     }
 
     @Test
-    fun deleteDatabase() {
+    fun deleteDatabaseById() {
 
         ensureDatabase()
 
-        AzureData.instance.deleteDatabase(databaseId) {
+        AzureData.deleteDatabase(databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDatabase() {
+
+        val db = ensureDatabase()
+
+        AzureData.deleteDatabase(db) {
             dataResponse = it
         }
 

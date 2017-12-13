@@ -30,14 +30,14 @@ class TriggersFragment : ResourceListFragment<Trigger>() {
 
     override fun fetchData(callback: (ResourceListResponse<Trigger>) -> Unit) {
 
-        AzureData.instance.getTriggers(collectionId, databaseId) { response ->
+        AzureData.getTriggers(collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
 //    override fun getItem(id: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
 //
-//        AzureData.instance.getStoredProcedure(id, collectionId, databaseId) { response ->
+//        AzureData.getStoredProcedure(id, collectionId, databaseId) { response ->
 //            callback(response)
 //        }
 //    }
@@ -56,14 +56,14 @@ class TriggersFragment : ResourceListFragment<Trigger>() {
 //        }
 //        """
 //
-//        AzureData.instance.createTrigger(resourceId, storedProcedure, collectionId, databaseId) { response ->
+//        AzureData.createTrigger(resourceId, storedProcedure, collectionId, databaseId) { response ->
 //            callback(response)
 //        }
 //    }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteTrigger(resourceId, collectionId, databaseId) { result ->
+        AzureData.deleteTrigger(resourceId, collectionId, databaseId) { result ->
             callback(result)
         }
     }

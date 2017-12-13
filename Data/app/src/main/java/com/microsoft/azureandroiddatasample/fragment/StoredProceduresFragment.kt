@@ -33,14 +33,14 @@ class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
 
     override fun fetchData(callback: (ResourceListResponse<StoredProcedure>) -> Unit) {
 
-        AzureData.instance.getStoredProcedures(collectionId, databaseId) { response ->
+        AzureData.getStoredProcedures(collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
 //    override fun getItem(id: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
 //
-//        AzureData.instance.getStoredProcedure(id, collectionId, databaseId) { response ->
+//        AzureData.getStoredProcedure(id, collectionId, databaseId) { response ->
 //            callback(response)
 //        }
 //    }
@@ -59,14 +59,14 @@ class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
         }
         """
 
-        AzureData.instance.createStoredProcedure(resourceId, storedProcedure, collectionId, databaseId) { response ->
+        AzureData.createStoredProcedure(resourceId, storedProcedure, collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteStoredProcedure(resourceId, collectionId, databaseId) { result ->
+        AzureData.deleteStoredProcedure(resourceId, collectionId, databaseId) { result ->
             callback(result)
         }
     }

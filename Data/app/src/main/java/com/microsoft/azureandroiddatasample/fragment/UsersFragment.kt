@@ -32,14 +32,14 @@ class UsersFragment : ResourceListFragment<User>() {
 
     override fun fetchData(callback: (ResourceListResponse<User>) -> Unit) {
 
-        AzureData.instance.getUsers(databaseId) { response ->
+        AzureData.getUsers(databaseId) { response ->
             callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<User>) -> Unit) {
 
-        AzureData.instance.getUser(id, databaseId) { response ->
+        AzureData.getUser(id, databaseId) { response ->
             callback(response)
         }
     }
@@ -49,14 +49,14 @@ class UsersFragment : ResourceListFragment<User>() {
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         val resourceId = editText.text.toString()
 
-        AzureData.instance.createUser(resourceId, databaseId) { response ->
+        AzureData.createUser(resourceId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteUser(resourceId, databaseId) { result ->
+        AzureData.deleteUser(resourceId, databaseId) { result ->
             callback(result)
         }
     }

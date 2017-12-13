@@ -16,28 +16,28 @@ import com.microsoft.azureandroid.data.services.ResourceResponse
 // Database
 
 fun Database.getCollections(callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
-    return AzureData.instance.getCollections(this.id, callback)
+    return AzureData.getCollections(this.id, callback)
 }
 
 fun Database.deleteCollection(collection: DocumentCollection, callback: (DataResponse) -> Unit) {
-    return AzureData.instance.deleteCollection(collection, this.id, callback)
+    return AzureData.deleteCollection(collection, this.id, callback)
 }
 
 fun Database.deleteCollection(collectionId: String, callback: (DataResponse) -> Unit) {
-    return AzureData.instance.deleteCollection(collectionId, this.id, callback)
+    return AzureData.deleteCollection(collectionId, this.id, callback)
 }
 
 
 // DocumentCollection
 
 fun <T : Document> DocumentCollection.getDocumentsAs(callback: (ResourceListResponse<T>) -> Unit) {
-    return AzureData.instance.getDocumentsAs(this, callback)
+    return AzureData.getDocumentsAs(this, callback)
 }
 
 // Resource
 
 fun <TResource : Resource> TResource.delete(callback: (DataResponse) -> Unit) =
-        AzureData.instance.delete(this, callback)
+        AzureData.delete(this, callback)
 
 fun <TResource : Resource> TResource.refresh(callback: (ResourceResponse<TResource>) -> Unit) =
-        AzureData.instance.refresh(this, callback)
+        AzureData.refresh(this, callback)

@@ -24,14 +24,14 @@ class DatabasesFragment : ResourceListFragment<Database>() {
 
     override fun fetchData(callback: (ResourceListResponse<Database>) -> Unit) {
 
-        AzureData.instance.databases { response ->
+        AzureData.databases { response ->
             callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<Database>) -> Unit) {
 
-        AzureData.instance.getDatabase(id) { response ->
+        AzureData.getDatabase(id) { response ->
             callback(response)
         }
     }
@@ -41,14 +41,14 @@ class DatabasesFragment : ResourceListFragment<Database>() {
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         val resourceId = editText.text.toString()
 
-        AzureData.instance.createDatabase(resourceId) { response ->
+        AzureData.createDatabase(resourceId) { response ->
             callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteDatabase(resourceId) { result ->
+        AzureData.deleteDatabase(resourceId) { result ->
             callback(result)
         }
     }

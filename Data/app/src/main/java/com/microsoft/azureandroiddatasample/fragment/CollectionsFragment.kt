@@ -32,14 +32,14 @@ class CollectionsFragment : ResourceListFragment<DocumentCollection>() {
 
     override fun fetchData(callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
 
-        AzureData.instance.getCollections(databaseId) { response ->
+        AzureData.getCollections(databaseId) { response ->
             callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
 
-        AzureData.instance.getCollection(id, databaseId) { response ->
+        AzureData.getCollection(id, databaseId) { response ->
             callback(response)
         }
     }
@@ -49,14 +49,14 @@ class CollectionsFragment : ResourceListFragment<DocumentCollection>() {
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         val resourceId = editText.text.toString()
 
-        AzureData.instance.createCollection(resourceId, databaseId) { response ->
+        AzureData.createCollection(resourceId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteCollection(resourceId, databaseId) { result ->
+        AzureData.deleteCollection(resourceId, databaseId) { result ->
             callback(result)
         }
     }

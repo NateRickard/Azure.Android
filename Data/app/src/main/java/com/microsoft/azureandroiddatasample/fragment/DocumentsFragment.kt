@@ -35,14 +35,14 @@ class DocumentsFragment : ResourceListFragment<Document>() {
 
     override fun fetchData(callback: (ResourceListResponse<Document>) -> Unit) {
 
-        AzureData.instance.getDocumentsAs<Document>(collectionId, databaseId) { response ->
+        AzureData.getDocumentsAs<Document>(collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<Document>) -> Unit) {
 
-        AzureData.instance.getDocument<Document>(id, collectionId, databaseId) { response ->
+        AzureData.getDocument<Document>(id, collectionId, databaseId) { response ->
             callback(response)
 
             //test doc properties came back
@@ -70,14 +70,14 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         doc["testString"] = "Yeah baby\nRock n Roll"
         doc["testDate"]   = Date()
 
-        AzureData.instance.createDocument(doc, collectionId, databaseId) { response ->
+        AzureData.createDocument(doc, collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteDocument(resourceId, collectionId, databaseId) { result ->
+        AzureData.deleteDocument(resourceId, collectionId, databaseId) { result ->
             callback(result)
         }
     }

@@ -34,14 +34,14 @@ class PermissionsFragment : ResourceListFragment<Permission>() {
 
     override fun fetchData(callback: (ResourceListResponse<Permission>) -> Unit) {
 
-        AzureData.instance.getPermissions(userId, databaseId) { response ->
+        AzureData.getPermissions(userId, databaseId) { response ->
             callback(response)
         }
     }
 
     override fun getItem(id: String, callback: (ResourceResponse<Permission>) -> Unit) {
 
-        AzureData.instance.getPermission(id, userId, databaseId) { response ->
+        AzureData.getPermission(id, userId, databaseId) { response ->
             callback(response)
         }
     }
@@ -61,14 +61,14 @@ class PermissionsFragment : ResourceListFragment<Permission>() {
 //        val modeText = dialogView.findViewById<EditText>(R.id.editTextMode).text.toString()
 //        val mode = Permission.PermissionMode.valueOf(modeText)
 //
-//        AzureData.instance.createPermission(resourceId, mode, res) { response ->
+//        AzureData.createPermission(resourceId, mode, res) { response ->
 //            callback(response)
 //        }
 //    }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deletePermission(resourceId, userId, databaseId) { result ->
+        AzureData.deletePermission(resourceId, userId, databaseId) { result ->
             callback(result)
         }
     }

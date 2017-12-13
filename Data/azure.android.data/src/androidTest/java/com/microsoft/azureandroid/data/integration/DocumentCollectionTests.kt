@@ -28,7 +28,7 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
     @Test
     fun listCollections() {
 
-        AzureData.instance.getCollections(databaseId) {
+        AzureData.getCollections(databaseId) {
             resourceListResponse = it
         }
 
@@ -45,7 +45,7 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
 
         ensureCollection()
 
-        AzureData.instance.getCollection(resourceId, databaseId) {
+        AzureData.getCollection(resourceId, databaseId) {
             resourceResponse = it
         }
 
@@ -66,7 +66,7 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
             resourceResponse = it
         }
 
-//        AzureData.instance.refresh(coll) {
+//        AzureData.refresh(coll) {
 //            resourceResponse = it
 //        }
 

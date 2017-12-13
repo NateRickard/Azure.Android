@@ -30,14 +30,14 @@ class UserDefinedFunctionsFragment : ResourceListFragment<UserDefinedFunction>()
 
     override fun fetchData(callback: (ResourceListResponse<UserDefinedFunction>) -> Unit) {
 
-        AzureData.instance.getUserDefinedFunctions(collectionId, databaseId) { response ->
+        AzureData.getUserDefinedFunctions(collectionId, databaseId) { response ->
             callback(response)
         }
     }
 
 //    override fun getItem(id: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
 //
-//        AzureData.instance.getStoredProcedure(id, collectionId, databaseId) { response ->
+//        AzureData.getStoredProcedure(id, collectionId, databaseId) { response ->
 //            callback(response)
 //        }
 //    }
@@ -56,14 +56,14 @@ class UserDefinedFunctionsFragment : ResourceListFragment<UserDefinedFunction>()
 //        }
 //        """
 //
-//        AzureData.instance.createUserDefinedFunction(resourceId, storedProcedure, collectionId, databaseId) { response ->
+//        AzureData.createUserDefinedFunction(resourceId, storedProcedure, collectionId, databaseId) { response ->
 //            callback(response)
 //        }
 //    }
 
     override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
 
-        AzureData.instance.deleteUserDefinedFunction(resourceId, collectionId, databaseId) { result ->
+        AzureData.deleteUserDefinedFunction(resourceId, collectionId, databaseId) { result ->
             callback(result)
         }
     }
