@@ -30,6 +30,7 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
     var resourceListResponse: ResourceListResponse<TResource>? = null
     var dataResponse: DataResponse? = null
 
+    var database: Database? = null
     var collection: DocumentCollection? = null
 
     val idWith256Chars = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345"
@@ -77,7 +78,9 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
         assertResponseSuccess(dbResponse)
         assertEquals(databaseId, dbResponse?.resource?.id)
 
-        return dbResponse!!.resource!!
+        database = dbResponse!!.resource!!
+
+        return database!!
     }
 
     fun ensureCollection() : DocumentCollection {

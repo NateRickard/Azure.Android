@@ -2,6 +2,7 @@ package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
 import com.microsoft.azureandroid.data.AzureData
+import com.microsoft.azureandroid.data.delete
 import com.microsoft.azureandroid.data.model.Database
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.refresh
@@ -38,7 +39,7 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
         }
 
         assertResponseSuccess(resourceListResponse)
-        assert(resourceListResponse?.resource?.count!! > 0)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
     }
 
     @Test
@@ -97,6 +98,22 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
         val db = ensureDatabase()
 
         AzureData.deleteDatabase(db) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDatabaseWithExtension() {
+
+        val db = ensureDatabase()
+
+        db.delete {
             dataResponse = it
         }
 

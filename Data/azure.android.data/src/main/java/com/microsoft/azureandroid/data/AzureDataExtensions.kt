@@ -13,20 +13,38 @@ import com.microsoft.azureandroid.data.services.ResourceResponse
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-// Database
+//region Database
 
+//region Database -> Collections
+
+// create
+fun Database.createCollection (collectionId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
+    return AzureData.createCollection(collectionId, this.id, callback)
+}
+
+// get
+fun Database.getCollection(collectionId: String, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
+    return AzureData.getCollection(collectionId, this.id, callback)
+}
+
+// list
 fun Database.getCollections(callback: (ResourceListResponse<DocumentCollection>) -> Unit) {
     return AzureData.getCollections(this.id, callback)
 }
 
+// delete
 fun Database.deleteCollection(collection: DocumentCollection, callback: (DataResponse) -> Unit) {
     return AzureData.deleteCollection(collection, this.id, callback)
 }
 
+// delete
 fun Database.deleteCollection(collectionId: String, callback: (DataResponse) -> Unit) {
     return AzureData.deleteCollection(collectionId, this.id, callback)
 }
 
+//endregion
+
+//endregion
 
 // DocumentCollection
 

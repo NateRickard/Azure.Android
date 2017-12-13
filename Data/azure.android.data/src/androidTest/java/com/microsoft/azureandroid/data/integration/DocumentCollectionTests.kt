@@ -1,11 +1,9 @@
 package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
-import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.delete
+import com.microsoft.azureandroid.data.*
 import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.ResourceType
-import com.microsoft.azureandroid.data.refresh
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Test
@@ -26,7 +24,24 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
     }
 
     @Test
+    fun createCollectionFromDatabase() {
+
+        database?.createCollection(resourceId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+    }
+
+    @Test
     fun listCollections() {
+
+        ensureCollection()
 
         AzureData.getCollections(databaseId) {
             resourceListResponse = it
@@ -37,7 +52,24 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
         }
 
         assertResponseSuccess(resourceListResponse)
-        assert(resourceListResponse?.resource?.count!! > 0)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
+    }
+
+    @Test
+    fun listCollectionsFromDatabase() {
+
+        ensureCollection()
+
+        database?.getCollections {
+            resourceListResponse = it
+        }
+
+        await().until {
+            resourceListResponse != null
+        }
+
+        assertResponseSuccess(resourceListResponse)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
     }
 
     @Test
@@ -46,6 +78,23 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
         ensureCollection()
 
         AzureData.getCollection(resourceId, databaseId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+    }
+
+    @Test
+    fun getCollectionFromDatabase() {
+
+        ensureCollection()
+
+        database?.getCollection(resourceId) {
             resourceResponse = it
         }
 
@@ -84,6 +133,38 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
         val coll = ensureCollection()
 
         coll.delete {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteCollectionByIds() {
+
+        ensureCollection()
+
+        AzureData.deleteCollection(collectionId, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteCollectionFromDatabase() {
+
+        val coll = ensureCollection()
+
+        database?.deleteCollection(coll) {
             dataResponse = it
         }
 
