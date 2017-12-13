@@ -11,8 +11,8 @@ import com.microsoft.azureandroid.data.model.Resource
 class ResourceExtensions {
 
     fun Resource.toJson() : String =
-            JsonHelper.Gson.toJson(this)
+            gson.toJson(this)
 
     fun<T: Resource> Resource.fromJson(json: String) : T =
-            JsonHelper.Gson.fromJson(json, object : TypeToken<T>() {}.type)
+            gson.fromJson(json, object : TypeToken<T>() {}.type)
 }

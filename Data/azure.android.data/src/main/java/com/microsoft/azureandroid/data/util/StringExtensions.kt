@@ -8,7 +8,7 @@ import com.microsoft.azureandroid.data.model.DataError
 */
 
 fun String.toError(): DataError =
-        JsonHelper.Gson.fromJson(this, DataError::class.java)
+        gson.fromJson(this, DataError::class.java)
 
 fun String.isValidResourceId() : Boolean =
         !this.isBlank() && this.matches(RegEx.whitespaceRegex) && this.length <= 255

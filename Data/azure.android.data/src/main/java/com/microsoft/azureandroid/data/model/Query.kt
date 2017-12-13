@@ -21,18 +21,6 @@ class Query(properties: ArrayList<String>? = null) {
 
     private var type: String? = null
 
-//    private enum CodingKeys: String, CodingKey {
-//        case query
-//                case parameters
-//    }
-//
-//    public func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//
-//        try container.encode(query, forKey: .query)
-//            try container.encode(parameters.isEmpty ? [] : [parameters], forKey: .parameters)
-//            }
-
     init {
         selectCalled = true
 
@@ -85,10 +73,6 @@ class Query(properties: ArrayList<String>? = null) {
             return mapOf("query" to query,
                     "parameters" to if (parameters.isEmpty()) arrayOf() else arrayOf(parameters))
         }
-
-    fun printQuery() {
-        print(query)
-    }
 
     fun from(type: String) : Query {
 
@@ -173,6 +157,8 @@ class Query(properties: ArrayList<String>? = null) {
 
         return this
     }
+
+    override fun toString(): String = query
 
     companion object {
 

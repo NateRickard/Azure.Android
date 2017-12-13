@@ -1,7 +1,7 @@
 package com.microsoft.azureandroid.data.model
 
 import com.google.gson.JsonObject
-import com.microsoft.azureandroid.data.util.JsonHelper
+import com.microsoft.azureandroid.data.util.gson
 
 /**
 * Created by Nate Rickard on 11/3/17.
@@ -23,7 +23,7 @@ class ResourceList<T: Resource>(resourceType: ResourceType, json: JsonObject) {
 
             items = it
                     .map {
-                        JsonHelper.Gson.fromJson<T>(it, resourceType.type)
+                        gson.fromJson<T>(it, resourceType.type)
                     }
         }
     }

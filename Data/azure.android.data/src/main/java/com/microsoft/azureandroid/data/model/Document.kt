@@ -16,10 +16,10 @@ open class Document(id: String? = null) : Resource(id) {
     // Gets or sets the time to live in seconds of the document in the Azure Cosmos DB service.
     var timeToLive: Int? = null
 
-    private val data: MutableMap<String, Any?> = mutableMapOf()
+    private val data = DocumentDataMap()
 
     // will be mapped to indexer, i.e. doc[key]
-    operator fun get(key: String): Any? = data[key]
+    operator fun get(key: String) = data[key]
 
     // will be mapped to indexer, i.e. doc[key] = value
     operator fun set(key: String, value: Any?) {

@@ -192,6 +192,22 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.Document, callback)
     }
 
+    // query
+    fun queryDocuments (collectionId: String, databaseId: String, query: Query, callback: (ResourceListResponse<Document>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(databaseId, collectionId)
+
+        return query(query, resourceUri, ResourceType.Document, callback)
+    }
+
+    // query
+    fun queryDocuments (collection: DocumentCollection, query: Query, callback: (ResourceListResponse<Document>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(collection.selfLink!!)
+
+        return query(query, resourceUri, ResourceType.Document, callback)
+    }
+
     //endregion
 
     //region Attachments
@@ -807,7 +823,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T : Resource> createOrReplace(body: T, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         try {
-            val jsonBody = JsonHelper.Gson.toJson(body)
+            val jsonBody = gson.toJson(body)
 
             val request = createRequest(if (replacing) ApiValues.HttpMethod.Put else ApiValues.HttpMethod.Post, resourceUri, resourceType, additionalHeaders, jsonBody)
 
@@ -822,7 +838,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T : Resource> createOrReplace(body: Map<String, String>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         try {
-            val jsonBody = JsonHelper.Gson.toJson(body)
+            val jsonBody = gson.toJson(body)
 
             val request = createRequest(if (replacing) ApiValues.HttpMethod.Put else ApiValues.HttpMethod.Post, resourceUri, resourceType, additionalHeaders, jsonBody)
 
@@ -847,13 +863,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     // query
     private fun <T : Resource> query(query: Query, resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
 
-        logIfVerbose(query.printQuery())
+        logIfVerbose(query)
 
         try {
-//            var type = object : TypeToken<T>() {}.type
-
-//            val resourceType = ResourceType.fromType<T>(T)
-            val json = JsonHelper.Gson.toJson(query)
+            val json = gson.toJson(query.dictionary)
 
             val request = createRequest(ApiValues.HttpMethod.Post, resourceUri, resourceType, forQuery = true, jsonBody = json)
 
@@ -869,7 +882,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         try {
 //            val resourceType = ResourceType.fromType<T>() ?: throw Exception("Unable to determine resource type requested for query")
-            val json = if (body != null) JsonHelper.Gson.toJson(body) else JsonHelper.Gson.toJson(arrayOf<String>())
+            val json = if (body != null) gson.toJson(body) else gson.toJson(arrayOf<String>())
 
             val request = createRequest(ApiValues.HttpMethod.Post, resourceUri, resourceType, forQuery = true, jsonBody = json)
 
@@ -910,9 +923,25 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         try {
             val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
 
+            // For Post on query operations, it must be application/query+json
+            // For attachments, must be set to the Mime type of the attachment.
+            // For all other tasks, must be application/json.
+            var mediaType = jsonMediaType
+
+            if (forQuery) {
+                builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
+                builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QueryJson.value)
+                mediaType = MediaType.parse(ApiValues.MediaTypes.QueryJson.value)
+            }
+            else if ((method == ApiValues.HttpMethod.Post || method == ApiValues.HttpMethod.Put) && resourceType != ResourceType.Attachment) {
+
+                builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.Json.value)
+
+            }
+
             when (method) {
-                ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(jsonMediaType, jsonBody))
-                ApiValues.HttpMethod.Put -> builder.put(RequestBody.create(jsonMediaType, jsonBody))
+                ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(mediaType, jsonBody))
+                ApiValues.HttpMethod.Put -> builder.put(RequestBody.create(mediaType, jsonBody))
                 else -> throw Exception("Get, Head, and Delete requests must use an overload that without a content body")
             }
 
@@ -957,8 +986,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         builder.addHeader(ApiValues.HttpRequestHeader.Authorization.value, token.authString)
 
         if (forQuery) {
-            builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
-            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QueryJson.value)
+//            builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
+//            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QueryJson.value)
         } else if ((method == ApiValues.HttpMethod.Post || method == ApiValues.HttpMethod.Put) && resourceType != ResourceType.Attachment) {
             // For Post on query operations, it must be application/query+json
             // For attachments, must be set to the Mime type of the attachment.
@@ -1079,7 +1108,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             //check http return code
             if (response.isSuccessful) {
-                val returnedResource = JsonHelper.Gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
+                val returnedResource = gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
 
                 return ResourceResponse(request, response, json, Result(returnedResource))
             } else if (response.code() == ApiValues.StatusCode.NotModified.code) {
