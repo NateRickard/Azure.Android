@@ -160,11 +160,7 @@ class ResourceUri(databaseName: String) {
 
     private fun getItemLink(resourceType: ResourceType, baseLink: String, resourceId: String? = null) : String {
 
-        var fragment = ""
-
-        resourceId?.let {
-            fragment = "$resourceId"
-        }
+        val fragment = resourceId ?: ""
 
         val builder = Uri.Builder()
                 .appendEncodedPath(baseLink.trim('/'))
@@ -188,9 +184,9 @@ class ResourceUri(databaseName: String) {
         val url = HttpUrl.Builder()
                 .scheme("https")
                 .host(host)
-                .addPathSegment(itemLink)
+                .addPathSegment(itemLink.trimStart('/'))
                 .build()
 
-        return UrlLink(url, resourceId?.toLowerCase() ?: baseLink.split("/").last().toLowerCase())
+        return UrlLink(url, resourceId?.toLowerCase() ?: baseLink.trimEnd('/').split("/").last().toLowerCase())
     }
 }

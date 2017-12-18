@@ -6,6 +6,7 @@ import com.microsoft.azureandroid.data.constants.HmacAlgorithm
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.model.Token
+import com.microsoft.azureandroid.data.util.ContextProvider
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.security.InvalidKeyException
@@ -39,7 +40,9 @@ class TokenProvider(private var key: String, private var keyType: TokenType = To
                 resourceLink,
                 dateString.toLowerCase(Locale.ROOT))
 
-        print(payload)
+        if (ContextProvider.verboseLogging) {
+            print(payload)
+        }
 
         val signature = hmac(payload)
 
