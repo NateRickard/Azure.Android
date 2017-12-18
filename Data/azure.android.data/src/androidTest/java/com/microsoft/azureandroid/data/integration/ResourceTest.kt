@@ -39,11 +39,11 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
     @Before
     open fun setUp() {
 
-        if (!AzureData.isSetup) {
+        if (!AzureData.isConfigured) {
             // Context of the app under test.
             val appContext = InstrumentationRegistry.getTargetContext()
 
-            AzureData.init(appContext, "mobile", "gioHmSqPP7J7FE5XlqRgBjmqykWLbm0KnP2FCAOl7gu17ZWlvMTRxOvsUYWQ3YUN2Yvmd077O0hyFyBOIftjOg==", TokenType.MASTER, true)
+            AzureData.configure(appContext, "mobile", "gioHmSqPP7J7FE5XlqRgBjmqykWLbm0KnP2FCAOl7gu17ZWlvMTRxOvsUYWQ3YUN2Yvmd077O0hyFyBOIftjOg==", TokenType.MASTER, true)
         }
 
         deleteResources()

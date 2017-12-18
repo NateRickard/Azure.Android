@@ -9,7 +9,6 @@ import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroid.data.util.ContextProvider
 import okhttp3.HttpUrl
-import java.net.URI
 import java.net.URL
 
 /**
@@ -24,17 +23,17 @@ class AzureData {
         lateinit var baseUri: ResourceUri
         lateinit var documentClient: DocumentClient
 
-        fun init(context: Context, name: String, key: String, keyType: TokenType = TokenType.MASTER, verboseLogging: Boolean = false) {
+        fun configure(context: Context, name: String, key: String, keyType: TokenType = TokenType.MASTER, verboseLogging: Boolean = false) {
 
             ContextProvider.init(context.applicationContext, verboseLogging)
 
             baseUri = ResourceUri(name)
             documentClient = DocumentClient(baseUri, key, keyType)
 
-            isSetup = true
+            isConfigured = true
         }
 
-        var isSetup: Boolean = false
+        var isConfigured: Boolean = false
             private set
 
         //region Databases

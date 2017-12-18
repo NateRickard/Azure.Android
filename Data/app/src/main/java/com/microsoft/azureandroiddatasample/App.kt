@@ -10,7 +10,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        AzureData.init(applicationContext, "mobile", "GET A KEY", TokenType.MASTER, true)
+        AzureData.configure(applicationContext, "mobile", "gioHmSqPP7J7FE5XlqRgBjmqykWLbm0KnP2FCAOl7gu17ZWlvMTRxOvsUYWQ3YUN2Yvmd077O0hyFyBOIftjOg==", TokenType.MASTER, true)
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
