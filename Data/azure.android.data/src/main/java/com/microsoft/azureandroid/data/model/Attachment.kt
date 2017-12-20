@@ -16,4 +16,10 @@ class Attachment(id: String, contentType: String, url: String) : Resource(id) {
      * Gets or sets the media link associated with the attachment content in the Azure Cosmos DB service.
      */
     var mediaLink: String? = url
+
+    companion object {
+
+        const val resourceName = "Attachment"
+        const val listName = "Attachments"
+    }
 }

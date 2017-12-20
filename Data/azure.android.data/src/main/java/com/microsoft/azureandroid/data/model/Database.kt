@@ -17,6 +17,9 @@ class Database : Resource() {
 
     companion object {
 
+        const val resourceName = "Datebase"
+        const val listName = "Databases"
+
         const val collectionsLinkKey    = "_colls"
         const val usersLinkKey          = "_users"
     }

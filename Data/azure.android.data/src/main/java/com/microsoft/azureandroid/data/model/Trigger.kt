@@ -53,4 +53,10 @@ class Trigger(id: String? = null) : Resource(id) {
         Pre,
         Post
     }
+
+    companion object {
+
+        const val resourceName = "Trigger"
+        const val listName = "Triggers"
+    }
 }

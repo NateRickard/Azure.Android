@@ -76,6 +76,9 @@ class DocumentCollection : Resource() {
 
     companion object {
 
+        const val resourceName = "DocumentCollection"
+        const val listName = "DocumentCollections"
+
         const val conflictsLinkKey                = "_conflicts"
         const val documentsLinkKey                = "_docs"
         const val storedProceduresLinkKey         = "_sprocs"

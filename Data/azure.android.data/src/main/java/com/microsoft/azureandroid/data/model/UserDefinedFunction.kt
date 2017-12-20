@@ -26,4 +26,10 @@ class UserDefinedFunction : Resource() {
      *    `"function (input) { return input.toLowerCase(); }"`
      */
     var body: String? = null
+
+    companion object {
+
+        const val resourceName = "UserDefinedFunction"
+        const val listName = "UserDefinedFunctions"
+    }
 }

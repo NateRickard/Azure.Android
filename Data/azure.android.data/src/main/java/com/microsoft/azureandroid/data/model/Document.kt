@@ -38,6 +38,9 @@ open class Document(id: String? = null) : Resource(id) {
 
     companion object {
 
+        const val resourceName = "Document"
+        const val listName = "Documents"
+
         object Keys {
 
             const val attachmentsLinkKey = "_attachments"

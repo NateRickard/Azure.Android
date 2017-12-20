@@ -23,4 +23,10 @@ class StoredProcedure : Resource() {
     ///   `"function () { getContext().getResponse().setBody('Hello World!'); }`
     */
     var body: String? = null
+
+    companion object {
+
+        const val resourceName = "StoredProcedure"
+        const val listName = "StoredProcedures"
+    }
 }
