@@ -147,9 +147,10 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
     fun assertResponseSuccess(response: ResourceListResponse<*>?) {
 
         assertNotNull(response)
-        assertNotNull(response!!.resource)
-        assertTrue(response.isSuccessful)
+        assertTrue(response!!.isSuccessful)
         assertFalse(response.isErrored)
+        assertNotNull(response.resource)
+        assertTrue(response.resource?.isPopuated!!)
     }
 
     fun assertResponseSuccess(response: DataResponse?) {
