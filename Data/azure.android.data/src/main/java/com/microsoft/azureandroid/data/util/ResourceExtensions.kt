@@ -2,6 +2,7 @@ package com.microsoft.azureandroid.data.util
 
 import com.google.gson.reflect.TypeToken
 import com.microsoft.azureandroid.data.model.Resource
+import com.microsoft.azureandroid.data.util.json.gson
 
 /**
  * Created by Nate Rickard on 11/17/17.

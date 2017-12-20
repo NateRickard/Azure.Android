@@ -1,6 +1,7 @@
 package com.microsoft.azureandroid.data.util
 
 import com.microsoft.azureandroid.data.model.DataError
+import com.microsoft.azureandroid.data.util.json.gson
 
 /**
 * Created by Nate Rickard on 11/11/17.

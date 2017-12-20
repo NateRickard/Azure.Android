@@ -1,7 +1,7 @@
 package com.microsoft.azureandroid.data.model
 
 import com.google.gson.JsonObject
-import com.microsoft.azureandroid.data.util.gson
+import com.microsoft.azureandroid.data.util.json.gson
 
 /**
 * Created by Nate Rickard on 11/3/17.
