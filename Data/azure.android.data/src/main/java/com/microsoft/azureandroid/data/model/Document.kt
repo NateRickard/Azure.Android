@@ -10,13 +10,14 @@ import com.google.gson.annotations.SerializedName
 open class Document(id: String? = null) : Resource(id) {
 
     // Gets the self-link corresponding to attachments of the document from the Azure Cosmos DB service.
-    @SerializedName(attachmentsLinkKey)
+    @SerializedName(Keys.attachmentsLinkKey)
     var attachmentsLink: String? = null
 
     // Gets or sets the time to live in seconds of the document in the Azure Cosmos DB service.
     var timeToLive: Int? = null
 
-    private val data = DocumentDataMap()
+    @Transient
+    internal var data = DocumentDataMap()
 
     // will be mapped to indexer, i.e. doc[key]
     operator fun get(key: String) = data[key]
@@ -28,8 +29,8 @@ open class Document(id: String? = null) : Resource(id) {
             throw Exception("Error: Indexing operation cannot be used on a child type of Document")
         }
 
-        if (sysKeys.contains(key) || key == attachmentsLinkKey) {
-            throw Exception("Error: Cannot use [key] = value syntax to set the following system generated properties: ${sysKeys.joinToString()}")
+        if (Keys.list.contains(key)) {
+            throw Exception("Error: Cannot use [key] = value syntax to set the following system generated properties: ${Keys.list.joinToString()}")
         }
 
         data[key] = value
@@ -37,6 +38,15 @@ open class Document(id: String? = null) : Resource(id) {
 
     companion object {
 
-        const val attachmentsLinkKey   = "_attachments"
+        object Keys {
+
+            const val attachmentsLinkKey = "_attachments"
+
+            val list = mutableListOf(attachmentsLinkKey)
+
+            init {
+                list.addAll(Resource.Companion.Keys.list)
+            }
+        }
     }
 }

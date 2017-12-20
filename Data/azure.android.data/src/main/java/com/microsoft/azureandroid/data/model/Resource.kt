@@ -22,35 +22,38 @@ abstract class Resource(id: String? = null) {
     /**
      * Gets or sets the Resource Id associated with the resource in the Azure Cosmos DB service.
      */
-    @SerializedName(resourceIdKey)
+    @SerializedName(Keys.resourceIdKey)
     var resourceId: String = ""
 
     /**
      * Gets the self-link associated with the resource from the Azure Cosmos DB service.
      */
-    @SerializedName(selfLinkKey)
+    @SerializedName(Keys.selfLinkKey)
     var selfLink: String? = null
 
     /**
      * Gets the entity tag associated with the resource from the Azure Cosmos DB service.
      */
-    @SerializedName(etagKey)
+    @SerializedName(Keys.etagKey)
     var etag: String? = null
 
     /**
      * Gets the last modified timestamp associated with the resource from the Azure Cosmos DB service.
      */
-    @SerializedName(timestampKey)
-    var timestamp: Date? = null
+    @SerializedName(Keys.timestampKey)
+    var timestamp: Timestamp? = null
 
     companion object {
 
-        private const val idKey =   "id"
-        const val resourceIdKey =   "_rid"
-        const val selfLinkKey =     "_self"
-        const val etagKey =         "_etag"
-        const val timestampKey =    "_ts"
+        object Keys {
 
-        val sysKeys = mutableListOf(idKey, resourceIdKey, selfLinkKey, etagKey, timestampKey)
+            const val idKey =           "id"
+            const val resourceIdKey =   "_rid"
+            const val selfLinkKey =     "_self"
+            const val etagKey =         "_etag"
+            const val timestampKey =    "_ts"
+
+            val list = listOf(idKey, resourceIdKey, selfLinkKey, etagKey, timestampKey)
+        }
     }
 }

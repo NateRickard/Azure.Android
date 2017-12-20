@@ -2,47 +2,36 @@ package com.microsoft.azureandroid.data.util
 
 import com.google.gson.*
 import com.google.gson.JsonDeserializer
-import java.util.*
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParseException
 import com.google.gson.JsonDeserializationContext
+import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroid.data.model.DocumentDataMap
 import java.lang.reflect.Type
-import java.text.NumberFormat
-import java.text.ParsePosition
+import com.microsoft.azureandroid.data.model.Timestamp
 
 /**
 * Created by Nate Rickard on 11/10/17.
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-        val gson: Gson =
+val gson: Gson =
 
-                GsonBuilder()
+        GsonBuilder()
 
-                        .disableHtmlEscaping()
+                .disableHtmlEscaping()
 
-                        .checkVerboseMode()
+                .checkVerboseMode()
 
-                        .registerTypeAdapter(Date::class.java, JsonSerializer<Date> { src, _, _ ->
+                .registerTypeAdapter(Timestamp::class.java, TimestampAdapter())
 
-                            JsonPrimitive(src.time)
-                        })
+//                .registerTypeHierarchyAdapter()
 
-                        .registerTypeAdapter(Date::class.java, JsonDeserializer<Date> { json, _, _ ->
+                .registerTypeAdapter(Document::class.java, DocumentAdapter())
 
-                            if (json.asJsonPrimitive.isNumber) {
-                                Date(json.asLong * 1000) //convert ticks since 1970 to Date
-                            } else {
-                                null
-                            }
-                        })
+//                .registerTypeAdapterFactory(DocumentTypeAdapterFactory())
 
-//                        .registerTypeAdapter(DocumentDataMap::class.java, MapDeserializer())
-
-                        .create()
+                .create()
 
 
 fun GsonBuilder.checkVerboseMode() : GsonBuilder {
@@ -54,60 +43,171 @@ fun GsonBuilder.checkVerboseMode() : GsonBuilder {
     return this
 }
 
-// adapted from https://stackoverflow.com/questions/17090589/gson-deserialize-integers-as-integers-and-not-as-doubles
-private class MapDeserializer : JsonDeserializer<DocumentDataMap> {
-
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): DocumentDataMap {
-
-//        val map = mutableMapOf<String, Any?>()
-        val map = DocumentDataMap()
-        val jo = json.asJsonObject
-
-        for ((key, v) in jo.entrySet()) {
-
-            if (v.isJsonArray) {
-
-                map.put(key, gson.fromJson(v, List::class.java))
-
-            } else if (v.isJsonPrimitive) {
-
-                val prim = v.asJsonPrimitive
-
-//                map.put(key, prim)
-
-                if (prim.isNumber) {
-
-                    map.put(key, prim.asNumber)
-
-//                    var num: Number? = null
-//                    val position = ParsePosition(0)
-//                    val vString = v.asString
+//private class DocumentAdapter : TypeAdapter<Document>() {
 //
-//                    try {
-//                        num = NumberFormat.getInstance(Locale.ROOT).parse(vString, position)
-//                    } catch (e: Exception) {
-//                    }
+//    override fun write(out: JsonWriter, value: Document?) {
 //
-//                    //Check if the position corresponds to the length of the string
-//                    if (position.errorIndex < 0 && vString.length == position.index) {
+//        out.beginObject()
 //
-//                        if (num != null) {
-//                            map.put(key, num)
-//                            continue
-//                        }
-//                    }
-                } else if (prim.isString) {
-                    map.put(key, prim.asString)
-                } else if (prim.isBoolean) {
-                    map.put(key, prim.asBoolean)
-                } else {
-                    map.put(key, null)
+//        value?.let {
+//
+//            //system/Document values
+//            out.name(Resource.idKey).value(value.id)
+//            out.name(Resource.resourceIdKey).value(value.resourceId)
+//            out.name(Resource.selfLinkKey).value(value.selfLink)
+//            out.name(Resource.etagKey).value(value.etag)
+//            out.name(Resource.timestampKey).value(value.timestamp.time)
+//
+//            out.name(Document.attachmentsLinkKey).value(value.attachmentsLink)
+//
+//            //user-defined values
+//            for (item in value.data) {
+//
+//
+//            }
+//        }
+//
+//        out.endObject()
+//    }
+//
+//    override fun read(`in`: JsonReader?): Document {
+//
+//        val doc = Document()
+//
+//        return doc
+//    }
+//}
+
+//class DocumentTypeAdapterFactory : TypeAdapterFactory {
+//
+//    override fun <T : Any?> create(gson: Gson, type: TypeToken<T>?): TypeAdapter<T> {
+//
+//        val delegate = gson.getDelegateAdapter(this, type)
+//
+//        return DocumentTypeAdapter()
+//    }
+//
+//    private class DocumentTypeAdapter<T>() : TypeAdapter<T>() {
+//
+//        override fun write(out: JsonWriter?, value: Document?) {
+//
+//
+//        }
+//
+//        override fun read(`in`: JsonReader?): Document {
+//
+//
+//        }
+//    }
+//}
+
+private class DocumentAdapter: JsonSerializer<Document>, JsonDeserializer<Document> {
+
+    override fun serialize(src: Document?, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
+
+        //serilize initial/system fields
+//        val jsonDoc = context.serialize(src).asJsonObject
+        val jsonDoc = localGson.toJsonTree(src).asJsonObject
+
+        src?.let {
+
+            val docData = context.serialize(src.data).asJsonObject
+
+            //user-defined values
+            for (item in docData.entrySet()) {
+
+                item.value?.let {
+
+                    jsonDoc.add(item.key, item.value)
                 }
-            } else if (v.isJsonObject) {
-                map.put(key, gson.fromJson(v, Map::class.java))
             }
         }
 
-        return map
+//        val jsonObj = JsonObject()
+//
+//        src?.let {
+//
+//            //system/Document values
+//            jsonObj.addProperty(Resource.idKey, src.id)
+//            jsonObj.addProperty(Resource.resourceIdKey, src.resourceId)
+//            jsonObj.addProperty(Resource.selfLinkKey, src.selfLink)
+//            jsonObj.addProperty(Resource.etagKey, src.etag)
+//            jsonObj.addProperty(Resource.timestampKey, src.timestamp?.time)
+//
+//            jsonObj.addProperty(Document.attachmentsLinkKey, src.attachmentsLink)
+//
+//            val docData = context.serialize(src.data).asJsonObject
+//
+//            //user-defined values
+//            for (item in docData.entrySet()) {
+//
+//                item.value?.let {
+//
+////                    val jsonMember = gson.toJsonTree(item.value)
+//                    jsonObj.add(item.key, item.value)
+//                }
+//            }
+//        }
+
+        return jsonDoc
+    }
+
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Document? {
+
+        val jsonObj = json.asJsonObject
+
+        try {
+
+//        val doc = context.deserialize<Document>(jsonObj, typeOfT)
+            val doc = localGson.fromJson<Document>(jsonObj, typeOfT)
+
+            //remove system keys
+            Document.Companion.Keys.list.forEach {
+                jsonObj.remove(it)
+            }
+
+            doc.data = context.deserialize<DocumentDataMap>(jsonObj, DocumentDataMap::class.java)
+
+            return doc
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    companion object {
+
+        val localGson: Gson = GsonBuilder()
+
+                .disableHtmlEscaping()
+
+                .checkVerboseMode()
+
+                .registerTypeAdapter(Timestamp::class.java, TimestampAdapter())
+
+                .create()
+    }
+}
+
+private class TimestampAdapter: JsonSerializer<Timestamp>, JsonDeserializer<Timestamp> {
+
+    override fun serialize(src: Timestamp?, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
+
+        return if (src != null) {
+            JsonPrimitive(src.time)
+        }
+        else {
+            JsonNull()
+        }
+    }
+
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Timestamp? {
+
+        return if (json.asJsonPrimitive.isNumber) {
+            Timestamp(json.asLong * 1000) //convert ticks since 1970 to Date
+        } else {
+            null
+        }
     }
 }
