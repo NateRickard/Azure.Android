@@ -179,7 +179,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
             if (response.isSuccessful) {
 
-                val users = response.resource!!.items
+                val users = response.resource?.items!!
                 val userNames = users.map {
                     it.id
                 }

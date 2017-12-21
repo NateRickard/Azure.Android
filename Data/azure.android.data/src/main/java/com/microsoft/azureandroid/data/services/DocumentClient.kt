@@ -5,8 +5,9 @@ import com.microsoft.azureandroid.data.constants.ApiValues
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
-import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 import com.microsoft.azureandroid.data.util.*
+import com.microsoft.azureandroid.data.util.json.gson
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
@@ -937,19 +938,22 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             var mediaType = jsonMediaType
 
             if (forQuery) {
-                builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
+                builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "True")
                 builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QueryJson.value)
                 mediaType = MediaType.parse(ApiValues.MediaTypes.QueryJson.value)
             }
             else if ((method == ApiValues.HttpMethod.Post || method == ApiValues.HttpMethod.Put) && resourceType != ResourceType.Attachment) {
 
                 builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.Json.value)
-
             }
 
+            // we convert the json to bytes here rather than allowing OkHttp, as they will tack on
+            //  a charset string that does not work well with certain operations (Query)
+            val body = jsonBody.toByteArray(Charsets.UTF_8)
+
             when (method) {
-                ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(mediaType, jsonBody))
-                ApiValues.HttpMethod.Put -> builder.put(RequestBody.create(mediaType, jsonBody))
+                ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(mediaType, body))
+                ApiValues.HttpMethod.Put -> builder.put(RequestBody.create(mediaType, body))
                 else -> throw Exception("Get, Head, and Delete requests must use an overload that without a content body")
             }
 
@@ -992,16 +996,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         builder.addHeader(ApiValues.HttpRequestHeader.XMSDate.value, token.date)
         builder.addHeader(ApiValues.HttpRequestHeader.Authorization.value, token.authString)
-
-        if (forQuery) {
-//            builder.addHeader(ApiValues.HttpRequestHeader.XMSDocumentDBIsQuery.value, "true")
-//            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.QueryJson.value)
-        } else if ((method == ApiValues.HttpMethod.Post || method == ApiValues.HttpMethod.Put) && resourceType != ResourceType.Attachment) {
-            // For Post on query operations, it must be application/query+json
-            // For attachments, must be set to the Mime type of the attachment.
-            // For all other tasks, must be application/json.
-            builder.addHeader(ApiValues.HttpRequestHeader.ContentType.value, ApiValues.MediaTypes.Json.value)
-        }
 
         //if we have additional headers, let's add them in here
         additionalHeaders?.let {
@@ -1114,7 +1108,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             logIfVerbose(json)
 
-            //check http return code
+            //check http return code/success
             if (response.isSuccessful) {
                 val returnedResource = gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
 
@@ -1140,12 +1134,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             if (response.isSuccessful) {
 
-                val jsonParser = JsonParser()
-                val jsonObject = jsonParser.parse(json).asJsonObject
-
-                //                            var resourceList = Gson().fromJson(json, ResourceList::class.java)
-
-                val resourceList = ResourceList<T>(resourceType, jsonObject)
+                //TODO: see if there's any benefit to caching these type tokens performance wise (or for any other reason)
+//                val listType = object : TypeToken<ResourceList<T>>() {}.type
+                val listType = TypeToken.getParameterized(ResourceList::class.java, resourceType.type).type
+                val resourceList = gson.fromJson<ResourceList<T>>(json, listType) ?: return ResourceListResponse(json.toError())
 
                 if (!resourceList.isPopuated) {
                     return ResourceListResponse(json.toError())

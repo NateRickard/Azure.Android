@@ -10,8 +10,7 @@ import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.refresh
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import org.awaitility.Awaitility.await
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -114,7 +113,7 @@ class DocumentTests : ResourceTest<Document>(ResourceType.Document, true, true) 
         }
 
         assertResponseSuccess(resourceListResponse)
-        assert(resourceListResponse?.resource?.count!! > 0)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
     }
 
     @Test
@@ -133,12 +132,17 @@ class DocumentTests : ResourceTest<Document>(ResourceType.Document, true, true) 
             resourceListResponse = it
         }
 
-        await().forever().until {
+        await().until {
             resourceListResponse != null
         }
 
         assertResponseSuccess(resourceListResponse)
-        assert(resourceListResponse?.resource?.count!! > 0)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
+
+        resourceListResponse?.resource?.items?.forEach {
+            assertEquals(customStringValue, it[customStringKey])
+            assertEquals(customNumberValue, (it[customNumberKey] as Double).toInt())
+        }
     }
 
     @Test
