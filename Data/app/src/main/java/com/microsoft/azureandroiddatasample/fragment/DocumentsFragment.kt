@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Document
+import com.microsoft.azureandroid.data.model.User
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
@@ -52,6 +53,8 @@ class DocumentsFragment : ResourceListFragment<Document>() {
                         println(it["testNumber"])
                         println(it["testString"])
                         println(it["testDate"])
+                        println(it["testArray"])
+                        println(it["testObject"])
                     }
                 }
             }
@@ -69,6 +72,8 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         doc["testNumber"] = 1_000_000
         doc["testString"] = "Yeah baby\nRock n Roll"
         doc["testDate"]   = Date()
+        doc["testArray"]  = arrayOf(1, 2, 3, 4)
+        doc["testObject"] = User()
 
         AzureData.createDocument(doc, collectionId, databaseId) { response ->
             callback(response)
