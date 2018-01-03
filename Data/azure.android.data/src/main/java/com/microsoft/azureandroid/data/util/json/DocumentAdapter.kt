@@ -1,97 +1,192 @@
 package com.microsoft.azureandroid.data.util.json
 
 import com.google.gson.*
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.google.gson.stream.JsonWriter
 import com.microsoft.azureandroid.data.model.Document
-import com.microsoft.azureandroid.data.model.DocumentDataMap
+import com.microsoft.azureandroid.data.model.Resource
 import com.microsoft.azureandroid.data.model.Timestamp
-import java.lang.reflect.Type
+import com.microsoft.azureandroid.data.util.RoundtripDateConverter
+import java.text.NumberFormat
+import kotlin.collections.ArrayList
 
 /**
  * Created by Nate Rickard on 12/19/17.
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-internal class DocumentAdapter: JsonSerializer<Document>, JsonDeserializer<Document> {
+internal class DocumentAdapter: TypeAdapter<Document>() {
 
-    override fun serialize(src: Document?, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
+    override fun read(reader: JsonReader): Document? {
 
-        //serilize initial/system fields
-//        val jsonDoc = context.serialize(src).asJsonObject
-        val jsonDoc = localGson.toJsonTree(src).asJsonObject
+        var doc: Document? = null
+        var name: String
+        var value: Any? = null
+        var jToken: JsonToken
 
-        src?.let {
+        reader.beginObject()
 
-            val docData = context.serialize(src.data).asJsonObject
+        while (reader.hasNext()) {
 
-            //user-defined values
-            for (item in docData.entrySet()) {
+            name = reader.nextName()
+            jToken = reader.peek() //figure out what type we're working with
 
-                item.value?.let {
+            if (jToken == JsonToken.NULL) {
+                reader.nextNull() //consume it
+                continue
+            }
 
-                    jsonDoc.add(item.key, item.value)
+            when (name) {
+
+                //we assume here that Id will ALWAYS come first and we can init doc here
+                Resource.Companion.Keys.idKey -> doc = Document(reader.nextString())
+                Resource.Companion.Keys.resourceIdKey -> doc?.resourceId = reader.nextString()
+                Resource.Companion.Keys.etagKey -> doc?.etag = reader.nextString()
+                Resource.Companion.Keys.selfLinkKey -> doc?.selfLink = reader.nextString()
+                Resource.Companion.Keys.timestampKey -> doc?.timestamp = Timestamp(reader.nextLong() * 1000)
+                Document.Companion.Keys.attachmentsLinkKey -> doc?.attachmentsLink = reader.nextString()
+
+                else -> {
+                    //custom/user-defined data
+                    value = readValue(reader, jToken)
+                    //add it to our data map
+                    doc?.data?.set(name, value)
                 }
             }
         }
 
-//        val jsonObj = JsonObject()
-//
-//        src?.let {
-//
-//            //system/Document values
-//            jsonObj.addProperty(Resource.idKey, src.id)
-//            jsonObj.addProperty(Resource.resourceIdKey, src.resourceId)
-//            jsonObj.addProperty(Resource.selfLinkKey, src.selfLink)
-//            jsonObj.addProperty(Resource.etagKey, src.etag)
-//            jsonObj.addProperty(Resource.timestampKey, src.timestamp?.time)
-//
-//            jsonObj.addProperty(Document.attachmentsLinkKey, src.attachmentsLink)
-//
-//            val docData = context.serialize(src.data).asJsonObject
-//
-//            //user-defined values
-//            for (item in docData.entrySet()) {
-//
-//                item.value?.let {
-//
-////                    val jsonMember = gson.toJsonTree(item.value)
-//                    jsonObj.add(item.key, item.value)
-//                }
-//            }
-//        }
+        reader.endObject()
 
-        return jsonDoc
+        return doc
     }
 
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Document? {
+    private fun readValue(reader: JsonReader, jToken: JsonToken) : Any? {
 
-        val jsonObj = json.asJsonObject
+        return when (jToken) {
 
-        try {
+            JsonToken.BEGIN_ARRAY -> readArray(reader)
 
-//        val doc = context.deserialize<Document>(jsonObj, typeOfT)
-            val doc = localGson.fromJson<Document>(jsonObj, typeOfT)
+            JsonToken.BEGIN_OBJECT -> readObject(reader)
 
-            //remove system keys
-            Document.Companion.Keys.list.forEach {
-                jsonObj.remove(it)
+            JsonToken.STRING -> {
+
+                val string = reader.nextString()
+
+                //if this string is exactly the length of a formatted date, let's try to parse it as one
+                if (string.length == RoundtripDateConverter.formattedDateLength) {
+                    try {
+                        return RoundtripDateConverter.toDate(string)
+                    } catch (e: Exception) {
+                        //not a date after all, just happens to be the same length ¯\_(ツ)_/¯
+                    }
+                }
+
+                return string
             }
 
-            doc.data = context.deserialize<DocumentDataMap>(jsonObj, DocumentDataMap::class.java)
+            JsonToken.BOOLEAN -> reader.nextBoolean()
 
-            return doc
-        } catch (e: Exception) {
-            e.printStackTrace()
+            JsonToken.NUMBER -> {
+
+                val string = reader.nextString()
+                NumberFormat.getInstance().parse(string) //TBD: do we need to cache this NumberFormat?
+            }
+
+            JsonToken.NULL -> {
+                //consume it
+                reader.nextNull()
+                null
+            }
+
+            JsonToken.NAME -> throw Exception("Malformed JSON?  Not expecting another name at this position")
+            JsonToken.END_DOCUMENT -> throw Exception("Unexpected END_DOCUMENT JSON...")
+            else -> throw Exception("Unexpected null token or other error")
         }
-
-        return null
     }
 
-    companion object {
+    private fun readArray(reader: JsonReader) : ArrayList<Any?> {
 
-        val localGson: Gson = GsonBuilder()
-                .disableHtmlEscaping()
-                .checkVerboseMode()
-                .registerTypeAdapter(Timestamp::class.java, TimestampAdapter())
-                .create()
+        val array: ArrayList<Any?> = ArrayList()
+
+        reader.beginArray()
+
+        while (reader.hasNext()) {
+
+            val jToken = reader.peek()
+
+            array.add(readValue(reader, jToken))
+        }
+
+        reader.endArray()
+
+        return array
+    }
+
+    private fun readObject(reader: JsonReader) : Map<String, Any?> {
+
+        //impossible to know what type this should deserialize to... we'll just map values
+        val map: MutableMap<String, Any?> = mutableMapOf()
+
+        reader.beginObject()
+
+        while (reader.hasNext()) {
+
+//            reader.skipValue()
+
+            val name = reader.nextName()
+            val value = reader.nextString()
+
+            map[name] = value
+        }
+
+        reader.endObject()
+
+        return map
+    }
+
+    override fun write(out: JsonWriter, value: Document?) {
+
+        out.beginObject()
+
+        value?.let {
+
+            for (key in Resource.Companion.Keys.list) {
+
+                out.name(key)
+
+                when (key) {
+
+                    Resource.Companion.Keys.idKey -> out.value(it.id)
+                    Resource.Companion.Keys.resourceIdKey -> out.value(it.resourceId)
+                    Resource.Companion.Keys.etagKey -> out.value(it.etag)
+                    Resource.Companion.Keys.selfLinkKey -> out.value(it.selfLink)
+                    Resource.Companion.Keys.timestampKey -> out.jsonValue(gson.toJson(it.timestamp))
+                }
+            }
+
+            out.name(Document.Companion.Keys.attachmentsLinkKey).value(it.attachmentsLink)
+
+            for (dataItem in it.data) {
+
+                out.name(dataItem.key)
+
+                when (dataItem.value) {
+
+                    is String -> out.value(dataItem.value as String)
+                    is Double, is Float -> out.value(dataItem.value as Double)
+                    is Long -> out.value(dataItem.value as Long)
+                    is Number -> out.value(dataItem.value as Number)
+                    is Boolean -> out.value(dataItem.value as Boolean)
+                    else -> {
+                        //all other types - serialize them!
+                        val jsonValue = gson.toJson(dataItem.value)
+                        out.jsonValue(jsonValue)
+                    }
+                }
+            }
+        }
+
+        out.endObject()
     }
 }

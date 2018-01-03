@@ -39,6 +39,8 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
     @Before
     open fun setUp() {
 
+        println("********* Begin Test Setup *********")
+
         if (!AzureData.isConfigured) {
             // Context of the app under test.
             val appContext = InstrumentationRegistry.getTargetContext()
@@ -55,12 +57,18 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
         if (ensureCollection) {
             ensureCollection()
         }
+
+        println("********* End Test Setup *********")
     }
 
     @After
     open fun tearDown() {
 
+        println("********* Begin Test Tear Down *********")
+
         deleteResources()
+
+        println("********* End Test Tear Down *********")
     }
 
     fun ensureDatabase() : Database {
