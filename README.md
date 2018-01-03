@@ -3,6 +3,7 @@ _This SDK was originally created as part of **[Azure.Mobile](https://aka.ms/mobi
 1. _Enable developers to create, configure, deploy all necessary backend services fast — ideally under 10 minutes with only a few clicks_
 2. _Provide native iOS and android SDKs with delightful APIs to interact with the services_
 
+---
 
 # Azure.Android [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/NateRickard/Azure.Android/master/LICENSE.md) [![Build status](https://build.appcenter.ms/v0.1/apps/8959ae85-7b36-48ac-b333-10dfd76fb36b/branches/master/badge)](https://appcenter.ms)
 
