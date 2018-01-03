@@ -1,35 +1,30 @@
+_This SDK was originally created as part of **[Azure.Mobile](https://aka.ms/mobile)** — a framework for rapidly creating iOS and android apps with modern, highly-scalable backends on Azure. Azure.Mobile has two simple objectives:_
+
+1. _Enable developers to create, configure, deploy all necessary backend services fast — ideally under 10 minutes with only a few clicks_
+2. _Provide native iOS and android SDKs with delightful APIs to interact with the services_
+
+
 # Azure.Android [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/NateRickard/Azure.Android/master/LICENSE.md) [![Build status](https://build.appcenter.ms/v0.1/apps/8959ae85-7b36-48ac-b333-10dfd76fb36b/branches/master/badge)](https://appcenter.ms)
 
 
-# About
 
-This library aims to provide an elegant API and great developer experience when working with Azure CosmosDB's NoSQL, document-based implementation (previously called DocumentDB).
+# Configure
 
-This should work with any native Android project (Java or Kotlin), although the code and samples below are written in Kotlin.
-
-
-# Setup
-
-Before making calls to AzureData, you'll need to initialize it using the `init` method:
-
-```kotlin
-fun init(context: Context, name: String, key: String, keyType: TokenType = TokenType.MASTER, verboseLogging: Boolean = false)
-```
-
-Call the `AzureData.init` method from your application class or main activity.
-
-Example:
+Before making calls to AzureData, you'll need to call `AzureData.configure` from your application class or main activity.
 
 ```kotlin
 override fun onCreate() {
 	super.onCreate()
 
-	AzureData.init(applicationContext, "mobile", "gioHmSqPP7J7FE5XlqRgBjmqykWLbm0KnP2FCAOl7gu17ZWlvMTRxOvsUYWQ3YUN2Yvmd077O0hyFyBOIftjOg==", TokenType.MASTER)//, true)
-	// uncomment the bool param above to enable verbose logging
+	AzureData.configure(applicationContext, "cosmosDb name", "read-write key", TokenType.MASTER)
 
-	...
+	// uncomment to enable verbose logging
+    // AzureData.verboseLogging = true
+
+    // ...
 }
 ```
+
 
 
 # Usage
@@ -79,21 +74,16 @@ AzureData.getDatabase (id) {
 AzureData.deleteDatabase (id) {
     // successfully deleted == it.isSuccessful
 }
-```
-or, if you have a `Database` instance:
 
-```kotlin
-AzureData.deleteDatabase (db) {
+AzureData.deleteDatabase (database) {
+	// successfully deleted == it.isSuccessful
+}
+
+database.delete {
 	// successfully deleted == it.isSuccessful
 }
 ```
-or, better yet:
 
-```kotlin
-db.delete {
-	// successfully deleted == it.isSuccessful
-}
-```
 
 
 ## Collections
@@ -103,10 +93,7 @@ db.delete {
 AzureData.createCollection (collectionId, databaseId) {
     // collection = it.resource
 }
-```
-or, if you have a `Database` instance:
 
-```kotlin
 database.create (collectionId) {
     // collection = it.resource
 }
@@ -117,10 +104,7 @@ database.create (collectionId) {
 AzureData.getCollections (databaseId) {
     // collections = it.resource?.items
 }
-```
-or, if you have a `Database` instance:
 
-```kotlin
 database.getCollections {
     // collections = it.resource?.items
 }
@@ -131,10 +115,7 @@ database.getCollections {
 AzureData.getCollection (collectionId, databaseId) {
     // collection = it.resource
 }
-```
-or, if you have a `Database` instance:
 
-```kotlin
 database.getCollection (collectionId) {
     // collection = it.resource
 }
@@ -142,38 +123,15 @@ database.getCollection (collectionId) {
 
 #### Delete
 ```kotlin
-AzureData.delete (collection, from: databaseId) { s in
+AzureData.deleteCollection (collection, from: databaseId) { s in
     // s == successfully deleted
 }
 
-database.delete (collection) { s in
+database.deleteCollection (collection) { s in
     // s == successfully deleted
 }
-```
 
-#### Delete
-```kotlin
-AzureData.deleteCollection (id) {
-    // successfully deleted == it.isSuccessful
-}
-```
-or, if you have a `DocumentCollection` instance:
-
-```kotlin
-AzureData.deleteCollection (coll) {
-	// successfully deleted == it.isSuccessful
-}
-```
-or, better yet:
-
-```kotlin
-coll.delete {
-	// successfully deleted == it.isSuccessful
-}
-```
-
-```kotlin
-db.deleteCollection (coll) {
+collection.delete {
 	// successfully deleted == it.isSuccessful
 }
 ```
@@ -186,55 +144,115 @@ db.deleteCollection (coll) {
 
 ## Documents
 
-#### Create
-```kotlin
-val newDocument = Document() //optionally specify an Id here, otherwise it will be generated
-            
-newDocument["aNumber"] = 86
-newDocument["aString"] = "Hello!"
+There are two different classes you can use to interact with documents:
 
-AzureData.createDocument (newDocument, collectionId, databaseId) {
-	// document = it.resource
+### Document
+
+The `Document` type is intended to be inherited by your custom model types. ~~Subclasses must conform to the `Codable` protocal and require minimal boilerplate code for successful serialization/deserialization.~~
+
+Here is an example of a class `CustomDocument` that inherits from `Document`:
+
+```swift
+class CustomDocument: Document {
+    
+    var testDate:   Date?
+    var testNumber: Double?
+    
+    public override init () { super.init() }
+    public override init (_ id: String) { super.init(id) }
+    
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        testDate    = try container.decode(Date.self,   forKey: .testDate)
+        testNumber  = try container.decode(Double.self, forKey: .testNumber)
+    }
+    
+    public override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(testDate,      forKey: .testDate)
+        try container.encode(testNumber,    forKey: .testNumber)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case testDate
+        case testNumber
+    }
 }
 ```
-with a `Collection` instance:
 
+### DictionaryDocument
+
+The `DictionaryDocument` type behaves very much like a `[String:Any]` dictionary while handling all properties required by the database.  This allows you to interact with the document directly using subscript syntax.  `DictionaryDocument` cannot be subclassed.
+
+Here is an example of using `DictionaryDocument` to create a document with the same properties as the `CustomDocument` above:
+
+```swift
+let document = DictionaryDocument()
+
+document["testDate"]   = Date(timeIntervalSince1970: 1510865595)         
+document["testNumber"] = 1_000_000
+```
+
+
+#### Create
 ```kotlin
-AzureData.createDocument (newDocument, collection) {
+val document = CustomDocument()
+
+document.testDate   = Date(timeIntervalSince1970: 1510865595)
+document.testNumber = 1_000_000
+
+// or
+
+val document = DictionaryDocument() //optionally specify an Id here, otherwise it will be generated
+            
+document["testDate"]   = Date(timeIntervalSince1970: 1510865595)         
+document["testNumber"] = 1_000_000
+
+AzureData.createDocument (document, collectionId, databaseId) {
+	// document = it.resource
+}
+
+AzureData.createDocument (document, collection) {
     // document = it.resource
 }
 
-collection.create (document) { r in
+collection.createDocument (document) { r in
     // document = r.resource
 }
 ```
 
 #### List
 ```kotlin
-AzureData.get (documentsAs: ADDocument.self, inCollection: collectionId, inDatabase: databaseId) { r in
+AzureData.get (documentsAs: CustomDocument.self, inCollection: collectionId, inDatabase: databaseId) { r in
     // documents = r.resource?.items
 }
 
-AzureData.get (documentsAs: ADDocument.self, in: collection) { r in
+AzureData.get (documentsAs: CustomDocument.self, in: collection) { r in
     // documents = r.resource?.items
 }
 
-collection.get (documentsAs: ADDocument.self) { r in
+collection.get (documentsAs: CustomDocument.self) { r in
     // documents in r.resource?.list
 }
 ```
 
 #### Get
 ```kotlin
-AzureData.get (documentWithId: id, as: ADDocument.self, inCollection: collectionId, inDatabase: databaseId) { r in
+AzureData.get (documentWithId: id, as: CustomDocument.self, inCollection: collectionId, inDatabase: databaseId) { r in
     // document = r.resource
 }
 
-AzureData.get (documentWithId: id, as: ADDocument.self, in: collection) { r in
+AzureData.get (documentWithId: id, as: CustomDocument.self, in: collection) { r in
     // document = r.resource
 }
 
-collection.get (documentWithResourceId: id: as: ADDocument.self) { r in
+collection.get (documentWithResourceId: id: as: CustomDocument.self) { r in
     // document = r.resource
 }
 ```
