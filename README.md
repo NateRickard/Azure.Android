@@ -14,11 +14,11 @@ Before making calls to AzureData, you'll need to call `AzureData.configure` from
 
 ```kotlin
 override fun onCreate() {
-	super.onCreate()
+    super.onCreate()
 
-	AzureData.configure(applicationContext, "cosmosDb name", "read-write key", TokenType.MASTER)
+    AzureData.configure(applicationContext, "cosmosDb name", "read-write key", TokenType.MASTER)
 
-	// uncomment to enable verbose logging
+    // uncomment to enable verbose logging
     // AzureData.verboseLogging = true
 
     // ...
@@ -76,11 +76,11 @@ AzureData.deleteDatabase (id) {
 }
 
 AzureData.deleteDatabase (database) {
-	// successfully deleted == it.isSuccessful
+    // successfully deleted == it.isSuccessful
 }
 
 database.delete {
-	// successfully deleted == it.isSuccessful
+    // successfully deleted == it.isSuccessful
 }
 ```
 
@@ -132,7 +132,7 @@ database.deleteCollection (collection) { s in
 }
 
 collection.delete {
-	// successfully deleted == it.isSuccessful
+    // successfully deleted == it.isSuccessful
 }
 ```
 
@@ -215,7 +215,7 @@ document["testDate"]   = Date(timeIntervalSince1970: 1510865595)
 document["testNumber"] = 1_000_000
 
 AzureData.createDocument (document, collectionId, databaseId) {
-	// document = it.resource
+    // document = it.resource
 }
 
 AzureData.createDocument (document, collection) {
