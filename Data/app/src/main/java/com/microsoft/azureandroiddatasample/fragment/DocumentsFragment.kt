@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
+import com.microsoft.azureandroid.data.model.DictionaryDocument
 import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroid.data.model.User
 import com.microsoft.azureandroid.data.services.DataResponse
@@ -20,7 +21,7 @@ import java.util.*
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-class DocumentsFragment : ResourceListFragment<Document>() {
+class DocumentsFragment : ResourceListFragment<DictionaryDocument>() {
 
     private lateinit var collectionId: String
 
@@ -34,16 +35,16 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         collectionId = activity.intent.extras.getString("coll_id")
     }
 
-    override fun fetchData(callback: (ResourceListResponse<Document>) -> Unit) {
+    override fun fetchData(callback: (ResourceListResponse<DictionaryDocument>) -> Unit) {
 
-        AzureData.getDocumentsAs<Document>(collectionId, databaseId) { response ->
+        AzureData.getDocumentsAs(collectionId, databaseId, DictionaryDocument::class.java) { response ->
             callback(response)
         }
     }
 
-    override fun getItem(id: String, callback: (ResourceResponse<Document>) -> Unit) {
+    override fun getItem(id: String, callback: (ResourceResponse<DictionaryDocument>) -> Unit) {
 
-        AzureData.getDocument<Document>(id, collectionId, databaseId) { response ->
+        AzureData.getDocument(id, collectionId, databaseId, DictionaryDocument::class.java) { response ->
             callback(response)
 
             //test doc properties came back
@@ -61,12 +62,12 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         }
     }
 
-    override fun createResource(dialogView: View, callback: (ResourceResponse<Document>) -> Unit) {
+    override fun createResource(dialogView: View, callback: (ResourceResponse<DictionaryDocument>) -> Unit) {
 
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         val resourceId = editText.text.toString()
 
-        val doc = Document(resourceId)
+        val doc = DictionaryDocument(resourceId)
 
         //set some test doc properties
         doc["testNumber"] = 1_000_000
@@ -87,7 +88,7 @@ class DocumentsFragment : ResourceListFragment<Document>() {
         }
     }
 
-    override fun onItemClick(view: View, item: Document, position: Int) {
+    override fun onItemClick(view: View, item: DictionaryDocument, position: Int) {
 
         super.onItemClick(view, item, position)
 
