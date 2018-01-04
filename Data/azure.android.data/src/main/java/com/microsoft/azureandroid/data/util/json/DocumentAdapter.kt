@@ -4,6 +4,7 @@ import com.google.gson.*
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import com.microsoft.azureandroid.data.model.DictionaryDocument
 import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroid.data.model.Resource
 import com.microsoft.azureandroid.data.model.Timestamp
@@ -16,11 +17,11 @@ import kotlin.collections.ArrayList
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-internal class DocumentAdapter: TypeAdapter<Document>() {
+internal class DocumentAdapter: TypeAdapter<DictionaryDocument>() {
 
-    override fun read(reader: JsonReader): Document? {
+    override fun read(reader: JsonReader): DictionaryDocument? {
 
-        var doc: Document? = null
+        var doc: DictionaryDocument? = null
         var name: String
         var value: Any? = null
         var jToken: JsonToken
@@ -40,7 +41,7 @@ internal class DocumentAdapter: TypeAdapter<Document>() {
             when (name) {
 
                 //we assume here that Id will ALWAYS come first and we can init doc here
-                Resource.Companion.Keys.idKey -> doc = Document(reader.nextString())
+                Resource.Companion.Keys.idKey -> doc = DictionaryDocument(reader.nextString())
                 Resource.Companion.Keys.resourceIdKey -> doc?.resourceId = reader.nextString()
                 Resource.Companion.Keys.etagKey -> doc?.etag = reader.nextString()
                 Resource.Companion.Keys.selfLinkKey -> doc?.selfLink = reader.nextString()
@@ -79,6 +80,7 @@ internal class DocumentAdapter: TypeAdapter<Document>() {
                         return RoundtripDateConverter.toDate(string)
                     } catch (e: Exception) {
                         //not a date after all, just happens to be the same length ¯\_(ツ)_/¯
+                        // TODO: maybe check this with a regex or do something else
                     }
                 }
 
@@ -145,7 +147,7 @@ internal class DocumentAdapter: TypeAdapter<Document>() {
         return map
     }
 
-    override fun write(out: JsonWriter, value: Document?) {
+    override fun write(out: JsonWriter, value: DictionaryDocument?) {
 
         out.beginObject()
 

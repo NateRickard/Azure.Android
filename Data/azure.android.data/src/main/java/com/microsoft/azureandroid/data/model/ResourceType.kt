@@ -39,7 +39,7 @@ enum class ResourceType(val path: String, fullname: String, val type: Type, val 
         fun<T: Resource> fromType(clazz: Class<T>) : ResourceType {
 
             //is this a Document?
-            if (Document::class.java.isAssignableFrom(clazz)) {
+            if (Doc::class.java.isAssignableFrom(clazz)) {
                 return Document
             }
 

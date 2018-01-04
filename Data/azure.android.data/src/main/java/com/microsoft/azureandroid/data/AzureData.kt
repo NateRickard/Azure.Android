@@ -95,16 +95,16 @@ class AzureData {
                 documentClient.createDocument(document, collection, callback)
 
         // list
-        fun<T: Document> getDocumentsAs ( collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) =
-                documentClient.getDocumentsAs(collectionId, databaseId, callback)
+        fun<T: Document> getDocumentsAs (collectionId: String, databaseId: String, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) =
+                documentClient.getDocumentsAs(collectionId, databaseId, documentClass, callback)
 
         // list
-        fun<T: Document> getDocumentsAs (collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) =
-                documentClient.getDocumentsAs(collection, callback)
+        fun<T: Document> getDocumentsAs (collection: DocumentCollection, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) =
+                documentClient.getDocumentsAs(collection, documentClass, callback)
 
         // get
-        fun<T: Document> getDocument (documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
-                documentClient.getDocument(documentId, collectionId, databaseId, callback)
+        fun<T: Document> getDocument (documentId: String, collectionId: String, databaseId: String, documentClass: Class<T>, callback: (ResourceResponse<T>) -> Unit) =
+                documentClient.getDocument(documentId, collectionId, databaseId, documentClass, callback)
 
         // delete
         fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
@@ -115,12 +115,12 @@ class AzureData {
                 documentClient.deleteDocument(document.id, collectionId, databaseId, callback)
 
         // query
-        fun queryDocuments (collectionId: String, databaseId: String, query: Query, callback: (ResourceListResponse<Document>) -> Unit) =
-                documentClient.queryDocuments(collectionId, databaseId, query, callback)
+        fun<T: Document> queryDocuments (collectionId: String, databaseId: String, query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) =
+                documentClient.queryDocuments(collectionId, databaseId, query, documentClass, callback)
 
         // query
-        fun queryDocuments (collection: DocumentCollection, query: Query, callback: (ResourceListResponse<Document>) -> Unit) =
-                documentClient.queryDocuments(collection, query, callback)
+        fun<T: Document> queryDocuments (collection: DocumentCollection, query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) =
+                documentClient.queryDocuments(collection, query, documentClass, callback)
 
         //endregion
 

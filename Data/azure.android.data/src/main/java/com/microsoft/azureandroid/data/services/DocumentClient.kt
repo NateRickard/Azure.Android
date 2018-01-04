@@ -8,9 +8,6 @@ import com.microsoft.azureandroid.data.model.*
 import com.google.gson.reflect.TypeToken
 import com.microsoft.azureandroid.data.util.*
 import com.microsoft.azureandroid.data.util.json.gson
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
 import okhttp3.*
 import java.io.IOException
 
@@ -170,27 +167,27 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // list
-    fun <T : Document> getDocumentsAs(collectionId: String, databaseId: String, callback: (ResourceListResponse<T>) -> Unit) {
+    fun <T : Document> getDocumentsAs(collectionId: String, databaseId: String, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
 
-        return resources(resourceUri, ResourceType.Document, callback)
+        return resources(resourceUri, ResourceType.Document, callback, documentClass)
     }
 
     // list
-    fun <T : Document> getDocumentsAs(collection: DocumentCollection, callback: (ResourceListResponse<T>) -> Unit) {
+    fun <T : Document> getDocumentsAs(collection: DocumentCollection, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(collection.selfLink!!)
 
-        return resources(resourceUri, ResourceType.Document, callback)
+        return resources(resourceUri, ResourceType.Document, callback, documentClass)
     }
 
     // get
-    fun <T : Document> getDocument(documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) {
+    fun <T : Document> getDocument(documentId: String, collectionId: String, databaseId: String, documentClass: Class<T>, callback: (ResourceResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId, documentId)
 
-        return resource(resourceUri, ResourceType.Document, callback)
+        return resource(resourceUri, ResourceType.Document, callback, documentClass)
     }
 
     // delete
@@ -202,19 +199,19 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // query
-    fun queryDocuments (collectionId: String, databaseId: String, query: Query, callback: (ResourceListResponse<Document>) -> Unit) {
+    fun <T: Document> queryDocuments (collectionId: String, databaseId: String, query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId)
 
-        return query(query, resourceUri, ResourceType.Document, callback)
+        return query(query, resourceUri, ResourceType.Document, callback, documentClass)
     }
 
     // query
-    fun queryDocuments (collection: DocumentCollection, query: Query, callback: (ResourceListResponse<Document>) -> Unit) {
+    fun <T: Document> queryDocuments (collection: DocumentCollection, query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
 
         val resourceUri = baseUri.forDocument(collection.selfLink!!)
 
-        return query(query, resourceUri, ResourceType.Document, callback)
+        return query(query, resourceUri, ResourceType.Document, callback, documentClass)
     }
 
     //endregion
@@ -726,42 +723,26 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         createOrReplace(map, resourceUri, resourceType, false, additionalHeaders, callback)
     }
 
-    // create
-//    private fun<T : Resource> createAsync(resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers, jsonBody: String? = null): Deferred<ResourceResponse<T>> {
-//
-//        val request = createRequest(ApiValues.HttpMethod.Post, resourceUri, resourceType, additionalHeaders, jsonBody)
-//
-//        return sendAsync(request, resourceType)
-//    }
-
     // list
-    private fun <T : Resource> resources(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+    private fun <T : Resource> resources(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         val request = createRequest(ApiValues.HttpMethod.Get, resourceUri, resourceType)
 
-        return sendResourceListRequest(request, resourceType, callback)
+        return sendResourceListRequest(request, resourceType, callback, resourceClass)
     }
 
     // get
-    private fun <T : Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> resource(resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         val request = createRequest(ApiValues.HttpMethod.Get, resourceUri, resourceType)
 
-        return sendResourceRequest(request, resourceType, callback)
-    }
-
-    // list
-    private fun <T : Resource> getResourcesAsync(resourceUri: UrlLink, resourceType: ResourceType): Deferred<ResourceListResponse<T>> {
-
-        val request = createRequest(ApiValues.HttpMethod.Get, resourceUri, resourceType)
-
-        return sendAsync(request, resourceType)
+        return sendResourceRequest(request, resourceType, callback, resourceClass)
     }
 
     // refresh
     fun <T : Resource> refresh(resource: T, callback: (ResourceResponse<T>) -> Unit) {
 
-        try {
+        return try {
 
             val resourceUri = baseUri.forResource(resource)
             val resourceType = ResourceType.fromType(resource.javaClass)
@@ -772,9 +753,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             val request = createRequest(ApiValues.HttpMethod.Get, resourceUri, resourceType, headers)
 
-            return sendResourceRequest(request, resourceType, resource, callback)
+            sendResourceRequest(request, resourceType, resource, callback)
         } catch (e: Exception) {
-            return callback(ResourceResponse(DataError(e)))
+            callback(ResourceResponse(DataError(e)))
         }
     }
 
@@ -836,7 +817,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             val request = createRequest(if (replacing) ApiValues.HttpMethod.Put else ApiValues.HttpMethod.Post, resourceUri, resourceType, additionalHeaders, jsonBody)
 
-            return sendResourceRequest(request, resourceType, callback)
+            @Suppress("UNCHECKED_CAST")
+            return sendResourceRequest(request, resourceType, callback, body::class.java as Class<T>)
 
         } catch (e: Exception) {
             callback(ResourceResponse(DataError(e)))
@@ -844,33 +826,33 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create or replace
-    private fun <T : Resource> createOrReplace(body: Map<String, String>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> createOrReplace(body: Map<String, String>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         try {
             val jsonBody = gson.toJson(body)
 
             val request = createRequest(if (replacing) ApiValues.HttpMethod.Put else ApiValues.HttpMethod.Post, resourceUri, resourceType, additionalHeaders, jsonBody)
 
-            return sendResourceRequest(request, resourceType, callback)
+            return sendResourceRequest(request, resourceType, callback, resourceClass)
         } catch (e: Exception) {
             callback(ResourceResponse(DataError(e)))
         }
     }
 
     // create or replace
-    private fun <T : Resource> createOrReplace(body: ByteArray, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> createOrReplace(body: ByteArray, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         try {
             val request = createRequest(if (replacing) ApiValues.HttpMethod.Put else ApiValues.HttpMethod.Post, resourceUri, resourceType, additionalHeaders, body)
 
-            return sendResourceRequest(request, resourceType, callback)
+            return sendResourceRequest(request, resourceType, callback, resourceClass)
         } catch (e: Exception) {
             callback(ResourceResponse(DataError(e)))
         }
     }
 
     // query
-    private fun <T : Resource> query(query: Query, resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+    private fun <T : Resource> query(query: Query, resourceUri: UrlLink, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         logIfVerbose(query)
 
@@ -879,7 +861,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             val request = createRequest(ApiValues.HttpMethod.Post, resourceUri, resourceType, forQuery = true, jsonBody = json)
 
-            return sendResourceListRequest(request, resourceType, callback)
+            return sendResourceListRequest(request, resourceType, callback, resourceClass)
 
         } catch (e: Exception) {
             callback(ResourceListResponse(DataError(e)))
@@ -906,10 +888,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     //region Network plumbing
 
-    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, forQuery: Boolean = false): Request {
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null): Request {
 
         try {
-            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
+            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders)
 
             when (method) {
                 ApiValues.HttpMethod.Get -> builder.get()
@@ -930,7 +912,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, jsonBody: String, forQuery: Boolean = false): Request {
 
         try {
-            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
+            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders)
 
             // For Post on query operations, it must be application/query+json
             // For attachments, must be set to the Mime type of the attachment.
@@ -966,10 +948,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, body: ByteArray, forQuery: Boolean = false): Request {
+    private fun createRequest(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, body: ByteArray): Request {
 
         try {
-            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders, forQuery)
+            val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders)
 
             when (method) {
                 ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(jsonMediaType, body))
@@ -986,7 +968,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun createRequestBuilder(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, forQuery: Boolean = false): Request.Builder {
+    private fun createRequestBuilder(method: ApiValues.HttpMethod, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null): Request.Builder {
 
         val token = tokenProvider.getToken(method, resourceType, resourceUri.link)
 
@@ -1007,10 +989,10 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return builder
     }
 
-    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit)
-            = sendResourceRequest(request, resourceType, null, callback = callback)
+    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null)
+            = sendResourceRequest(request, resourceType, null, callback = callback, resourceClass = resourceClass)
 
-    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, resource: T?, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, resource: T?, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         if (ContextProvider.verboseLogging) {
             println("***")
@@ -1029,7 +1011,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
                         @Throws(IOException::class)
                         override fun onResponse(call: Call, response: Response) =
-                                callback(processResponse(request, response, resourceType, resource))
+                                callback(processResponse(request, response, resourceType, resource, resourceClass))
                     })
         } catch (e: Exception) {
             logIfVerbose(e)
@@ -1064,17 +1046,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun <T : Resource> sendAsync(request: Request, resourceType: ResourceType): Deferred<ResourceListResponse<T>> {
-
-        return async(CommonPool) {
-
-            val response = client.newCall(request).execute()
-
-            processListResponse<T>(request, response, resourceType)
-        }
-    }
-
-    private fun <T : Resource> sendResourceListRequest(request: Request, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit) {
+    private fun <T : Resource> sendResourceListRequest(request: Request, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         if (ContextProvider.verboseLogging) {
             println("***")
@@ -1092,7 +1064,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
                         @Throws(IOException::class)
                         override fun onResponse(call: Call, response: Response) =
-                                callback(processListResponse(request, response, resourceType))
+                                callback(processListResponse(request, response, resourceType, resourceClass))
                     })
         } catch (e: Exception) {
             logIfVerbose(e)
@@ -1100,7 +1072,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun <T : Resource> processResponse(request: Request, response: Response, resourceType: ResourceType, resource: T?): ResourceResponse<T> {
+    private fun <T : Resource> processResponse(request: Request, response: Response, resourceType: ResourceType, resource: T?, resourceClass: Class<T>? = null): ResourceResponse<T> {
 
         try {
             val body = response.body() ?: return ResourceResponse(DataError("Empty response body received"))
@@ -1110,7 +1082,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             //check http return code/success
             if (response.isSuccessful) {
-                val returnedResource = gson.fromJson<T>(json, resourceType.type) ?: return ResourceResponse(json.toError())
+
+                val type = resourceClass ?: resource?.javaClass ?: resourceType.type
+                val returnedResource = gson.fromJson<T>(json, type) ?: return ResourceResponse(json.toError())
 
                 return ResourceResponse(request, response, json, Result(returnedResource))
             } else if (response.code() == ApiValues.StatusCode.NotModified.code) {
@@ -1124,7 +1098,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         }
     }
 
-    private fun <T : Resource> processListResponse(request: Request, response: Response, resourceType: ResourceType): ResourceListResponse<T> {
+    private fun <T : Resource> processListResponse(request: Request, response: Response, resourceType: ResourceType, resourceClass: Class<T>? = null): ResourceListResponse<T> {
 
         try {
             val body = response.body() ?: return ResourceListResponse(DataError("Empty response body received"))
@@ -1135,8 +1109,8 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             if (response.isSuccessful) {
 
                 //TODO: see if there's any benefit to caching these type tokens performance wise (or for any other reason)
-//                val listType = object : TypeToken<ResourceList<T>>() {}.type
-                val listType = TypeToken.getParameterized(ResourceList::class.java, resourceType.type).type
+                val type = resourceClass ?: resourceType.type
+                val listType = TypeToken.getParameterized(ResourceList::class.java, type).type
                 val resourceList = gson.fromJson<ResourceList<T>>(json, listType) ?: return ResourceListResponse(json.toError())
 
                 if (!resourceList.isPopuated) {

@@ -16,7 +16,7 @@ class ResourceList<T: Resource> {
     var count: Int? = null
 
     @SerializedName(Document.listName, alternate = [Database.listName, Attachment.listName, DocumentCollection.listName, Offer.listName, Permission.listName, StoredProcedure.listName, Trigger.listName, User.listName])
-    var items: List<T>? = null
+    var items: Array<T>? = null
 
     val isPopuated: Boolean
             get() = resourceId != null && items != null
