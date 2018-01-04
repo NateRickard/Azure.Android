@@ -1,18 +1,15 @@
 package com.microsoft.azureandroiddatasample.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.DictionaryDocument
-import com.microsoft.azureandroid.data.model.Document
 import com.microsoft.azureandroid.data.model.User
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.R
-import com.microsoft.azureandroiddatasample.activity.CollectionActivity
 import com.microsoft.azureandroiddatasample.model.ResourceAction
 import java.util.*
 
@@ -37,7 +34,7 @@ class DocumentsFragment : ResourceListFragment<DictionaryDocument>() {
 
     override fun fetchData(callback: (ResourceListResponse<DictionaryDocument>) -> Unit) {
 
-        AzureData.getDocumentsAs(collectionId, databaseId, DictionaryDocument::class.java) { response ->
+        AzureData.getDocuments(collectionId, databaseId, DictionaryDocument::class.java) { response ->
             callback(response)
         }
     }

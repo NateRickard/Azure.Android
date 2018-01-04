@@ -48,8 +48,8 @@ fun Database.deleteCollection(collectionId: String, callback: (DataResponse) -> 
 
 // DocumentCollection
 
-fun <T : Document> DocumentCollection.getDocumentsAs(documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
-    return AzureData.getDocumentsAs(this, documentClass, callback)
+fun <T : Document> DocumentCollection.getDocuments(documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
+    return AzureData.getDocuments(this, documentClass, callback)
 }
 
 // Resource

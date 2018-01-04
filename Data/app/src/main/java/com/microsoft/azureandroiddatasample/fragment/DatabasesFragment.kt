@@ -24,7 +24,7 @@ class DatabasesFragment : ResourceListFragment<Database>() {
 
     override fun fetchData(callback: (ResourceListResponse<Database>) -> Unit) {
 
-        AzureData.databases { response ->
+        AzureData.getDatabases { response ->
             callback(response)
         }
     }

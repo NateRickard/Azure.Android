@@ -179,7 +179,7 @@ class DocumentTests : ResourceTest<DictionaryDocument>(ResourceType.Document, tr
         //ensure at least 1 doc
         createNewDocument()
 
-        AzureData.getDocumentsAs(collectionId, databaseId, DictionaryDocument::class.java) {
+        AzureData.getDocuments(collectionId, databaseId, DictionaryDocument::class.java) {
             resourceListResponse = it
         }
 

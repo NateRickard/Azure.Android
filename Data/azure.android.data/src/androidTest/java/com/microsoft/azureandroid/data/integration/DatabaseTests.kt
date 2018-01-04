@@ -30,7 +30,7 @@ class DatabaseTests : ResourceTest<Database>(ResourceType.Database, false, false
 
         ensureDatabase()
 
-        AzureData.databases {
+        AzureData.getDatabases {
             resourceListResponse = it
         }
 
