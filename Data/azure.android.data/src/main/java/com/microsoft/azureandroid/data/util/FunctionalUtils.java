@@ -9,7 +9,7 @@ import kotlin.jvm.functions.Function1;
  */
 
 public class FunctionalUtils {
-    public static <T> Function1<T, Unit> callback(Consumer<T> callable) {
+    public static <T> Function1<T, Unit> onCallback(Consumer<T> callable) {
         return t -> {
             callable.accept(t);
             return Unit.INSTANCE;
