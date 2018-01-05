@@ -4,7 +4,8 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 /**
- * Created by naterickard on 1/5/18.
+ * Created by Nate Rickard on 1/5/18.
+ * Copyright © 2018 Nate Rickard. All rights reserved.
  */
 
 public class FunctionalUtils {
