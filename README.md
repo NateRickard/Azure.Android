@@ -50,7 +50,7 @@ override fun onCreate() {
 
 # Usage
 
-Using Java?  [See the below note](#Using-from-Java) about syntactical differences.
+Using Java?  [See the below note](#using-from-java) about syntactical differences.
 
 ## Operations
 
@@ -341,7 +341,7 @@ collection.query (documentsWith: query) { r in
 As noted, this library is written in and optimized for Kotlin.  If your app is written in Java, it's still possible to use this library (assuming [your app targets JDK 1.8](https://developer.android.com/studio/write/java8-support.html)), with a few syntactical differences to the sample code found above:
 
 * Callbacks in Java will be in lambda form and passed as an argument to the method.
-* Due to [some compiler intricacies](https://stackoverflow.com/questions/37828790/why-do-i-have-to-return-unit-instance-when-implementing-in-java-a-kotlin-functio) with the way lambdas returning `Unit` (void in Java) are interpreted in Java, the callbacks from the [operations](#Operations) either need to return `Unit.INSTANCE` or be wrapped in something that handles that for you.
+* Due to [some compiler intricacies](https://stackoverflow.com/questions/37828790/why-do-i-have-to-return-unit-instance-when-implementing-in-java-a-kotlin-functio) with the way lambdas returning `Unit` (void in Java) are interpreted in Java, the callbacks from the [operations](#operations) either need to return `Unit.INSTANCE` or be wrapped in something that handles that for you.
 
 Example: To get the [list of databases](#list), the call would look like:
 
