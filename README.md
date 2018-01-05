@@ -7,9 +7,30 @@ _This SDK was originally created as part of **[Azure.Mobile](https://aka.ms/mobi
 
 # Azure.Android [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/NateRickard/Azure.Android/master/LICENSE.md) [![Build status](https://build.appcenter.ms/v0.1/apps/8959ae85-7b36-48ac-b333-10dfd76fb36b/branches/master/badge)](https://appcenter.ms)
 
-
-
 # Configure
+
+AzureData is built via [JitPack](https://jitpack.io/#NateRickard/Azure.Android) and the latest version(s), and instructions to add them to your Android project, can be found [there](https://jitpack.io/#NateRickard/Azure.Android).
+
+For example, to add **v0.4.1** to an Android app, you would add the JitPack repository to the root `build.gradle` file:
+
+```javascript
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+Then, in the app project you want to use AzureData in, add the AzureData dependency:
+
+```javascript
+dependencies {
+	compile 'com.github.NateRickard:Azure.Android:v0.4.1'
+}
+```
+
+## App Configuration
 
 Before making calls to AzureData, you'll need to call `AzureData.configure` from your application class or main activity.
 
@@ -27,8 +48,11 @@ override fun onCreate() {
 ```
 
 
-
 # Usage
+
+Using Java?  [See the below note](#Using-from-Java) about syntactical differences.
+
+## Operations
 
 | Resource                                              | Create                                                | List                                                  | Get                                                   | Delete                                                | Replace                                               | Query                                                 | Execute                                               |
 | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
@@ -47,7 +71,7 @@ override fun onCreate() {
 _* not applicable to resource type_
 
 
-## Databases
+### Databases
 
 #### Create
 ```kotlin
@@ -58,7 +82,7 @@ AzureData.createDatabase (id) {
 
 #### List
 ```kotlin
-AzureData.databases {
+AzureData.getDatabases {
     // databases = it.resource?.items
 }
 ```
@@ -87,7 +111,7 @@ database.delete {
 
 
 
-## Collections
+### Collections
 
 #### Create
 ```kotlin
@@ -143,11 +167,11 @@ collection.delete {
 ```
 
 
-## Documents
+### Documents
 
 There are two different classes you can use to interact with documents:
 
-### Document
+#### Document
 
 The `Document` type is intended to be inherited by your custom model types. ~~Subclasses must conform to the `Codable` protocal and require minimal boilerplate code for successful serialization/deserialization.~~
 
@@ -187,7 +211,7 @@ class CustomDocument: Document {
 }
 ```
 
-### DictionaryDocument
+#### DictionaryDocument
 
 The `DictionaryDocument` type behaves very much like a `[String:Any]` dictionary while handling all properties required by the database.  This allows you to interact with the document directly using subscript syntax.  `DictionaryDocument` cannot be subclassed.
 
@@ -274,6 +298,7 @@ collection.delete (document) { s in
 ```
 
 #### Replace
+
 ```kotlin
 AzureData.replace (document, inCollection: collectionId, inDatabase: databaseId) { r in
     // document = r.resource
@@ -289,6 +314,7 @@ collection.replace (document) { r in
 ```
 
 #### Query
+
 ```kotlin
 let query = ADQuery.select("firstName", "lastName", ...)
                    .from("People")
@@ -309,3 +335,35 @@ collection.query (documentsWith: query) { r in
     // documents in r.resource?.list
 }
 ```
+
+## Using from Java
+
+As noted, this library is written in and optimized for Kotlin.  If your app is written in Java, it's still possible to use this library (assuming [your app targets JDK 1.8](https://developer.android.com/studio/write/java8-support.html)), with a few syntactical differences to the sample code found above:
+
+* Callbacks in Java will be in lambda form and passed as an argument to the method.
+* Due to [some compiler intricacies](https://stackoverflow.com/questions/37828790/why-do-i-have-to-return-unit-instance-when-implementing-in-java-a-kotlin-functio) with the way lambdas returning `Unit` (void in Java) are interpreted in Java, the callbacks from the [operations](#Operations) either need to return `Unit.INSTANCE` or be wrapped in something that handles that for you.
+
+Example: To get the [list of databases](#list), the call would look like:
+
+```java
+AzureData.getDatabases(response -> {
+	if (response.isSuccessful()) {
+		Database[] dbs = response.getResource().getItems();
+	}
+	...
+	return Unit.INSTANCE;
+});
+```
+
+For an improved development experience, a functional wrapper has been added to make this a bit cleaner:
+
+```java
+AzureData.getDatabases(onCallback(response -> {
+	if (response.isSuccessful()) {
+		Database[] dbs = response.getResource().getItems();
+	}
+	...
+}));
+```
+
+`onCallback()` is found in the `com.microsoft.azureandroid.data.util` package, and will in essence 'inject' the return statement for you and remove the need to end your callback with a returned `Unit.INSTANCE`.
