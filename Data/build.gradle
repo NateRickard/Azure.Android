@@ -28,24 +28,7 @@ allprojects {
     }
 
     ext {
-        // Android config
-//        androidBuildToolsVersion = "26.0.1"
-//        androidMinSdkVersion = 19
-//        androidTargetSdkVersion = 26
-//        androidCompileSdkVersion = 26
-//        androidApplicationId = "com.antonioleiva.bandhookkotlin"
-//        androidVersionCode = 1
-//        androidVersionName = "0.1"
-
-
-        // Compile dependencies
-//        supportVersion = "26.1.0"
-
         okhttpVersion = "3.9.0"
-
-        // Unit tests
-//        mockitoVersion = "2.8.47"
-
     }
 }
 
