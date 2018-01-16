@@ -33,6 +33,58 @@ class DocumentTests : ResourceTest<DictionaryDocument>(ResourceType.Document, tr
     private val customObjectKey = "customObjectKey"
     private val customObjectValue = User()
 
+    private fun createNewDocument(coll: DocumentCollection? = null) : DictionaryDocument {
+
+        val newDocument = DictionaryDocument(resourceId)
+
+        newDocument[customStringKey] = customStringValue
+        newDocument[customNumberKey] = customNumberValue
+
+        if (coll != null) {
+            AzureData.createDocument(newDocument, coll) {
+                resourceResponse = it
+            }
+        } else {
+            AzureData.createDocument(newDocument, collectionId, databaseId) {
+                resourceResponse = it
+            }
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        return verifyDocument()
+    }
+
+    private fun verifyDocument() : DictionaryDocument {
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        val createdDoc = resourceResponse!!.resource!!
+
+        assertNotNull(createdDoc[customStringKey])
+        assertNotNull(createdDoc[customNumberKey])
+        assertEquals(customStringValue, createdDoc[customStringKey])
+        assertEquals(customNumberValue, (createdDoc[customNumberKey] as Number).toInt())
+
+        return createdDoc
+    }
+
+    private fun verifyListDocuments() {
+
+        assertResponseSuccess(resourceListResponse)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
+
+        resourceListResponse?.resource?.items?.forEach {
+            assertNotNull(it[customStringKey])
+            assertNotNull(it[customNumberKey])
+            assertEquals(customStringValue, it[customStringKey])
+            assertEquals(customNumberValue, (it[customNumberKey] as Number).toInt())
+        }
+    }
+
     @Test
     fun testDocumentDateHandling() {
 
@@ -119,58 +171,6 @@ class DocumentTests : ResourceTest<DictionaryDocument>(ResourceType.Document, tr
     fun createDocumentInCollection() {
 
         createNewDocument(collection)
-    }
-
-    private fun createNewDocument(coll: DocumentCollection? = null) : DictionaryDocument {
-
-        val newDocument = DictionaryDocument(resourceId)
-
-        newDocument[customStringKey] = customStringValue
-        newDocument[customNumberKey] = customNumberValue
-
-        if (coll != null) {
-            AzureData.createDocument(newDocument, coll) {
-                resourceResponse = it
-            }
-        } else {
-            AzureData.createDocument(newDocument, collectionId, databaseId) {
-                resourceResponse = it
-            }
-        }
-
-        await().until {
-            resourceResponse != null
-        }
-
-        return verifyDocument()
-    }
-
-    private fun verifyDocument() : DictionaryDocument {
-
-        assertResponseSuccess(resourceResponse)
-        assertEquals(resourceId, resourceResponse?.resource?.id)
-
-        val createdDoc = resourceResponse!!.resource!!
-
-        assertNotNull(createdDoc[customStringKey])
-        assertNotNull(createdDoc[customNumberKey])
-        assertEquals(customStringValue, createdDoc[customStringKey])
-        assertEquals(customNumberValue, (createdDoc[customNumberKey] as Number).toInt())
-
-        return createdDoc
-    }
-
-    private fun verifyListDocuments() {
-
-        assertResponseSuccess(resourceListResponse)
-        assertTrue(resourceListResponse?.resource?.count!! > 0)
-
-        resourceListResponse?.resource?.items?.forEach {
-            assertNotNull(it[customStringKey])
-            assertNotNull(it[customNumberKey])
-            assertEquals(customStringValue, it[customStringKey])
-            assertEquals(customNumberValue, (it[customNumberKey] as Number).toInt())
-        }
     }
 
     @Test
