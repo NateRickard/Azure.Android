@@ -3,10 +3,7 @@ package com.microsoft.azureandroid.data.integration
 import android.support.test.InstrumentationRegistry
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.constants.TokenType
-import com.microsoft.azureandroid.data.model.Database
-import com.microsoft.azureandroid.data.model.DocumentCollection
-import com.microsoft.azureandroid.data.model.Resource
-import com.microsoft.azureandroid.data.model.ResourceType
+import com.microsoft.azureandroid.data.model.*
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
@@ -20,10 +17,14 @@ import org.junit.Before
  * Copyright © 2017 Nate Rickard. All rights reserved.
  */
 
-open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, val ensureDatabase : Boolean = true, val ensureCollection : Boolean = true) {
+open class ResourceTest<TResource : Resource>(resourceType: ResourceType,
+                                              private val ensureDatabase : Boolean = true,
+                                              private val ensureCollection : Boolean = true,
+                                              private val ensureDocument : Boolean = false) {
 
     val databaseId = "AndroidTest${ResourceType.Database.name}"
     val collectionId = "AndroidTest${ResourceType.Collection.name}"
+    val documentId = "AndroidTest${ResourceType.Document.name}"
     val resourceId = "AndroidTest${resourceType.name}"
 
     var resourceResponse: ResourceResponse<TResource>? = null
@@ -32,6 +33,7 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
 
     var database: Database? = null
     var collection: DocumentCollection? = null
+    var document: Document? = null
 
     val idWith256Chars = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345"
     val idWithWhitespace = "id value with spaces"
@@ -50,12 +52,16 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
 
         deleteResources()
 
-        if (ensureDatabase) {
+        if (ensureDatabase || ensureCollection || ensureDocument) {
             ensureDatabase()
         }
 
-        if (ensureCollection) {
+        if (ensureCollection || ensureDocument) {
             ensureCollection()
+        }
+
+        if (ensureDocument) {
+            ensureDocument()
         }
 
         println("********* End Test Setup *********")
@@ -111,20 +117,29 @@ open class ResourceTest<TResource : Resource>(val resourceType: ResourceType, va
         return collection!!
     }
 
+    fun ensureDocument() : Document {
+
+        var docResponse: ResourceResponse<CustomDocument>? = null
+        val doc = CustomDocument(documentId)
+
+        AzureData.createDocument(doc, collection!!) {
+            docResponse = it
+        }
+
+        await().until {
+            docResponse != null
+        }
+
+        document = docResponse!!.resource!!
+
+        return document!!
+    }
+
     private fun deleteResources() {
 
         var deleteResponse: DataResponse? = null
 
-        AzureData.deleteCollection(collectionId, databaseId) { response ->
-            println("Attempted to delete test collection.  Result: ${response.isSuccessful}")
-            deleteResponse = response
-        }
-
-        await().until {
-            deleteResponse != null
-        }
-
-        deleteResponse = null
+        //delete the DB - this should delete all attached resources
 
         AzureData.deleteDatabase(databaseId) { response ->
             println("Attempted to delete test database.  Result: ${response.isSuccessful}")
