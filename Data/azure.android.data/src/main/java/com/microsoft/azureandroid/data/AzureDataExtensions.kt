@@ -72,9 +72,24 @@ fun Document.createAttachment (attachmentId: String, contentType: String, mediaU
     return AzureData.createAttachment(attachmentId, contentType, mediaUrl, this, callback)
 }
 
+// create
+fun Document.createAttachment (attachmentId: String, contentType: String, data: ByteArray, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.createAttachment(attachmentId, contentType, attachmentId, data, this, callback)
+}
+
 // list
 fun Document.getAttachments(callback: (ResourceListResponse<Attachment>) -> Unit) {
     return AzureData.getAttachments(this, callback)
+}
+
+// delete
+fun Document.deleteAttachment(attachment: Attachment, callback: (DataResponse) -> Unit) {
+    return AzureData.deleteAttachment(attachment, this, callback)
+}
+
+// delete
+fun Document.deleteAttachment(attachmentRid: String, callback: (DataResponse) -> Unit) {
+    return AzureData.deleteAttachment(attachmentRid, this, callback)
 }
 
 // replace

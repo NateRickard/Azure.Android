@@ -275,17 +275,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteAttachment(attachment: Attachment, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteAttachment(attachmentId: String, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachment.id)
+        val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
 
         return delete(resourceUri, ResourceType.Attachment, callback)
     }
 
     // delete
-    fun deleteAttachment(attachment: Attachment, document: Document, callback: (DataResponse) -> Unit) {
+    fun deleteAttachment(attachmentRid: String, document: Document, callback: (DataResponse) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachment.id)
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRid)
 
         return delete(resourceUri, ResourceType.Attachment, callback)
     }
@@ -952,10 +952,15 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         try {
             val builder = createRequestBuilder(method, resourceUri, resourceType, additionalHeaders)
+            var mediaType = jsonMediaType
+
+            additionalHeaders?.get(ApiValues.HttpRequestHeader.ContentType.value)?.let {
+                mediaType = MediaType.parse(it)
+            }
 
             when (method) {
-                ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(jsonMediaType, body))
-                ApiValues.HttpMethod.Put -> builder.put(RequestBody.create(jsonMediaType, body))
+                ApiValues.HttpMethod.Post -> builder.post(RequestBody.create(mediaType, body))
+                ApiValues.HttpMethod.Put -> builder.put(RequestBody.create(mediaType, body))
                 else -> throw Exception("Get, Head, and Delete requests must use an overload that without a content body")
             }
 

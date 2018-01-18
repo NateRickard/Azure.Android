@@ -200,12 +200,22 @@ class AzureData {
         // delete
         @JvmStatic
         fun deleteAttachment(attachment: Attachment, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
-                documentClient.deleteAttachment(attachment, documentId, collectionId, databaseId, callback)
+                documentClient.deleteAttachment(attachment.id, documentId, collectionId, databaseId, callback)
+
+        // delete
+        @JvmStatic
+        fun deleteAttachment(attachmentId: String, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+                documentClient.deleteAttachment(attachmentId, documentId, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
         fun deleteAttachment(attachment: Attachment, document: Document, callback: (DataResponse) -> Unit) =
-                documentClient.deleteAttachment(attachment, document, callback)
+                documentClient.deleteAttachment(attachment.resourceId, document, callback)
+
+        // delete
+        @JvmStatic
+        fun deleteAttachment(attachmentRid: String, document: Document, callback: (DataResponse) -> Unit) =
+                documentClient.deleteAttachment(attachmentRid, document, callback)
 
         // replace
         @JvmStatic
