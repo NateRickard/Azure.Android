@@ -311,17 +311,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-    fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentId)
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRId)
 
         return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.Attachment, callback = callback)
     }
 
     // replace
-    fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentId)
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRId)
         val headers = Headers.Builder()
                 .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
                 .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)

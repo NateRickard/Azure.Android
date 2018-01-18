@@ -229,23 +229,23 @@ class AzureData {
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, contentType, mediaUrl, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, mediaUrl, document, callback)
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: String, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, contentType, HttpUrl.parse(mediaUrl)!!, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: String, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, HttpUrl.parse(mediaUrl)!!, document, callback)
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, contentType: String, mediaUrl: URL, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, contentType, HttpUrl.get(mediaUrl)!!, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: URL, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, HttpUrl.get(mediaUrl)!!, document, callback)
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, contentType, mediaName, media, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, mediaName, media, document, callback)
 
         //endregion
 

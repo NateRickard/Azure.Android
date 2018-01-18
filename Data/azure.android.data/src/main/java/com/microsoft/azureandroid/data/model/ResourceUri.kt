@@ -75,11 +75,11 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, attachmentId)
     }
 
-    fun forAttachment(baseLink: String, attachmentId: String? = null) : UrlLink {
+    fun forAttachment(baseLink: String, resourceId: String? = null) : UrlLink {
 
-        val itemLink = getItemLink(ResourceType.Attachment, baseLink, attachmentId)
+        val itemLink = getItemLink(ResourceType.Attachment, baseLink, resourceId)
 
-        return getUrlLinkForSelf(baseLink, itemLink, attachmentId)
+        return getUrlLinkForSelf(baseLink, itemLink, resourceId)
     }
 
     fun forStoredProcedure(databaseId: String, collectionId: String, storedProcedureId: String? = null) : UrlLink {

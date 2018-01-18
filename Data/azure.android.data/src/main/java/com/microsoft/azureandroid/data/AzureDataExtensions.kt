@@ -45,6 +45,7 @@ fun Database.deleteCollection(collectionId: String, callback: (DataResponse) -> 
 
 //endregion
 
+
 //region DocumentCollection
 
 fun <T : Document> DocumentCollection.getDocuments(documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
@@ -52,6 +53,7 @@ fun <T : Document> DocumentCollection.getDocuments(documentClass: Class<T>, call
 }
 
 //endregion
+
 
 //region Document -> Attachment
 
@@ -70,7 +72,28 @@ fun Document.createAttachment (attachmentId: String, contentType: String, mediaU
     return AzureData.createAttachment(attachmentId, contentType, mediaUrl, this, callback)
 }
 
+// list
+fun Document.getAttachments(callback: (ResourceListResponse<Attachment>) -> Unit) {
+    return AzureData.getAttachments(this, callback)
+}
+
+// replace
+fun Document.replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: URL, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.replaceAttachment(attachmentId, attachmentRId, contentType, mediaUrl, this, callback)
+}
+
+// replace
+fun Document.replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: HttpUrl, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.replaceAttachment(attachmentId, attachmentRId, contentType, mediaUrl, this, callback)
+}
+
+// replace
+fun Document.replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.replaceAttachment(attachmentId, attachmentRId, contentType, mediaUrl, this, callback)
+}
+
 //endregion
+
 
 // Resource
 

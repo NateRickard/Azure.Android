@@ -1,10 +1,9 @@
 package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
-import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.createAttachment
-import com.microsoft.azureandroid.data.delete
+import com.microsoft.azureandroid.data.*
 import com.microsoft.azureandroid.data.model.*
+import com.microsoft.azureandroid.data.services.ResourceResponse
 import junit.framework.Assert.assertTrue
 import org.awaitility.Awaitility.await
 import org.junit.Assert
@@ -24,25 +23,27 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
 
     private fun createNewAttachment(doc: Document? = null) : Attachment {
 
+        var response: ResourceResponse<Attachment>? = null
+
         if (doc != null) {
             document?.createAttachment(resourceId, "image/jpeg", url) {
-                resourceResponse = it
+                response = it
             }
         }
         else {
             AzureData.createAttachment(resourceId, "image/jpeg", url, documentId, collectionId, databaseId) {
-                resourceResponse = it
+                response = it
             }
         }
 
         await().until {
-            resourceResponse != null
+            response != null
         }
 
-        assertResponseSuccess(resourceResponse)
-        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+        assertResponseSuccess(response)
+        Assert.assertEquals(resourceId, response?.resource?.id)
 
-        return resourceResponse!!.resource!!
+        return response!!.resource!!
     }
 
     @Test
@@ -76,6 +77,24 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
     }
 
     @Test
+    fun listAttachmentsForDocument() {
+
+        //ensure at least 1 attachment
+        createNewAttachment(document)
+
+        document?.getAttachments {
+            resourceListResponse = it
+        }
+
+        await().until {
+            resourceListResponse != null
+        }
+
+        assertResponseSuccess(resourceListResponse)
+        assertTrue(resourceListResponse?.resource?.count!! > 0)
+    }
+
+    @Test
     fun replaceAttachment() {
 
         createNewAttachment()
@@ -84,7 +103,24 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
             resourceResponse = it
         }
 
-        await().until {
+        await().forever().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+    }
+
+    @Test
+    fun replaceAttachmentForDocument() {
+
+        val attachment = createNewAttachment(document)
+
+        document?.replaceAttachment(resourceId, attachment.resourceId, "image/jpeg", url) {
+            resourceResponse = it
+        }
+
+        await().forever().until {
             resourceResponse != null
         }
 
