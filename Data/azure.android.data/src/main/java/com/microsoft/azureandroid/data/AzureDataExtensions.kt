@@ -1,12 +1,11 @@
 package com.microsoft.azureandroid.data
 
-import com.microsoft.azureandroid.data.model.Database
-import com.microsoft.azureandroid.data.model.Document
-import com.microsoft.azureandroid.data.model.DocumentCollection
-import com.microsoft.azureandroid.data.model.Resource
+import com.microsoft.azureandroid.data.model.*
 import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import okhttp3.HttpUrl
+import java.net.URL
 
 /**
 * Created by Nate Rickard on 11/11/17.
@@ -46,11 +45,32 @@ fun Database.deleteCollection(collectionId: String, callback: (DataResponse) -> 
 
 //endregion
 
-// DocumentCollection
+//region DocumentCollection
 
 fun <T : Document> DocumentCollection.getDocuments(documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
     return AzureData.getDocuments(this, documentClass, callback)
 }
+
+//endregion
+
+//region Document -> Attachment
+
+// create
+fun Document.createAttachment (attachmentId: String, contentType: String, mediaUrl: URL, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.createAttachment(attachmentId, contentType, mediaUrl, this, callback)
+}
+
+// create
+fun Document.createAttachment (attachmentId: String, contentType: String, mediaUrl: HttpUrl, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.createAttachment(attachmentId, contentType, mediaUrl, this, callback)
+}
+
+// create
+fun Document.createAttachment (attachmentId: String, contentType: String, mediaUrl: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+    return AzureData.createAttachment(attachmentId, contentType, mediaUrl, this, callback)
+}
+
+//endregion
 
 // Resource
 

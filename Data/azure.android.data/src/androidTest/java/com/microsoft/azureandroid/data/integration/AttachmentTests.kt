@@ -2,6 +2,7 @@ package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
 import com.microsoft.azureandroid.data.AzureData
+import com.microsoft.azureandroid.data.createAttachment
 import com.microsoft.azureandroid.data.delete
 import com.microsoft.azureandroid.data.model.*
 import junit.framework.Assert.assertTrue
@@ -21,10 +22,17 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
 
     private val url: URL = URL("https", "azuredatatests.blob.core.windows.net", "/attachment-tests/youre%20welcome.jpeg?st=2017-11-07T14%3A00%3A00Z&se=2020-11-08T14%3A00%3A00Z&sp=rl&sv=2017-04-17&sr=c&sig=RAHr6Mee%2Bt7RrDnGHyjgSX3HSqJgj8guhy0IrEMh3KQ%3D")
 
-    private fun createNewAttachment() : Attachment {
+    private fun createNewAttachment(doc: Document? = null) : Attachment {
 
-        AzureData.createAttachment(resourceId, "image/jpeg", url, documentId, collectionId, databaseId) {
-            resourceResponse = it
+        if (doc != null) {
+            document?.createAttachment(resourceId, "image/jpeg", url) {
+                resourceResponse = it
+            }
+        }
+        else {
+            AzureData.createAttachment(resourceId, "image/jpeg", url, documentId, collectionId, databaseId) {
+                resourceResponse = it
+            }
         }
 
         await().until {
@@ -41,6 +49,12 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
     fun createAttachment() {
 
         createNewAttachment()
+    }
+
+    @Test
+    fun createAttachmentToDocument() {
+
+        createNewAttachment(document)
     }
 
     @Test
