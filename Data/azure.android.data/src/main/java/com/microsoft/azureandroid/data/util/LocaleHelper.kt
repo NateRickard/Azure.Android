@@ -13,6 +13,7 @@ class LocaleHelper {
 
     companion object {
 
+        @Suppress("DEPRECATION")
         fun getCurrentLocale(context: Context): Locale {
 
             //ContextProvider.appContext.assets.locales   //app/system locale list based on resources/assets

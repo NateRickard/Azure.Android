@@ -17,6 +17,7 @@ internal class TimestampAdapter: JsonSerializer<Timestamp>, JsonDeserializer<Tim
             JsonPrimitive(src.time)
         }
         else {
+            @Suppress("DEPRECATION")
             JsonNull()
         }
     }
