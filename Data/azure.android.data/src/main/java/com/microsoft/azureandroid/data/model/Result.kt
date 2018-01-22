@@ -5,4 +5,7 @@ package com.microsoft.azureandroid.data.model
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-class Result<out T: Resource>(val resource: T? = null, val error: DataError? = null)
+class Result<out T>(val resource: T? = null, val error: DataError? = null) {
+
+    constructor(error: DataError) : this(null, error)
+}

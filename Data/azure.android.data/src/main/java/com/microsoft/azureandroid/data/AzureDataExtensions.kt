@@ -1,9 +1,9 @@
 package com.microsoft.azureandroid.data
 
 import com.microsoft.azureandroid.data.model.*
-import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroid.data.services.Response
 import okhttp3.HttpUrl
 import java.net.URL
 
@@ -32,12 +32,12 @@ fun Database.getCollections(callback: (ResourceListResponse<DocumentCollection>)
 }
 
 // delete
-fun Database.deleteCollection(collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+fun Database.deleteCollection(collection: DocumentCollection, callback: (Response) -> Unit) {
     return AzureData.deleteCollection(collection, this.id, callback)
 }
 
 // delete
-fun Database.deleteCollection(collectionId: String, callback: (DataResponse) -> Unit) {
+fun Database.deleteCollection(collectionId: String, callback: (Response) -> Unit) {
     return AzureData.deleteCollection(collectionId, this.id, callback)
 }
 
@@ -74,7 +74,7 @@ fun Document.createAttachment (attachmentId: String, contentType: String, mediaU
 
 // create
 fun Document.createAttachment (attachmentId: String, contentType: String, data: ByteArray, callback: (ResourceResponse<Attachment>) -> Unit) {
-    return AzureData.createAttachment(attachmentId, contentType, attachmentId, data, this, callback)
+    return AzureData.createAttachment(attachmentId, contentType, data, this, callback)
 }
 
 // list
@@ -83,12 +83,12 @@ fun Document.getAttachments(callback: (ResourceListResponse<Attachment>) -> Unit
 }
 
 // delete
-fun Document.deleteAttachment(attachment: Attachment, callback: (DataResponse) -> Unit) {
+fun Document.deleteAttachment(attachment: Attachment, callback: (Response) -> Unit) {
     return AzureData.deleteAttachment(attachment, this, callback)
 }
 
 // delete
-fun Document.deleteAttachment(attachmentRid: String, callback: (DataResponse) -> Unit) {
+fun Document.deleteAttachment(attachmentRid: String, callback: (Response) -> Unit) {
     return AzureData.deleteAttachment(attachmentRid, this, callback)
 }
 
@@ -112,7 +112,7 @@ fun Document.replaceAttachment(attachmentId: String, attachmentRId: String, cont
 
 // Resource
 
-fun <TResource : Resource> TResource.delete(callback: (DataResponse) -> Unit) =
+fun <TResource : Resource> TResource.delete(callback: (Response) -> Unit) =
         AzureData.delete(this, callback)
 
 fun <TResource : Resource> TResource.refresh(callback: (ResourceResponse<TResource>) -> Unit) =

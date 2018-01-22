@@ -4,10 +4,7 @@ import com.google.gson.*
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import com.microsoft.azureandroid.data.model.DictionaryDocument
-import com.microsoft.azureandroid.data.model.Document
-import com.microsoft.azureandroid.data.model.Resource
-import com.microsoft.azureandroid.data.model.Timestamp
+import com.microsoft.azureandroid.data.model.*
 import com.microsoft.azureandroid.data.util.RoundtripDateConverter
 import java.text.NumberFormat
 import kotlin.collections.ArrayList
@@ -23,7 +20,7 @@ internal class DocumentAdapter: TypeAdapter<DictionaryDocument>() {
 
         var doc: DictionaryDocument? = null
         var name: String
-        var value: Any? = null
+        var value: Any?
         var jToken: JsonToken
 
         reader.beginObject()
@@ -42,7 +39,7 @@ internal class DocumentAdapter: TypeAdapter<DictionaryDocument>() {
 
                 //we assume here that Id will ALWAYS come first and we can init doc here
                 Resource.Companion.Keys.idKey -> doc = DictionaryDocument(reader.nextString())
-                Resource.Companion.Keys.resourceIdKey -> doc?.resourceId = reader.nextString()
+                ResourceBase.Companion.resourceIdKey -> doc?.resourceId = reader.nextString()
                 Resource.Companion.Keys.etagKey -> doc?.etag = reader.nextString()
                 Resource.Companion.Keys.selfLinkKey -> doc?.selfLink = reader.nextString()
                 Resource.Companion.Keys.timestampKey -> doc?.timestamp = Timestamp(reader.nextLong() * 1000)
@@ -160,7 +157,7 @@ internal class DocumentAdapter: TypeAdapter<DictionaryDocument>() {
                 when (key) {
 
                     Resource.Companion.Keys.idKey -> out.value(it.id)
-                    Resource.Companion.Keys.resourceIdKey -> out.value(it.resourceId)
+                    ResourceBase.Companion.resourceIdKey -> out.value(it.resourceId)
                     Resource.Companion.Keys.etagKey -> out.value(it.etag)
                     Resource.Companion.Keys.selfLinkKey -> out.value(it.selfLink)
                     Resource.Companion.Keys.timestampKey -> out.jsonValue(gson.toJson(it.timestamp))

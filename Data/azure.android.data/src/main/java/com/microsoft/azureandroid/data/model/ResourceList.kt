@@ -7,10 +7,7 @@ import com.google.gson.annotations.SerializedName
 * Copyright © 2017 Nate Rickard. All rights reserved.
 */
 
-class ResourceList<T: Resource> {
-
-    @SerializedName(Keys.resourceIdKey)
-    var resourceId: String? = null
+class ResourceList<T: Resource> : ResourceBase() {
 
     @SerializedName(Keys.countKey)
     var count: Int? = null
@@ -25,7 +22,6 @@ class ResourceList<T: Resource> {
 
         object Keys {
 
-            const val resourceIdKey = "_rid"
             const val countKey      = "_count"
 
             val list = listOf(resourceIdKey, countKey)

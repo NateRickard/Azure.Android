@@ -6,8 +6,8 @@ import com.microsoft.azureandroid.data.delete
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.model.User
 import com.microsoft.azureandroid.data.refresh
-import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroid.data.services.Response
 import org.awaitility.Awaitility.await
 import org.junit.After
 import org.junit.Assert
@@ -40,7 +40,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
 
     private fun deleteTestUser(id: String = resourceId) {
 
-        var deleteResponse: DataResponse? = null
+        var deleteResponse: Response? = null
 
         AzureData.deleteUser(id, databaseId) { response ->
             println("Attempted to delete test user.  Result: ${response.isSuccessful}")

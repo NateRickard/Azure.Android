@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.User
-import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.R
@@ -54,7 +54,7 @@ class UsersFragment : ResourceListFragment<User>() {
         }
     }
 
-    override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
+    override fun deleteItem(resourceId: String, callback: (Response) -> Unit) {
 
         AzureData.deleteUser(resourceId, databaseId) { result ->
             callback(result)

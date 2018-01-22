@@ -6,9 +6,9 @@ import android.view.View
 import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.DocumentCollection
-import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroiddatasample.R
 import com.microsoft.azureandroiddatasample.activity.CollectionActivity
 import com.microsoft.azureandroiddatasample.model.ResourceAction
@@ -54,7 +54,7 @@ class CollectionsFragment : ResourceListFragment<DocumentCollection>() {
         }
     }
 
-    override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
+    override fun deleteItem(resourceId: String, callback: (Response) -> Unit) {
 
         AzureData.deleteCollection(resourceId, databaseId) { result ->
             callback(result)

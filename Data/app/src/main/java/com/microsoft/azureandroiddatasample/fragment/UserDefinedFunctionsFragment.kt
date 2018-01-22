@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.UserDefinedFunction
-import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroiddatasample.model.ResourceAction
 import java.util.*
@@ -61,7 +61,7 @@ class UserDefinedFunctionsFragment : ResourceListFragment<UserDefinedFunction>()
 //        }
 //    }
 
-    override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
+    override fun deleteItem(resourceId: String, callback: (Response) -> Unit) {
 
         AzureData.deleteUserDefinedFunction(resourceId, collectionId, databaseId) { result ->
             callback(result)

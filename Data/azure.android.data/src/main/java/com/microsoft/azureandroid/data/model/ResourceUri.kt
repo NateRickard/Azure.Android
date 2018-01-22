@@ -145,7 +145,7 @@ class ResourceUri(databaseName: String) {
 
     fun forResource (resource: Resource) : UrlLink {
 
-        if (resource.selfLink.isNullOrEmpty() || resource.resourceId.isEmpty()) {
+        if (resource.selfLink.isNullOrEmpty() || resource.resourceId?.isEmpty() != false) {
             throw Exception(ErrorType.IncompleteIds.message)
         }
 
@@ -155,7 +155,7 @@ class ResourceUri(databaseName: String) {
                 .addPathSegment(resource.selfLink!!.trimStart('/'))
                 .build()
 
-        return UrlLink(url, resource.resourceId.toLowerCase())
+        return UrlLink(url, resource.resourceId!!.toLowerCase())
     }
 
     private fun getItemLink(resourceType: ResourceType, baseLink: String, resourceId: String? = null) : String {

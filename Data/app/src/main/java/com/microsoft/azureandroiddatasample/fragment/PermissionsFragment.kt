@@ -6,7 +6,7 @@ import android.widget.EditText
 import android.widget.TextView
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Permission
-import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.R
@@ -66,7 +66,7 @@ class PermissionsFragment : ResourceListFragment<Permission>() {
 //        }
 //    }
 
-    override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
+    override fun deleteItem(resourceId: String, callback: (Response) -> Unit) {
 
         AzureData.deletePermission(resourceId, userId, databaseId) { result ->
             callback(result)

@@ -4,9 +4,9 @@ import android.support.test.InstrumentationRegistry
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.*
-import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroid.data.services.Response
 import org.awaitility.Awaitility.await
 import org.junit.After
 import org.junit.Assert.*
@@ -29,7 +29,7 @@ open class ResourceTest<TResource : Resource>(resourceType: ResourceType,
 
     var resourceResponse: ResourceResponse<TResource>? = null
     var resourceListResponse: ResourceListResponse<TResource>? = null
-    var dataResponse: DataResponse? = null
+    var dataResponse: Response? = null
 
     var database: Database? = null
     var collection: DocumentCollection? = null
@@ -137,7 +137,7 @@ open class ResourceTest<TResource : Resource>(resourceType: ResourceType,
 
     private fun deleteResources() {
 
-        var deleteResponse: DataResponse? = null
+        var deleteResponse: Response? = null
 
         //delete the DB - this should delete all attached resources
 
@@ -151,9 +151,17 @@ open class ResourceTest<TResource : Resource>(resourceType: ResourceType,
         }
     }
 
-    fun assertResponseSuccess(response: ResourceResponse<*>?) {
+    private fun assertResponsePopulated(response: ResourceResponse<*>?) {
 
         assertNotNull(response)
+        assertNotNull(response!!.request)
+        assertNotNull(response.response)
+        assertNotNull(response.jsonData)
+    }
+
+    fun assertResponseSuccess(response: ResourceResponse<*>?) {
+
+        assertResponsePopulated(response)
         assertNotNull(response!!.resource)
         assertTrue(response.isSuccessful)
         assertFalse(response.isErrored)
@@ -161,7 +169,7 @@ open class ResourceTest<TResource : Resource>(resourceType: ResourceType,
 
     fun assertResponseFailure(response: ResourceResponse<*>?) {
 
-        assertNotNull(response)
+        assertResponsePopulated(response)
         assertNotNull(response!!.error)
         assertFalse(response.isSuccessful)
         assertTrue(response.isErrored)
@@ -169,17 +177,30 @@ open class ResourceTest<TResource : Resource>(resourceType: ResourceType,
 
     fun assertResponseSuccess(response: ResourceListResponse<*>?) {
 
-        assertNotNull(response)
+        assertResponsePopulated(response)
         assertTrue(response!!.isSuccessful)
         assertFalse(response.isErrored)
         assertNotNull(response.resource)
         assertTrue(response.resource?.isPopuated!!)
     }
 
-    fun assertResponseSuccess(response: DataResponse?) {
+    fun assertResponseSuccess(response: Response?) {
 
         assertNotNull(response)
         assertTrue(response!!.isSuccessful)
         assertFalse(response.isErrored)
+    }
+
+    fun assertErrorResponse(response: ResourceResponse<*>?) {
+
+        assertNotNull(response)
+        assertNotNull(response!!.error)
+        assertFalse(response.isSuccessful)
+        assertTrue(response.isErrored)
+    }
+
+    fun resetResponse() {
+
+        resourceResponse = null
     }
 }

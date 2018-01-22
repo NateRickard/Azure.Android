@@ -114,8 +114,8 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
             doc1Response != null && doc2Response != null
         }
 
-        assertResponseFailure(doc1Response)
-        assertResponseFailure(doc2Response)
+        assertErrorResponse(doc1Response)
+        assertErrorResponse(doc2Response)
     }
 
     @Test
@@ -234,26 +234,27 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
 
     private fun createNewDocument(coll: DocumentCollection? = null) : TDoc {
 
+        var docResponse: ResourceResponse<TDoc>? = null
         val doc = newDocument()
 
         if (coll != null) {
             AzureData.createDocument(doc, coll) {
-                resourceResponse = it
+                docResponse = it
             }
         } else {
             AzureData.createDocument(doc, collectionId, databaseId) {
-                resourceResponse = it
+                docResponse = it
             }
         }
 
         await().until {
-            resourceResponse != null
+            docResponse != null
         }
 
-        assertResponseSuccess(resourceResponse)
-        assertEquals(resourceId, resourceResponse?.resource?.id)
+        assertResponseSuccess(docResponse)
+        assertEquals(resourceId, docResponse?.resource?.id)
 
-        val createdDoc = resourceResponse!!.resource!!
+        val createdDoc = docResponse!!.resource!!
 
         return verifyDocument(createdDoc)
     }

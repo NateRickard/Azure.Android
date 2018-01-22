@@ -13,13 +13,3 @@ import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class CustomDocumentTests : DocumentTest<CustomDocument>(CustomDocument::class.java)
-
-class CustomDocument(id: String? = null) : Document(id) {
-
-    var customString = "My Custom String"
-    var customNumber = 0
-    var customDate: Date = Date()
-    var customBool = false
-    var customArray = arrayOf(1, 2, 3)
-    var customObject: User? = null
-}

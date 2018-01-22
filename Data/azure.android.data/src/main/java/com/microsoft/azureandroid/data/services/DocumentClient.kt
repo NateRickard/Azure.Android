@@ -97,7 +97,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteDatabase(databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteDatabase(databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forDatabase(databaseId)
 
@@ -105,7 +105,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteDatabase(database: Database, callback: (DataResponse) -> Unit) {
+    fun deleteDatabase(database: Database, callback: (Response) -> Unit) {
 
         deleteDatabase(database.id, callback)
     }
@@ -139,7 +139,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteCollection(collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteCollection(collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forCollection(databaseId, collectionId)
 
@@ -191,7 +191,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forDocument(databaseId, collectionId, documentId)
 
@@ -227,12 +227,12 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-    fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun createAttachment(attachmentId: String, contentType: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId)
         val headers = Headers.Builder()
                 .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
-                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.Slug.value, attachmentId)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, additionalHeaders = headers, callback = callback)
@@ -247,12 +247,12 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-    fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun createAttachment(attachmentId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!)
         val headers = Headers.Builder()
                 .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
-                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.Slug.value, attachmentId)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, additionalHeaders = headers, callback = callback)
@@ -275,7 +275,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteAttachment(attachmentId: String, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteAttachment(attachmentId: String, documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
 
@@ -283,7 +283,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteAttachment(attachmentRid: String, document: Document, callback: (DataResponse) -> Unit) {
+    fun deleteAttachment(attachmentRid: String, document: Document, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRid)
 
@@ -299,12 +299,12 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-    fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun replaceAttachment(attachmentId: String, contentType: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) {
 
         val resourceUri = baseUri.forAttachment(databaseId, collectionId, documentId, attachmentId)
         val headers = Headers.Builder()
                 .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
-                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.Slug.value, attachmentId)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, replacing = true, additionalHeaders = headers, callback = callback)
@@ -319,12 +319,12 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-    fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
 
         val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRId)
         val headers = Headers.Builder()
                 .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
-                .add(ApiValues.HttpRequestHeader.Slug.value, mediaName)
+                .add(ApiValues.HttpRequestHeader.Slug.value, attachmentId)
                 .build()
 
         return createOrReplace(media, resourceUri, ResourceType.Attachment, replacing = true, additionalHeaders = headers, callback = callback)
@@ -367,7 +367,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteStoredProcedure(storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteStoredProcedure(storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedure.id)
 
@@ -375,7 +375,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+    fun deleteStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedure.id)
 
@@ -383,7 +383,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteStoredProcedure(storedProcedureId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteStoredProcedure(storedProcedureId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
 
@@ -407,7 +407,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // execute
-    fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
 
@@ -415,7 +415,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // execute
-    fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+    fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collection: DocumentCollection, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
 
@@ -459,7 +459,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteUserDefinedFunction(userDefinedFunctionId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteUserDefinedFunction(userDefinedFunctionId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forUdf(databaseId, collectionId, udfId = userDefinedFunctionId)
 
@@ -467,7 +467,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+    fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forUdf(collection.selfLink!!, udfId = userDefinedFunction.id)
 
@@ -527,7 +527,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteTrigger(triggerId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteTrigger(triggerId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forTrigger(databaseId, collectionId, triggerId)
 
@@ -535,7 +535,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteTrigger(trigger: Trigger, collection: DocumentCollection, callback: (DataResponse) -> Unit) {
+    fun deleteTrigger(trigger: Trigger, collection: DocumentCollection, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = trigger.id)
 
@@ -595,7 +595,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteUser(userId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deleteUser(userId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forUser(databaseId, userId)
 
@@ -661,7 +661,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (DataResponse) -> Unit) {
+    fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forPermission(databaseId, userId, permissionId)
 
@@ -669,7 +669,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deletePermission(permission: Permission, user: User, callback: (DataResponse) -> Unit) {
+    fun deletePermission(permission: Permission, user: User, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forPermission(user.selfLink!!, permission.id)
 
@@ -760,14 +760,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    private fun delete(resourceUri: UrlLink, resourceType: ResourceType, callback: (DataResponse) -> Unit) {
+    private fun delete(resourceUri: UrlLink, resourceType: ResourceType, callback: (Response) -> Unit) {
 
         val request = createRequest(ApiValues.HttpMethod.Delete, resourceUri, resourceType)
 
         return sendRequest(request, callback)
     }
 
-    fun <TResource : Resource> delete(resource: TResource, callback: (DataResponse) -> Unit) {
+    fun <TResource : Resource> delete(resource: TResource, callback: (Response) -> Unit) {
 
         return try {
 
@@ -778,7 +778,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
             sendRequest(request, callback)
         } catch (e: Exception) {
-            callback(DataResponse(DataError(e)))
+            callback(Response(DataError(e)))
         }
     }
 
@@ -869,7 +869,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // execute
-    private fun <T> execute(body: T? = null, resourceUri: UrlLink, resourceType: ResourceType, callback: (DataResponse) -> Unit) {
+    private fun <T> execute(body: T? = null, resourceUri: UrlLink, resourceType: ResourceType, callback: (Response) -> Unit) {
 
         try {
 //            val resourceType = ResourceType.fromType<T>() ?: throw Exception("Unable to determine resource type requested for query")
@@ -880,7 +880,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             return sendRequest(request, callback)
 
         } catch (e: Exception) {
-            callback(DataResponse(DataError(e)))
+            callback(Response(DataError(e)))
         }
     }
 
@@ -1011,20 +1011,20 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
                         override fun onFailure(call: Call, e: IOException) {
                             logIfVerbose(e)
-                            return callback(ResourceResponse(DataError(e)))
+                            return callback(ResourceResponse(DataError(e), request))
                         }
 
                         @Throws(IOException::class)
-                        override fun onResponse(call: Call, response: Response) =
+                        override fun onResponse(call: Call, response: okhttp3.Response) =
                                 callback(processResponse(request, response, resourceType, resource, resourceClass))
                     })
         } catch (e: Exception) {
             logIfVerbose(e)
-            callback(ResourceResponse(DataError(e)))
+            callback(ResourceResponse(DataError(e), request))
         }
     }
 
-    private fun sendRequest(request: Request, callback: (DataResponse) -> Unit) {
+    private fun sendRequest(request: Request, callback: (Response) -> Unit) {
 
         if (ContextProvider.verboseLogging) {
             println("***")
@@ -1038,16 +1038,16 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
                         override fun onFailure(call: Call, e: IOException) {
                             logIfVerbose(e)
-                            return callback(DataResponse(DataError(e)))
+                            return callback(Response(DataError(e), request))
                         }
 
                         @Throws(IOException::class)
-                        override fun onResponse(call: Call, response: Response) =
+                        override fun onResponse(call: Call, response: okhttp3.Response) =
                                 callback(processDataResponse(request, response))
                     })
         } catch (e: Exception) {
             logIfVerbose(e)
-            callback(DataResponse(DataError(e)))
+            callback(Response(DataError(e), request))
         }
     }
 
@@ -1068,16 +1068,16 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                                 callback(ResourceListResponse(DataError(e)))
 
                         @Throws(IOException::class)
-                        override fun onResponse(call: Call, response: Response) =
+                        override fun onResponse(call: Call, response: okhttp3.Response) =
                                 callback(processListResponse(request, response, resourceType, resourceClass))
                     })
         } catch (e: Exception) {
             logIfVerbose(e)
-            callback(ResourceListResponse(DataError(e)))
+            callback(ResourceListResponse(DataError(e), request))
         }
     }
 
-    private fun <T : Resource> processResponse(request: Request, response: Response, resourceType: ResourceType, resource: T?, resourceClass: Class<T>? = null): ResourceResponse<T> {
+    private fun <T : Resource> processResponse(request: Request, response: okhttp3.Response, resourceType: ResourceType, resource: T?, resourceClass: Class<T>? = null): ResourceResponse<T> {
 
         try {
             val body = response.body() ?: return ResourceResponse(DataError("Empty response body received"))
@@ -1096,17 +1096,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 //return the original resource
                 return ResourceResponse(request, response, json, Result(resource))
             } else {
-                return ResourceResponse(json.toError())
+                return ResourceResponse(json.toError(), request, response, json)
             }
         } catch (e: Exception) {
-            return ResourceResponse(DataError(e))
+            return ResourceResponse(DataError(e), request, response)
         }
     }
 
-    private fun <T : Resource> processListResponse(request: Request, response: Response, resourceType: ResourceType, resourceClass: Class<T>? = null): ResourceListResponse<T> {
+    private fun <T : Resource> processListResponse(request: Request, response: okhttp3.Response, resourceType: ResourceType, resourceClass: Class<T>? = null): ResourceListResponse<T> {
 
         try {
-            val body = response.body() ?: return ResourceListResponse(DataError("Empty response body received"))
+            val body = response.body() ?: return ResourceListResponse(DataError("Empty response body received"), request, response)
             val json = body.string()
 
             logIfVerbose(json)
@@ -1116,39 +1116,37 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 //TODO: see if there's any benefit to caching these type tokens performance wise (or for any other reason)
                 val type = resourceClass ?: resourceType.type
                 val listType = TypeToken.getParameterized(ResourceList::class.java, type).type
-                val resourceList = gson.fromJson<ResourceList<T>>(json, listType) ?: return ResourceListResponse(json.toError())
+                val resourceList = gson.fromJson<ResourceList<T>>(json, listType) ?: return ResourceListResponse(json.toError(), request, response, json)
 
                 if (!resourceList.isPopuated) {
                     return ResourceListResponse(json.toError())
                 }
 
-                val result = ListResult(resourceList)
-
-                return ResourceListResponse(request, response, json, result)
+                return ResourceListResponse(request, response, json, Result(resourceList))
             } else {
-                return ResourceListResponse(json.toError())
+                return ResourceListResponse(json.toError(), request, response, json)
             }
         } catch (e: Exception) {
-            return ResourceListResponse(DataError(e))
+            return ResourceListResponse(DataError(e), request, response)
         }
     }
 
-    private fun processDataResponse(request: Request, response: Response): DataResponse {
+    private fun processDataResponse(request: Request, response: okhttp3.Response): Response {
 
         try {
-            val body = response.body() ?: return DataResponse(DataError("Empty response body received"))
+            val body = response.body() ?: return Response(DataError("Empty response body received"), request, response)
             val json = body.string()
 
             logIfVerbose(json)
 
             //check http return code
             return if (response.isSuccessful) {
-                DataResponse(request, response, json, DataResult(json))
+                Response(request, response, json, Result(json))
             } else {
-                DataResponse(json.toError())
+                Response(json.toError(), request, response, json)
             }
         } catch (e: Exception) {
-            return DataResponse(DataError(e))
+            return Response(DataError(e), request, response)
         }
     }
 

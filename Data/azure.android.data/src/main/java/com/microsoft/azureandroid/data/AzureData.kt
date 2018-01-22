@@ -3,10 +3,10 @@ package com.microsoft.azureandroid.data
 import android.content.Context
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.*
-import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.DocumentClient
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroid.data.util.ContextProvider
 import okhttp3.HttpUrl
 import java.net.URL
@@ -57,12 +57,12 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteDatabase(database: Database, callback: (DataResponse) -> Unit) =
+        fun deleteDatabase(database: Database, callback: (Response) -> Unit) =
                 documentClient.deleteDatabase(database.id, callback)
 
         // delete
         @JvmStatic
-        fun deleteDatabase(databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteDatabase(databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteDatabase(databaseId, callback)
 
         //endregion
@@ -86,12 +86,12 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteCollection(collection: DocumentCollection, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteCollection(collection: DocumentCollection, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteCollection(collection.id, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteCollection(collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteCollection(collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteCollection(collectionId, databaseId, callback)
 
         //endregion
@@ -125,12 +125,12 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteDocument(documentId, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteDocument(document: Document, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteDocument(document: Document, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteDocument(document.id, collectionId, databaseId, callback)
 
         // query
@@ -164,8 +164,8 @@ class AzureData {
 
         // create
         @JvmStatic
-        fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.createAttachment(attachmentId, contentType, mediaName, media, documentId, collectionId, databaseId, callback)
+        fun createAttachment(attachmentId: String, contentType: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.createAttachment(attachmentId, contentType, media, documentId, collectionId, databaseId, callback)
 
         // create
         @JvmStatic
@@ -184,8 +184,8 @@ class AzureData {
 
         // create
         @JvmStatic
-        fun createAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.createAttachment(attachmentId, contentType, mediaName, media, document, callback)
+        fun createAttachment(attachmentId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.createAttachment(attachmentId, contentType, media, document, callback)
 
         // list
         @JvmStatic
@@ -199,22 +199,22 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteAttachment(attachment: Attachment, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteAttachment(attachment: Attachment, documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteAttachment(attachment.id, documentId, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteAttachment(attachmentId: String, documentId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteAttachment(attachmentId: String, documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteAttachment(attachmentId, documentId, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteAttachment(attachment: Attachment, document: Document, callback: (DataResponse) -> Unit) =
-                documentClient.deleteAttachment(attachment.resourceId, document, callback)
+        fun deleteAttachment(attachment: Attachment, document: Document, callback: (Response) -> Unit) =
+                documentClient.deleteAttachment(attachment.resourceId!!, document, callback)
 
         // delete
         @JvmStatic
-        fun deleteAttachment(attachmentRid: String, document: Document, callback: (DataResponse) -> Unit) =
+        fun deleteAttachment(attachmentRid: String, document: Document, callback: (Response) -> Unit) =
                 documentClient.deleteAttachment(attachmentRid, document, callback)
 
         // replace
@@ -234,8 +234,8 @@ class AzureData {
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, contentType: String, mediaName: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, contentType, mediaName, media, documentId, collectionId, databaseId, callback)
+        fun replaceAttachment(attachmentId: String, contentType: String, media: ByteArray, documentId: String, collectionId: String, databaseId: String, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, contentType, media, documentId, collectionId, databaseId, callback)
 
         // replace
         @JvmStatic
@@ -254,8 +254,8 @@ class AzureData {
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaName: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, mediaName, media, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, media, document, callback)
 
         //endregion
 
@@ -283,17 +283,17 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteStoredProcedure(storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteStoredProcedure(storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteStoredProcedure(storedProcedure, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (DataResponse) -> Unit) =
+        fun deleteStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (Response) -> Unit) =
                 documentClient.deleteStoredProcedure(storedProcedure, collection, callback)
 
         // delete
         @JvmStatic
-        fun deleteStoredProcedure(storedProcedureId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteStoredProcedure(storedProcedureId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteStoredProcedure(storedProcedureId, collectionId, databaseId, callback)
 
         //endregion
@@ -322,17 +322,17 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteUserDefinedFunction(userDefinedFunctionId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteUserDefinedFunction(userDefinedFunctionId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteUserDefinedFunction(userDefinedFunctionId, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteUserDefinedFunction(userDefinedFunction.id, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (DataResponse) -> Unit) =
+        fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (Response) -> Unit) =
                 documentClient.deleteUserDefinedFunction(userDefinedFunction, collection, callback)
 
         // replace
@@ -371,17 +371,17 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteTrigger(triggerId: String, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteTrigger(triggerId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteTrigger(triggerId, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteTrigger(trigger: Trigger, collectionId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteTrigger(trigger: Trigger, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteTrigger(trigger.id, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteTrigger(trigger: Trigger, collection: DocumentCollection, callback: (DataResponse) -> Unit) =
+        fun deleteTrigger(trigger: Trigger, collection: DocumentCollection, callback: (Response) -> Unit) =
                 documentClient.deleteTrigger(trigger, collection, callback)
 
         // replace
@@ -420,12 +420,12 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteUser(userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteUser(userId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteUser(userId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deleteUser(user: User, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deleteUser(user: User, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteUser(user.id, databaseId, callback)
 
         //endregion
@@ -464,17 +464,17 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deletePermission(permissionId: String, userId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deletePermission(permissionId, userId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deletePermission(permission: Permission, userId: String, databaseId: String, callback: (DataResponse) -> Unit) =
+        fun deletePermission(permission: Permission, userId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deletePermission(permission.id, userId, databaseId, callback)
 
         // delete
         @JvmStatic
-        fun deletePermission(permission: Permission, user: User, callback: (DataResponse) -> Unit) =
+        fun deletePermission(permission: Permission, user: User, callback: (Response) -> Unit) =
                 documentClient.deletePermission(permission, user, callback)
 
         //endregion
@@ -497,7 +497,7 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun <T : Resource> delete(resource: T, callback: (DataResponse) -> Unit) =
+        fun <T : Resource> delete(resource: T, callback: (Response) -> Unit) =
                 documentClient.delete(resource, callback)
 
         // refresh

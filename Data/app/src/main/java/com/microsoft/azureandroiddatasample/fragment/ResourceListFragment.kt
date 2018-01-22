@@ -23,7 +23,7 @@ import java.util.*
 import android.widget.ArrayAdapter
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.Permission
-import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroiddatasample.extensions.updateItemEnabledStatus
 
 import kotlinx.android.synthetic.main.dialog_create_permission.view.*
@@ -103,7 +103,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
 
     open fun createResource(dialogView: View, callback: (ResourceResponse<TData>) -> Unit) {}
 
-    open fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {}
+    open fun deleteItem(resourceId: String, callback: (Response) -> Unit) {}
 
     open fun getResourceCreationDialog() : View {
 

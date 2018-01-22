@@ -6,8 +6,8 @@ import com.microsoft.azureandroid.data.delete
 import com.microsoft.azureandroid.data.model.Permission
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.model.User
-import com.microsoft.azureandroid.data.services.DataResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
+import com.microsoft.azureandroid.data.services.Response
 import org.awaitility.Awaitility.await
 import org.junit.After
 import org.junit.Assert
@@ -44,7 +44,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
     @After
     override fun tearDown() {
 
-        var deleteResponse: DataResponse? = null
+        var deleteResponse: Response? = null
 
         AzureData.deleteUser(userId, databaseId) { response ->
             println("Attempted to delete test user.  Result: ${response.isSuccessful}")

@@ -6,7 +6,7 @@ import android.widget.EditText
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.model.DictionaryDocument
 import com.microsoft.azureandroid.data.model.User
-import com.microsoft.azureandroid.data.services.DataResponse
+import com.microsoft.azureandroid.data.services.Response
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroiddatasample.R
@@ -46,7 +46,7 @@ class DocumentsFragment : ResourceListFragment<DictionaryDocument>() {
 
             //test doc properties came back
             if (response.isSuccessful) {
-                response.result?.let {
+                response.result.let {
                     it.resource?.let {
                         println(it["testNumber"])
                         println(it["testString"])
@@ -78,7 +78,7 @@ class DocumentsFragment : ResourceListFragment<DictionaryDocument>() {
         }
     }
 
-    override fun deleteItem(resourceId: String, callback: (DataResponse) -> Unit) {
+    override fun deleteItem(resourceId: String, callback: (Response) -> Unit) {
 
         AzureData.deleteDocument(resourceId, collectionId, databaseId) { result ->
             callback(result)

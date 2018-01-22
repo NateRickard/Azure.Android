@@ -12,18 +12,12 @@ import java.util.*
  * Represents a resource type in the Azure Cosmos DB service.
  * All Azure Cosmos DB resources, such as `Database`, `DocumentCollection`, and `Document` are derived from this class.
  */
-abstract class Resource(id: String? = null) {
+abstract class Resource(id: String? = null) : ResourceBase() {
 
     /**
      * Gets or sets the Id of the resource in the Azure Cosmos DB service.
      */
     var id: String = id ?: UUID.randomUUID().toString()
-
-    /**
-     * Gets or sets the Resource Id associated with the resource in the Azure Cosmos DB service.
-     */
-    @SerializedName(Keys.resourceIdKey)
-    var resourceId: String = ""
 
     /**
      * Gets the self-link associated with the resource from the Azure Cosmos DB service.
@@ -48,7 +42,6 @@ abstract class Resource(id: String? = null) {
         object Keys {
 
             const val idKey =           "id"
-            const val resourceIdKey =   "_rid"
             const val selfLinkKey =     "_self"
             const val etagKey =         "_etag"
             const val timestampKey =    "_ts"
