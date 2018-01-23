@@ -12,7 +12,7 @@ class ResourceList<T: Resource> : ResourceBase() {
     @SerializedName(Keys.countKey)
     var count: Int = 0
 
-    @SerializedName(Document.listName, alternate = [Database.listName, Attachment.listName, DocumentCollection.listName, Offer.listName, Permission.listName, StoredProcedure.listName, Trigger.listName, User.listName])
+    @SerializedName(Document.listName, alternate = [Database.listName, Attachment.listName, DocumentCollection.listName, Offer.listName, Permission.listName, StoredProcedure.listName, Trigger.listName, User.listName, UserDefinedFunction.listName])
     lateinit var items: Array<T>
 
     val isPopuated: Boolean
