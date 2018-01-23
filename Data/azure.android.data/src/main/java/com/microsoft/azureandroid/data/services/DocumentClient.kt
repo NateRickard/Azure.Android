@@ -999,11 +999,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     private fun <T : Resource> sendResourceRequest(request: Request, resourceType: ResourceType, resource: T?, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
-        if (ContextProvider.verboseLogging) {
-            println("***")
-            println("Sending ${request.method()} request for Data to ${request.url()}")
-            println("\tBody : ${request.body()?.toString()}")
-        }
+        logIfVerbose("***", "Sending ${request.method()} request for Data to ${request.url()}", "\tContent : length = ${request.body()?.contentLength()}, type = ${request.body()?.contentType()}", "***")
 
         try {
             client.newCall(request)
@@ -1026,11 +1022,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     private fun sendRequest(request: Request, callback: (Response) -> Unit) {
 
-        if (ContextProvider.verboseLogging) {
-            println("***")
-            println("Sending ${request.method()} request for Data to ${request.url()}")
-            println("\tBody : ${request.body()?.toString()}")
-        }
+        logIfVerbose("***", "Sending ${request.method()} request for Data to ${request.url()}", "\tContent : length = ${request.body()?.contentLength()}, type = ${request.body()?.contentType()}", "***")
 
         try {
             client.newCall(request)
@@ -1053,11 +1045,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
     private fun <T : Resource> sendResourceListRequest(request: Request, resourceType: ResourceType, callback: (ResourceListResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
-        if (ContextProvider.verboseLogging) {
-            println("***")
-            println("Sending ${request.method()} request for Data to ${request.url()}")
-            println("\tBody : ${request.body()?.toString()}")
-        }
+        logIfVerbose("***", "Sending ${request.method()} request for Data to ${request.url()}", "\tContent : length = ${request.body()?.contentLength()}, type = ${request.body()?.contentType()}", "***")
 
         try {
             client.newCall(request)
@@ -1156,6 +1144,15 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         if (ContextProvider.verboseLogging) {
             println(thing)
+        }
+    }
+
+    private fun logIfVerbose(vararg things: Any) {
+
+        if (ContextProvider.verboseLogging) {
+            things.forEach {
+                println(it)
+            }
         }
     }
 
