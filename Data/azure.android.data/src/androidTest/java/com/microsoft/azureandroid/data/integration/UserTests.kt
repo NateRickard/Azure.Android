@@ -91,7 +91,6 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         }
 
         assertResponseSuccess(resourceListResponse)
-        assert(resourceListResponse!!.resource!!.isPopuated)
     }
 
     @Test

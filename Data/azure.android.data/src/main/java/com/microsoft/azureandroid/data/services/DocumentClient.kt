@@ -1106,10 +1106,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
                 val listType = TypeToken.getParameterized(ResourceList::class.java, type).type
                 val resourceList = gson.fromJson<ResourceList<T>>(json, listType) ?: return ResourceListResponse(json.toError(), request, response, json)
 
-                if (!resourceList.isPopuated) {
-                    return ResourceListResponse(json.toError())
-                }
-
                 return ResourceListResponse(request, response, json, Result(resourceList))
             } else {
                 return ResourceListResponse(json.toError(), request, response, json)

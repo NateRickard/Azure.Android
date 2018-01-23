@@ -110,7 +110,6 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         }
 
         assertResponseSuccess(resourceListResponse)
-        assert(resourceListResponse!!.resource!!.isPopuated)
     }
 
     @Test

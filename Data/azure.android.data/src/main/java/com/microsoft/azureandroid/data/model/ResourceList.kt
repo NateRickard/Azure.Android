@@ -10,19 +10,19 @@ import com.google.gson.annotations.SerializedName
 class ResourceList<T: Resource> : ResourceBase() {
 
     @SerializedName(Keys.countKey)
-    var count: Int? = null
+    var count: Int = 0
 
     @SerializedName(Document.listName, alternate = [Database.listName, Attachment.listName, DocumentCollection.listName, Offer.listName, Permission.listName, StoredProcedure.listName, Trigger.listName, User.listName])
-    var items: Array<T>? = null
+    lateinit var items: Array<T>
 
     val isPopuated: Boolean
-            get() = resourceId != null && items != null
+            get() = resourceId != null && count > 0
 
     companion object {
 
         object Keys {
 
-            const val countKey      = "_count"
+            const val countKey = "_count"
 
             val list = listOf(resourceIdKey, countKey)
         }
