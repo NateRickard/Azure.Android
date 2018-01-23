@@ -79,7 +79,7 @@ Still using Java?  [See the below note](#using-from-java) about some needed synt
 All operations defined below will return a response that has the following properties:
 
 | Property      |                    Value                 |
-| ----------------------------------------------------- |
+| ------------- | -----------------------------------------|
 | `isSuccessful` | Returns `true` if the result is a success, `false` otherwise. |
 
 | `isErrored` | Returns `true` if the result is an error, `false` otherwise. |
