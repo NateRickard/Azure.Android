@@ -70,7 +70,29 @@ override fun onCreate() {
 
 # Usage
 
-Using Java?  [See the below note](#using-from-java) about syntactical differences.
+## General Information
+
+Still using Java?  [See the below note](#using-from-java) about some needed syntactical differences.
+
+### Responses
+
+All operations defined below will return a response that has the following properties:
+
+| Property      |                    Value                 |
+| ----------------------------------------------------- |
+| `isSuccessful` | Returns `true` if the result is a success, `false` otherwise. |
+
+| `isErrored` | Returns `true` if the result is an error, `false` otherwise. |
+
+| `error` | Returns the associated error value if the result if it is a failure, null otherwise. |
+
+| `jsonData` | The json data returned by the server (if applicable) |
+
+| `request` | The (OkHttp) request object sent to the server. (If available) |
+
+| `response` | The (OkHttp) response object returned from the server. (If available) |
+
+| `resource` | For operations that return a resource or list of resources, this will contain that (typed) result. |
 
 ## Operations
 

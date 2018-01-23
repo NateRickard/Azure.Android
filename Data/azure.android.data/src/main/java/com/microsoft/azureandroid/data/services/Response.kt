@@ -10,11 +10,11 @@ import okhttp3.Request
  */
 
 open class Response(
-        // The URL request sent to the server.
+        // The request sent to the server.
         val request: Request? = null,
-        // The server's response to the URL request.
+        // The server's response to the request.
         val response: okhttp3.Response? = null,
-        // The data returned by the server.
+        //  The json data returned by the server (if applicable)
         val jsonData: String? = null,
         // The result of response deserialization.
         open val result: Result<*>
