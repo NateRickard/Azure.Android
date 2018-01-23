@@ -38,6 +38,11 @@ class AzureData {
         var isConfigured: Boolean = false
             private set
 
+        var verboseLogging: Boolean
+            get() = ContextProvider.verboseLogging
+            set (value) { ContextProvider.verboseLogging = value }
+
+
         //region Databases
 
         // create
