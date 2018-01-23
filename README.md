@@ -5,7 +5,8 @@ _This SDK was originally created as part of **[Azure.Mobile](https://aka.ms/mobi
 
 ---
 
-# Azure.Android [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/NateRickard/Azure.Android/master/LICENSE.md) [![Build status](https://build.appcenter.ms/v0.1/apps/8959ae85-7b36-48ac-b333-10dfd76fb36b/branches/master/badge)](https://appcenter.ms)
+# Azure.Android [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/NateRickard/Azure.Android/master/LICENSE.md) [![Release](https://jitpack.io/v/NateRickard/Azure.Android.svg)]
+(https://jitpack.io/#NateRickard/Azure.Android) [![Build status](https://build.appcenter.ms/v0.1/apps/8959ae85-7b36-48ac-b333-10dfd76fb36b/branches/master/badge)](https://appcenter.ms)
 
 # Configure
 
@@ -27,6 +28,26 @@ Then, in the app project you want to use AzureData in, add the AzureData depende
 ```javascript
 dependencies {
 	compile 'com.github.NateRickard:Azure.Android:v0.4.1'
+}
+```
+
+To grab the latest from GitHub:
+
+```javascript
+dependencies {
+	compile 'com.github.NateRickard:Azure.Android:-SNAPSHOT'
+	
+	// you can also specify branch, i.e. master-SNAPSHOT
+}
+```
+
+...or a [specific commit](https://github.com/NateRickard/Azure.Android/commit/594b795e10cda101b9b2572ed7a22f8a315cae30):
+
+```javascript
+dependencies {
+	compile 'com.github.NateRickard:Azure.Android:594b795'
+	
+	// 594b795 == short commit hash from GitHub
 }
 ```
 
