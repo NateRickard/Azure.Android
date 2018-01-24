@@ -143,6 +143,24 @@ class AzureData {
         fun deleteDocument(document: Document, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteDocument(document.id, collectionId, databaseId, callback)
 
+        // delete
+        @JvmStatic
+        fun deleteDocument(document: Document, collection: DocumentCollection, callback: (Response) -> Unit) =
+                documentClient.deleteDocument(document.resourceId!!, collection, callback)
+
+        // delete
+        @JvmStatic
+        fun deleteDocument(documentResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) =
+                documentClient.deleteDocument(documentResourceId, collection, callback)
+
+        // replace
+        fun <T : Document> replaceDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
+                documentClient.replaceDocument(document, collectionId, databaseId, callback)
+
+        // replace
+        fun <T : Document> replaceDocument(document: T, collection: DocumentCollection, callback: (ResourceResponse<T>) -> Unit) =
+                documentClient.replaceDocument(document, collection, callback)
+
         // query
         @JvmStatic
         fun <T : Document> queryDocuments(collectionId: String, databaseId: String, query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) =

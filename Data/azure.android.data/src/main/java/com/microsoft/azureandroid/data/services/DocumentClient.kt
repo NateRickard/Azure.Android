@@ -206,6 +206,30 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.Document, callback)
     }
 
+    // delete
+    fun deleteDocument(documentResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(collection.selfLink!!, documentResourceId = documentResourceId)
+
+        return delete(resourceUri, ResourceType.Document, callback)
+    }
+
+    // replace
+    fun <T : Document> replaceDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(databaseId, collectionId, document.id)
+
+        return replace(document, resourceUri, ResourceType.Document, callback = callback)
+    }
+
+    // replace
+    fun <T : Document> replaceDocument(document: T, collection: DocumentCollection, callback: (ResourceResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(collection.selfLink!!, document.resourceId)
+
+        return replace(document, resourceUri, ResourceType.Document, callback = callback)
+    }
+
     // query
     fun <T: Document> queryDocuments (collectionId: String, databaseId: String, query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
 

@@ -63,6 +63,26 @@ fun <T : Document> DocumentCollection.getDocument(documentResourceId: String, do
     return AzureData.getDocument(documentResourceId, this, documentClass, callback)
 }
 
+// delete
+fun DocumentCollection.deleteDocument(document: Document, callback: (Response) -> Unit) {
+    return AzureData.deleteDocument(document.resourceId!!, this, callback)
+}
+
+// delete
+fun DocumentCollection.deleteDocument(documentResourceId: String, callback: (Response) -> Unit) {
+    return AzureData.deleteDocument(documentResourceId, this, callback)
+}
+
+// replace
+fun <T : Document> DocumentCollection.replaceDocument(document: T, callback: (ResourceResponse<T>) -> Unit) {
+    return AzureData.replaceDocument(document, this, callback)
+}
+
+// query
+fun <T : Document> DocumentCollection.queryDocuments(query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
+    return AzureData.queryDocuments(this, query, documentClass, callback)
+}
+
 //endregion
 
 
