@@ -1,9 +1,7 @@
 package com.microsoft.azureandroid.data.integration
 
-import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.delete
+import com.microsoft.azureandroid.data.*
 import com.microsoft.azureandroid.data.model.*
-import com.microsoft.azureandroid.data.refresh
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroid.data.util.json.gson
 import junit.framework.Assert.*
@@ -148,6 +146,23 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
     }
 
     @Test
+    fun listDocumentsInCollection() {
+
+        //ensure at least 1 doc
+        createNewDocument()
+
+        collection?.getDocuments(docType) {
+            resourceListResponse = it
+        }
+
+        await().until {
+            resourceListResponse != null
+        }
+
+        verifyListDocuments()
+    }
+
+    @Test
     fun queryDocuments() {
 
         //ensure at least 1 doc
@@ -176,6 +191,23 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
         createNewDocument()
 
         AzureData.getDocument(resourceId, collectionId, databaseId, docType) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        val createdDoc = resourceResponse!!.resource!!
+        verifyDocument(createdDoc)
+    }
+
+    @Test
+    fun getDocumentInCollection() {
+
+        val doc = createNewDocument()
+
+        collection?.getDocument(doc.resourceId!!, docType) {
             resourceResponse = it
         }
 
@@ -238,7 +270,7 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
         val doc = newDocument()
 
         if (coll != null) {
-            AzureData.createDocument(doc, coll) {
+            coll.createDocument(doc) {
                 docResponse = it
             }
         } else {
