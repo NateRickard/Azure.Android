@@ -178,7 +178,30 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
             resourceListResponse = it
         }
 
-        await().forever().until {
+        await().until {
+            resourceListResponse != null
+        }
+
+        verifyListDocuments()
+    }
+
+    @Test
+    fun queryDocumentsInCollection() {
+
+        //ensure at least 1 doc
+        createNewDocument()
+
+        val query = Query.select()
+                .from(collectionId)
+                .where(customStringKey, customStringValue)
+                .andWhere(customNumberKey, customNumberValue)
+                .orderBy("_etag", true)
+
+        collection?.queryDocuments(query, docType) {
+            resourceListResponse = it
+        }
+
+        await().until {
             resourceListResponse != null
         }
 
@@ -236,6 +259,8 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
         verifyDocument(createdDoc)
     }
 
+    //region Deletes
+
     @Test
     fun deleteDocument() {
 
@@ -250,6 +275,126 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
         }
 
         assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDocument2() {
+
+        val doc = createNewDocument()
+
+        AzureData.deleteDocument(doc, collectionId, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDocumentById() {
+
+        createNewDocument()
+
+        AzureData.deleteDocument(resourceId, collectionId, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDocumentFromCollection() {
+
+        val doc = createNewDocument()
+
+        collection?.deleteDocument(doc) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDocumentFromCollection2() {
+
+        val doc = createNewDocument()
+
+        AzureData.deleteDocument(doc, collection!!) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteDocumentFromCollectionByResourceId() {
+
+        val doc = createNewDocument()
+
+        collection?.deleteDocument(doc.resourceId!!) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    //endregion
+
+    @Test
+    fun replaceDocument() {
+
+        val doc = createNewDocument()
+
+        doc.setValue(customStringKey, replacedStringValue)
+
+        AzureData.replaceDocument(doc, collectionId, databaseId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        val replacedDoc = resourceResponse!!.resource!!
+        verifyDocument(replacedDoc, replacedStringValue)
+    }
+
+    @Test
+    fun replaceDocumentInCollection() {
+
+        val doc = createNewDocument()
+
+        doc.setValue(customStringKey, replacedStringValue)
+
+        collection?.replaceDocument(doc) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        val replacedDoc = resourceResponse!!.resource!!
+        verifyDocument(replacedDoc, replacedStringValue)
     }
 
     //endregion
@@ -291,11 +436,11 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
         return verifyDocument(createdDoc)
     }
 
-    private fun verifyDocument(createdDoc: TDoc) : TDoc {
+    private fun verifyDocument(createdDoc: TDoc, stringValue: String? = null) : TDoc {
 
         assertNotNull(createdDoc.getValue(customStringKey))
         assertNotNull(createdDoc.getValue(customNumberKey))
-        assertEquals(customStringValue, createdDoc.getValue(customStringKey))
+        assertEquals(stringValue ?: customStringValue, createdDoc.getValue(customStringKey))
         assertEquals(customNumberValue, (createdDoc.getValue(customNumberKey) as Number).toInt())
 
         return createdDoc
@@ -357,6 +502,7 @@ abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
         val customArrayValue = arrayOf(1, 2, 3, 4)
         const val customObjectKey = "customObject"
         val customObjectValue = User()
+        val replacedStringValue = "My replaced string content"
 
         init {
             val cal = Calendar.getInstance()
