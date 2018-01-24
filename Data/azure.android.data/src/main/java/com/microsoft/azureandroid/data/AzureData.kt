@@ -128,6 +128,11 @@ class AzureData {
         fun <T : Document> getDocument(documentId: String, collectionId: String, databaseId: String, documentClass: Class<T>, callback: (ResourceResponse<T>) -> Unit) =
                 documentClient.getDocument(documentId, collectionId, databaseId, documentClass, callback)
 
+        // get
+        @JvmStatic
+        fun <T : Document> getDocument(documentResourceId: String, collection: DocumentCollection, documentClass: Class<T>, callback: (ResourceResponse<T>) -> Unit) =
+                documentClient.getDocument(documentResourceId, collection, documentClass, callback)
+
         // delete
         @JvmStatic
         fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
@@ -219,8 +224,8 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteAttachment(attachmentRid: String, document: Document, callback: (Response) -> Unit) =
-                documentClient.deleteAttachment(attachmentRid, document, callback)
+        fun deleteAttachment(attachmentResourceId: String, document: Document, callback: (Response) -> Unit) =
+                documentClient.deleteAttachment(attachmentResourceId, document, callback)
 
         // replace
         @JvmStatic
@@ -244,23 +249,23 @@ class AzureData {
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, mediaUrl, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentResourceId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentResourceId, contentType, mediaUrl, document, callback)
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: String, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, HttpUrl.parse(mediaUrl)!!, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentResourceId: String, contentType: String, mediaUrl: String, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentResourceId, contentType, HttpUrl.parse(mediaUrl)!!, document, callback)
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: URL, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, HttpUrl.get(mediaUrl)!!, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentResourceId: String, contentType: String, mediaUrl: URL, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentResourceId, contentType, HttpUrl.get(mediaUrl)!!, document, callback)
 
         // replace
         @JvmStatic
-        fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
-                documentClient.replaceAttachment(attachmentId, attachmentRId, contentType, media, document, callback)
+        fun replaceAttachment(attachmentId: String, attachmentResourceId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) =
+                documentClient.replaceAttachment(attachmentId, attachmentResourceId, contentType, media, document, callback)
 
         //endregion
 

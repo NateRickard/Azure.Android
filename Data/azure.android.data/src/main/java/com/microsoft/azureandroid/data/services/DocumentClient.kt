@@ -190,6 +190,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return resource(resourceUri, ResourceType.Document, callback, documentClass)
     }
 
+    // get
+    fun <T : Document> getDocument(documentResourceId: String, collection: DocumentCollection, documentClass: Class<T>, callback: (ResourceResponse<T>) -> Unit) {
+
+        val resourceUri = baseUri.forDocument(collection.selfLink!!, documentResourceId = documentResourceId)
+
+        return resource(resourceUri, ResourceType.Document, callback, documentClass)
+    }
+
     // delete
     fun deleteDocument(documentId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
@@ -283,9 +291,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteAttachment(attachmentRid: String, document: Document, callback: (Response) -> Unit) {
+    fun deleteAttachment(attachmentResourceId: String, document: Document, callback: (Response) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRid)
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentResourceId)
 
         return delete(resourceUri, ResourceType.Attachment, callback)
     }
@@ -311,17 +319,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-    fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun replaceAttachment(attachmentId: String, attachmentResourceId: String, contentType: String, mediaUrl: HttpUrl, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRId)
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentResourceId)
 
         return replace(Attachment(attachmentId, contentType, mediaUrl.toString()), resourceUri, ResourceType.Attachment, callback = callback)
     }
 
     // replace
-    fun replaceAttachment(attachmentId: String, attachmentRId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
+    fun replaceAttachment(attachmentId: String, attachmentResourceId: String, contentType: String, media: ByteArray, document: Document, callback: (ResourceResponse<Attachment>) -> Unit) {
 
-        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentRId)
+        val resourceUri = baseUri.forAttachment(document.selfLink!!, attachmentResourceId)
         val headers = Headers.Builder()
                 .add(ApiValues.HttpRequestHeader.ContentType.value, contentType)
                 .add(ApiValues.HttpRequestHeader.Slug.value, attachmentId)

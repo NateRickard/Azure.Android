@@ -60,11 +60,11 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, documentId)
     }
 
-    fun forDocument(baseLink: String, documentId: String? = null) : UrlLink {
+    fun forDocument(baseLink: String, documentResourceId: String? = null) : UrlLink {
 
-        val itemLink = getItemLink(ResourceType.Document, baseLink, documentId)
+        val itemLink = getItemLink(ResourceType.Document, baseLink, documentResourceId)
 
-        return getUrlLinkForSelf(baseLink, itemLink, documentId)
+        return getUrlLinkForSelf(baseLink, itemLink, documentResourceId)
     }
 
     fun forAttachment(databaseId: String, collectionId: String, documentId: String, attachmentId: String? = null) : UrlLink {

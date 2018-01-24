@@ -48,8 +48,19 @@ fun Database.deleteCollection(collectionId: String, callback: (Response) -> Unit
 
 //region DocumentCollection
 
+// list
 fun <T : Document> DocumentCollection.getDocuments(documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
     return AzureData.getDocuments(this, documentClass, callback)
+}
+
+// create
+fun <T : Document> DocumentCollection.createDocument(document: T, callback: (ResourceResponse<T>) -> Unit) {
+    return AzureData.createDocument(document, this, callback)
+}
+
+// get
+fun <T : Document> DocumentCollection.getDocument(documentResourceId: String, documentClass: Class<T>, callback: (ResourceResponse<T>) -> Unit) {
+    return AzureData.getDocument(documentResourceId, this, documentClass, callback)
 }
 
 //endregion
