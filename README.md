@@ -255,18 +255,18 @@ document["customObject"] = User()
 
 When using `DictionaryDocument`, the data is subject to the limitations of json's lack of typing.  This means that when the above `DictionaryDocument` is deserialized, the deserializer won't know the specific types for your data.  In practice, this means the following types of data may appear differently once they've been "round tripped":
 
-| Data Type  |   Roundtrip Data Type   | Sample Conversion |
-| ---------- | ----------------------- | ----------------- |
+| Data Type  |   Roundtrip Data Type       | Sample Conversion |
+| ---------- | --------------------------- | ----------------- |
 | Number types (Int, Long, etc.) | `Number` | `(document["customNumber"] as Number).toInt()` |
-| Array/List types | `ArrayList<*>`/`ArrayList<Any?>` | `document["customArray"] as ArrayList<*>` |
-| Object types | `Map<*,*>`/`Map<String, Any?>` | `document["customObject"] as Map<*,*>` |
+| Array/List types | `ArrayList<*>`<br/>`ArrayList<Any?>` | `document["customArray"] as ArrayList<*>` |
+| Object types | `Map<*,*>`<br/>`Map<String, Any?>` | `document["customObject"] as Map<*,*>` |
 
 Due to these limitations, we recommend only using `DictionaryDocument` for simple data types and/or rapid prototyping.  Subclassing `Document`, as shown above, will yield much better results with proper typing based on the structure of your document class.
 
 #### Create
 
 ```kotlin
-// ridiculous logic to get a Date using Calendar API
+// ridiculous code to get a Date using Calendar API
 val cal = Calendar.getInstance()
 cal.set(Calendar.YEAR, 1988)
 cal.set(Calendar.MONTH, Calendar.JANUARY)
@@ -306,15 +306,15 @@ collection.createDocument (document) {
 
 ```kotlin
 AzureData.getDocuments (collectionId, databaseId, CustomDocument::class.java) {
-	// documents = it.resource?.items
+    // documents = it.resource?.items
 }
 
 AzureData.getDocuments (collection, CustomDocument::class.java) {
-	// documents = it.resource?.items
+    // documents = it.resource?.items
 }
 
 collection.getDocuments (CustomDocument::class.java) {
-	// documents = it.resource?.items
+    // documents = it.resource?.items
 }
 ```
 
@@ -322,7 +322,7 @@ collection.getDocuments (CustomDocument::class.java) {
 
 ```kotlin
 AzureData.getDocument (documentId, collectionId, databaseId, CustomDocument::class.java) {
-	// document = it.resource
+    // document = it.resource
 }
 
 AzureData.getDocument (documentResourceId, collection, CustomDocument::class.java) {
@@ -337,55 +337,66 @@ collection.getDocument (documentResourceId, CustomDocument::class.java) {
 #### Delete
 
 ```kotlin
-AzureData.delete (document, fromCollection: collectionId, inDatabase: databaseId) { r in
-    // document = r.resource
+AzureData.deleteDocument (document, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
 }
 
-AzureData.delete (document, from: collection) { r in
-    // document = r.resource
+AzureData.deleteDocument (document, collection) {
+    // successfully deleted == it.isSuccessful
 }
 
-collection.delete (document) { s in
-    // s == successfully deleted
+AzureData.deleteDocument (documentId, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteDocument (document) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteDocument (documentResourceId) {
+    // successfully deleted == it.isSuccessful
+}
+
+document.delete {
+    // successfully deleted == it.isSuccessful
 }
 ```
 
 #### Replace
 
 ```kotlin
-AzureData.replace (document, inCollection: collectionId, inDatabase: databaseId) { r in
-    // document = r.resource
+AzureData.replaceDocument (document, inCollection: collectionId, inDatabase: databaseId) {
+    // updated document = it.resource
 }
 
-AzureData.replace (document, in: collection) { r in
-    // document = r.resource
+AzureData.replaceDocument (document, collection) {
+    // updated document = it.resource
 }
 
-collection.replace (document) { r in
-    // document = r.resource
+collection.replaceDocument (document) {
+    // updated document = it.resource
 }
 ```
 
 #### Query
 
 ```kotlin
-let query = ADQuery.select("firstName", "lastName", ...)
-                   .from("People")
-                   .where("firstName", is: "Colby")
-                   .and("lastName", is: "Williams")
-                   .and("age", isGreaterThanOrEqualTo: 20)
-                   .orderBy("_etag", descending: true)
+val query = Query.select()
+                .from(collectionId)
+                .where("stringProperty", "stringValue")
+                .andWhere("numberProperty", 12)
+                .orderBy("_etag", true) // descending = true/false
 
-AzureData.query(documentsIn: collectionId, inDatabase: databaseId, with: query) { r in
-    // documents = r.resource?.items
+AzureData.queryDocuments(collectionId, databaseId, query, CustomDocument::class.java) {
+    // matching documents = it.resource?.items
 }
 
-AzureData.query(documentsIn: collection, with: query) { r in
-    // documents = r.resource?.items
+AzureData.queryDocuments(collection, query, CustomDocument::class.java) {
+    // matching documents = it.resource?.items
 }
 
-collection.query (documentsWith: query) { r in
-    // documents in r.resource?.list
+collection.queryDocuments (query, CustomDocument::class.java) {
+    // matching documents = it.resource?.items
 }
 ```
 
