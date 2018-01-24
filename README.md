@@ -110,6 +110,7 @@ _* not applicable to resource type_
 ### Databases
 
 #### Create
+
 ```kotlin
 AzureData.createDatabase (id) {
     // database = it.resource
@@ -117,6 +118,7 @@ AzureData.createDatabase (id) {
 ```
 
 #### List
+
 ```kotlin
 AzureData.getDatabases {
     // databases = it.resource?.items
@@ -124,6 +126,7 @@ AzureData.getDatabases {
 ```
 
 #### Get
+
 ```kotlin
 AzureData.getDatabase (id) {
     // database = it.resource
@@ -131,6 +134,7 @@ AzureData.getDatabase (id) {
 ```
 
 #### Delete
+
 ```kotlin
 AzureData.deleteDatabase (id) {
     // successfully deleted == it.isSuccessful
@@ -150,6 +154,7 @@ database.delete {
 ### Collections
 
 #### Create
+
 ```kotlin
 AzureData.createCollection (collectionId, databaseId) {
     // collection = it.resource
@@ -161,6 +166,7 @@ database.create (collectionId) {
 ```
 
 #### List
+
 ```kotlin
 AzureData.getCollections (databaseId) {
     // collections = it.resource?.items
@@ -172,6 +178,7 @@ database.getCollections {
 ```
 
 #### Get
+
 ```kotlin
 AzureData.getCollection (collectionId, databaseId) {
     // collection = it.resource
@@ -183,6 +190,7 @@ database.getCollection (collectionId) {
 ```
 
 #### Delete
+
 ```kotlin
 AzureData.deleteCollection (collection, from: databaseId) { s in
     // s == successfully deleted
@@ -198,6 +206,7 @@ collection.delete {
 ```
 
 #### Replace
+
 ```kotlin
 // TODO...
 ```
@@ -209,116 +218,124 @@ There are two different classes you can use to interact with documents:
 
 #### Document
 
-The `Document` type is intended to be inherited by your custom model types. ~~Subclasses must conform to the `Codable` protocal and require minimal boilerplate code for successful serialization/deserialization.~~
+The `Document` type is intended to be inherited by your custom document model types.
 
 Here is an example of a class `CustomDocument` that inherits from `Document`:
 
-```swift
-class CustomDocument: Document {
-    
-    var testDate:   Date?
-    var testNumber: Double?
-    
-    public override init () { super.init() }
-    public override init (_ id: String) { super.init(id) }
-    
-    public required init(from decoder: Decoder) throws {
-        try super.init(from: decoder)
-        
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        testDate    = try container.decode(Date.self,   forKey: .testDate)
-        testNumber  = try container.decode(Double.self, forKey: .testNumber)
-    }
-    
-    public override func encode(to encoder: Encoder) throws {
-        try super.encode(to: encoder)
+```kotlin
+class CustomDocument(id: String? = null) : Document(id) {
 
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(testDate,      forKey: .testDate)
-        try container.encode(testNumber,    forKey: .testNumber)
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case testDate
-        case testNumber
-    }
+    var customString = "My Custom String"
+    var customNumber = 123000
+    var customDate: Date = Date()
+    var customBool = true
+    var customArray = arrayOf(1, 2, 3)
+    var customObject: User? = User()
 }
 ```
 
 #### DictionaryDocument
 
-The `DictionaryDocument` type behaves very much like a `[String:Any]` dictionary while handling all properties required by the database.  This allows you to interact with the document directly using subscript syntax.  `DictionaryDocument` cannot be subclassed.
+The `DictionaryDocument` type behaves very much like a `<String, Any?>` Map while handling all properties required by the database.  This allows you to interact with the document directly using subscript/indexing syntax.  `DictionaryDocument` cannot be subclassed.
 
 Here is an example of using `DictionaryDocument` to create a document with the same properties as the `CustomDocument` above:
 
-```swift
-let document = DictionaryDocument()
+```kotlin
+val document = DictionaryDocument()
 
-document["testDate"]   = Date(timeIntervalSince1970: 1510865595)         
-document["testNumber"] = 1_000_000
+document["customString"] = "My Custom String"
+document["customNumber"] = 123000
+document["customDate"] = Date()
+document["customBool"] = true
+document["customArray"] = arrayOf(1, 2, 3)
+document["customObject"] = User()
 ```
 
+##### ** Limitations **
+
+When using `DictionaryDocument`, the data is subject to the limitations of json's lack of typing.  This means that when the above `DictionaryDocument` is deserialized, the deserializer won't know the specific types for your data.  In practice, this means the following types of data may appear differently once they've been "round tripped":
+
+| Data Type  |   Roundtrip Data Type   | Sample Conversion |
+| ---------- | ----------------------- | ----------------- |
+| Number types (Int, Long, etc.) | `Number` | `(document["customNumber"] as Number).toInt()` |
+| Array/List types | `ArrayList<*>`/`ArrayList<Any?>` | `document["customArray"] as ArrayList<*>` |
+| Object types | `Map<*,*>`/`Map<String, Any?>` | `document["customObject"] as Map<*,*>` |
+
+Due to these limitations, we recommend only using `DictionaryDocument` for simple data types and/or rapid prototyping.  Subclassing `Document`, as shown above, will yield much better results with proper typing based on the structure of your document class.
 
 #### Create
-```kotlin
-val document = CustomDocument()
 
-document.testDate   = Date(timeIntervalSince1970: 1510865595)
-document.testNumber = 1_000_000
+```kotlin
+// ridiculous logic to get a Date using Calendar API
+val cal = Calendar.getInstance()
+cal.set(Calendar.YEAR, 1988)
+cal.set(Calendar.MONTH, Calendar.JANUARY)
+cal.set(Calendar.DAY_OF_MONTH, 1)
+val customDateValue = cal.time
+
+// Create Document
+
+val document = CustomDocument() //optionally specify an Id here, otherwise it will be generated
+
+document.customDate = customDateValue
+document.customNumber = 1_000_000
 
 // or
 
 val document = DictionaryDocument() //optionally specify an Id here, otherwise it will be generated
             
-document["testDate"]   = Date(timeIntervalSince1970: 1510865595)         
-document["testNumber"] = 1_000_000
+document["customDate"] = customDateValue
+document["customNumber"] = 1_000_000
+
+// Document creation in CosmosDB
 
 AzureData.createDocument (document, collectionId, databaseId) {
-    // document = it.resource
+    // created document = it.resource
 }
 
 AzureData.createDocument (document, collection) {
-    // document = it.resource
+    // created document = it.resource
 }
 
-collection.createDocument (document) { r in
-    // document = r.resource
+collection.createDocument (document) {
+    // created document = it.resource
 }
 ```
 
 #### List
+
 ```kotlin
-AzureData.get (documentsAs: CustomDocument.self, inCollection: collectionId, inDatabase: databaseId) { r in
-    // documents = r.resource?.items
+AzureData.getDocuments (collectionId, databaseId, CustomDocument::class.java) {
+	// documents = it.resource?.items
 }
 
-AzureData.get (documentsAs: CustomDocument.self, in: collection) { r in
-    // documents = r.resource?.items
+AzureData.getDocuments (collection, CustomDocument::class.java) {
+	// documents = it.resource?.items
 }
 
-collection.get (documentsAs: CustomDocument.self) { r in
-    // documents in r.resource?.list
+collection.getDocuments (CustomDocument::class.java) {
+	// documents = it.resource?.items
 }
 ```
 
 #### Get
+
 ```kotlin
-AzureData.get (documentWithId: id, as: CustomDocument.self, inCollection: collectionId, inDatabase: databaseId) { r in
-    // document = r.resource
+AzureData.getDocument (documentId, collectionId, databaseId, CustomDocument::class.java) {
+	// document = it.resource
 }
 
-AzureData.get (documentWithId: id, as: CustomDocument.self, in: collection) { r in
-    // document = r.resource
+AzureData.getDocument (documentResourceId, collection, CustomDocument::class.java) {
+    // document = it.resource
 }
 
-collection.get (documentWithResourceId: id: as: CustomDocument.self) { r in
-    // document = r.resource
+collection.getDocument (documentResourceId, CustomDocument::class.java) {
+    // document = it.resource
 }
 ```
 
 #### Delete
+
 ```kotlin
 AzureData.delete (document, fromCollection: collectionId, inDatabase: databaseId) { r in
     // document = r.resource
@@ -403,3 +420,5 @@ AzureData.getDatabases(onCallback(response -> {
 ```
 
 `onCallback()` is found in the `com.microsoft.azureandroid.data.util` package, and will in essence 'inject' the return statement for you and remove the need to end your callback with a returned `Unit.INSTANCE`.
+
+[See here](https://github.com/NateRickard/cosmos_db_example) for a complete example using this library from Java.
