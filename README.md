@@ -192,12 +192,16 @@ database.getCollection (collectionId) {
 #### Delete
 
 ```kotlin
-AzureData.deleteCollection (collection, from: databaseId) { s in
-    // s == successfully deleted
+AzureData.deleteCollection (collection, databaseId) {
+    // successfully deleted == it.isSuccessful
 }
 
-database.deleteCollection (collection) { s in
-    // s == successfully deleted
+database.deleteCollection (collection) {
+    // successfully deleted == it.isSuccessful
+}
+
+database?.deleteCollection(collectionId) {
+    // successfully deleted == it.isSuccessful
 }
 
 collection.delete {
@@ -497,6 +501,118 @@ document.replaceAttachment (attachmentId, "image/jpeg", data) {
 
 `data` here is a `ByteArray` containing the bytes for the media/blob, and "image/jpeg" is the content type of the blob.
 
+### Stored Procedures
+
+#### Create
+
+Given a stored procedure body:
+
+```kotlin
+val storedProcedureBody = """
+        function () {
+            var context = getContext();
+            var r = context.getResponse();
+
+            r.setBody('Hello World!');
+        }
+        """
+```
+
+A Stored Procedure can be created like so:
+
+```kotlin
+AzureData.createStoredProcedure (storedProcedureId, storedProcedureBody, collectionId, databaseId) {
+    // storedProcedure = it.resource
+}
+
+AzureData.createStoredProcedure (storedProcedureId, storedProcedureBody, collection) {
+    // storedProcedure = it.resource
+}
+
+collection.createStoredProcedure (storedProcedureId, storedProcedureBody) {
+    // storedProcedure = it.resource
+}
+```
+
+#### List
+
+```kotlin
+AzureData.getStoredProcedures (collectionId, databaseId) {
+    // storedProcedures = it.resource?.items
+}
+
+AzureData.getStoredProcedures (collection) {
+    // storedProcedures = it.resource?.items
+}
+
+collection.getStoredProcedures () {
+    // storedProcedures = it.resource?.items
+}
+```
+
+#### Delete
+
+```kotlin
+AzureData.deleteStoredProcedure (storedProcedureId, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteStoredProcedure (storedProcedure, collection) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteStoredProcedure (storedProcedureResourceId, collection) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteStoredProcedure (storedProcedure, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteStoredProcedure (storedProcedure) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteStoredProcedure (storedProcedureResourceId) {
+    // successfully deleted == it.isSuccessful
+}
+```
+
+#### Replace
+
+```kotlin
+AzureData.replaceStoredProcedure (storedProcedureId, storedProcedureBody, collectionId, databaseId) {
+    // storedProcedure = it.resource
+}
+
+AzureData.replaceStoredProcedure (storedProcedureId, storedProcedureResourceId, storedProcedureBody, collection) {
+    // storedProcedure = it.resource
+}
+
+collection.replaceStoredProcedure(storedProcedureId, storedProcedureResourceId, storedProcedureBody) {
+    // storedProcedure = it.resource
+}
+
+collection.replaceStoredProcedure(storedProcedure) {
+    // storedProcedure = it.resource
+}
+```
+
+#### Execute
+
+```kotlin
+AzureData.executeStoredProcedure (storedProcedureId, parameters, collectionId, databaseId) {
+    // raw response data = it.resource
+}
+
+AzureData.executeStoredProcedure (storedProcedureResourceId, parameters, collection) {
+    // raw response data = it.resource
+}
+
+collection.executeStoredProcedure (storedProcedureResourceId, parameters) {
+    // raw response data = it.resource
+}
+```
 
 ## Using from Java
 
