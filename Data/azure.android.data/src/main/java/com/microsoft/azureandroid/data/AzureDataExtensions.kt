@@ -126,6 +126,40 @@ fun DocumentCollection.executeStoredProcedure(storedProcedureResourceId: String,
 
 //endregion
 
+//region DocumentCollection -> UDF
+
+// create
+fun DocumentCollection.createUserDefinedFunction(userDefinedFunctionId: String, functionBody: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+    return AzureData.createUserDefinedFunction(userDefinedFunctionId, functionBody, this, callback)
+}
+
+// list
+fun DocumentCollection.getUserDefinedFunctions(callback: (ResourceListResponse<UserDefinedFunction>) -> Unit) {
+    return AzureData.getUserDefinedFunctions(this, callback)
+}
+
+// delete
+fun DocumentCollection.deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, callback: (Response) -> Unit) {
+    return AzureData.deleteUserDefinedFunction(userDefinedFunction, this, callback)
+}
+
+// delete
+fun DocumentCollection.deleteUserDefinedFunction(userDefinedFunctionResourceId: String, callback: (Response) -> Unit) {
+    return AzureData.deleteUserDefinedFunction(userDefinedFunctionResourceId, this, callback)
+}
+
+// replace
+fun DocumentCollection.replaceUserDefinedFunction(userDefinedFunctionId: String, userDefinedFunctionResourceId: String, procedure: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+    return AzureData.replaceUserDefinedFunction(userDefinedFunctionId, userDefinedFunctionResourceId, procedure, this, callback)
+}
+
+// replace
+fun DocumentCollection.replaceUserDefinedFunction(userDefinedFunction: UserDefinedFunction, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) {
+    return AzureData.replaceUserDefinedFunction(userDefinedFunction, this, callback)
+}
+
+//endregion
+
 //endregion
 
 

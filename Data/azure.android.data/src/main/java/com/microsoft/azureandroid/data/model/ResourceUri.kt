@@ -120,11 +120,11 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, udfId)
     }
 
-    fun forUdf(baseLink: String, udfId: String? = null): UrlLink {
+    fun forUdf(baseLink: String, udfResourceId: String? = null): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.Udf, baseLink, udfId)
+        val itemLink = getItemLink(ResourceType.Udf, baseLink, udfResourceId)
 
-        return getUrlLinkForSelf(baseLink, itemLink, udfId)
+        return getUrlLinkForSelf(baseLink, itemLink, udfResourceId)
     }
 
     fun forOffer() : UrlLink {

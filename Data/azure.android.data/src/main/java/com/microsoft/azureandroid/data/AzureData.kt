@@ -149,10 +149,12 @@ class AzureData {
                 documentClient.deleteDocument(documentResourceId, collection, callback)
 
         // replace
+        @JvmStatic
         fun <T : Document> replaceDocument(document: T, collectionId: String, databaseId: String, callback: (ResourceResponse<T>) -> Unit) =
                 documentClient.replaceDocument(document, collectionId, databaseId, callback)
 
         // replace
+        @JvmStatic
         fun <T : Document> replaceDocument(document: T, collection: DocumentCollection, callback: (ResourceResponse<T>) -> Unit) =
                 documentClient.replaceDocument(document, collection, callback)
 
@@ -315,6 +317,7 @@ class AzureData {
                 documentClient.deleteStoredProcedure(storedProcedure.resourceId!!, collection, callback)
 
         // delete
+        @JvmStatic
         fun deleteStoredProcedure(storedProcedureResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) =
                 documentClient.deleteStoredProcedure(storedProcedureResourceId, collection, callback)
 
@@ -324,22 +327,27 @@ class AzureData {
                 documentClient.deleteStoredProcedure(storedProcedureId, collectionId, databaseId, callback)
 
         // replace
+        @JvmStatic
         fun replaceStoredProcedure(storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
                 documentClient.replaceStoredProcedure(storedProcedureId, procedure, collectionId, databaseId, callback)
 
         // replace
+        @JvmStatic
         fun replaceStoredProcedure(storedProcedureId: String, storedProcedureResourceId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
                 documentClient.replaceStoredProcedure(storedProcedureId, storedProcedureResourceId, procedure, collection, callback)
 
         // replace
+        @JvmStatic
         fun replaceStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
             documentClient.replaceStoredProcedure(storedProcedure.id, storedProcedure.resourceId!!, storedProcedure.body!!, collection, callback)
 
         // execute
+        @JvmStatic
         fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.executeStoredProcedure(storedProcedureId, parameters, collectionId, databaseId, callback)
 
         // execute
+        @JvmStatic
         fun executeStoredProcedure(storedProcedureResourceId: String, parameters: List<String>?, collection: DocumentCollection, callback: (Response) -> Unit) =
                 documentClient.executeStoredProcedure(storedProcedureResourceId, parameters, collection, callback)
 
@@ -349,13 +357,13 @@ class AzureData {
 
         // create
         @JvmStatic
-        fun createUserDefinedFunction(functionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
-                documentClient.createUserDefinedFunction(functionId, function, collectionId, databaseId, callback)
+        fun createUserDefinedFunction(functionId: String, functionBody: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+                documentClient.createUserDefinedFunction(functionId, functionBody, collectionId, databaseId, callback)
 
         // create
         @JvmStatic
-        fun createUserDefinedFunction(functionId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
-                documentClient.createUserDefinedFunction(functionId, function, collection, callback)
+        fun createUserDefinedFunction(functionId: String, functionBody: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+                documentClient.createUserDefinedFunction(functionId, functionBody, collection, callback)
 
         // list
         @JvmStatic
@@ -380,17 +388,27 @@ class AzureData {
         // delete
         @JvmStatic
         fun deleteUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (Response) -> Unit) =
-                documentClient.deleteUserDefinedFunction(userDefinedFunction, collection, callback)
+                documentClient.deleteUserDefinedFunction(userDefinedFunction.resourceId!!, collection, callback)
+
+        // delete
+        @JvmStatic
+        fun deleteUserDefinedFunction(userDefinedFunctionResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) =
+                documentClient.deleteUserDefinedFunction(userDefinedFunctionResourceId, collection, callback)
 
         // replace
         @JvmStatic
-        fun replaceUserDefinedFunction(functionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
-                documentClient.replaceUserDefinedFunction(functionId, function, collectionId, databaseId, callback)
+        fun replaceUserDefinedFunction(userDefinedFunctionId: String, function: String, collectionId: String, databaseId: String, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+                documentClient.replaceUserDefinedFunction(userDefinedFunctionId, function, collectionId, databaseId, callback)
 
         // replace
         @JvmStatic
-        fun replaceUserDefinedFunction(functionId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
-                documentClient.replaceUserDefinedFunction(functionId, function, collection, callback)
+        fun replaceUserDefinedFunction(userDefinedFunctionId: String, userDefinedFunctionResourceId: String, function: String, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+                documentClient.replaceUserDefinedFunction(userDefinedFunctionId, userDefinedFunctionResourceId, function, collection, callback)
+
+        // replace
+        @JvmStatic
+        fun replaceUserDefinedFunction(userDefinedFunction: UserDefinedFunction, collection: DocumentCollection, callback: (ResourceResponse<UserDefinedFunction>) -> Unit) =
+                documentClient.replaceUserDefinedFunction(userDefinedFunction.id, userDefinedFunction.resourceId!!, userDefinedFunction.body!!, collection, callback)
 
         //endregion
 
