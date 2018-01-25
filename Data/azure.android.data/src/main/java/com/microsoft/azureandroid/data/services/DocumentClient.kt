@@ -399,25 +399,17 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteStoredProcedure(storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
-
-        val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedure.id)
-
-        return delete(resourceUri, ResourceType.StoredProcedure, callback)
-    }
-
-    // delete
-    fun deleteStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (Response) -> Unit) {
-
-        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedure.id)
-
-        return delete(resourceUri, ResourceType.StoredProcedure, callback)
-    }
-
-    // delete
     fun deleteStoredProcedure(storedProcedureId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
+
+        return delete(resourceUri, ResourceType.StoredProcedure, callback)
+    }
+
+    // delete
+    fun deleteStoredProcedure(storedProcedureResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) {
+
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureResourceId = storedProcedureResourceId)
 
         return delete(resourceUri, ResourceType.StoredProcedure, callback)
     }
@@ -431,9 +423,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-    fun replaceStoredProcedure(storedProcedureId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+    fun replaceStoredProcedure(storedProcedureId: String, storedProcedureResourceId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
 
-        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureResourceId = storedProcedureResourceId)
 
         replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
     }
@@ -447,9 +439,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // execute
-    fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collection: DocumentCollection, callback: (Response) -> Unit) {
+    fun executeStoredProcedure(storedProcedureResourceId: String, parameters: List<String>?, collection: DocumentCollection, callback: (Response) -> Unit) {
 
-        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureId = storedProcedureId)
+        val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureResourceId = storedProcedureResourceId)
 
         return execute(parameters, resourceUri, ResourceType.StoredProcedure, callback)
     }
@@ -904,7 +896,6 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     private fun <T> execute(body: T? = null, resourceUri: UrlLink, resourceType: ResourceType, callback: (Response) -> Unit) {
 
         try {
-//            val resourceType = ResourceType.fromType<T>() ?: throw Exception("Unable to determine resource type requested for query")
             val json = if (body != null) gson.toJson(body) else gson.toJson(arrayOf<String>())
 
             val request = createRequest(ApiValues.HttpMethod.Post, resourceUri, resourceType, forQuery = true, jsonBody = json)

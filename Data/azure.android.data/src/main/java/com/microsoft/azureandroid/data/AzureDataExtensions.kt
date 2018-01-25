@@ -33,7 +33,7 @@ fun Database.getCollections(callback: (ResourceListResponse<DocumentCollection>)
 
 // delete
 fun Database.deleteCollection(collection: DocumentCollection, callback: (Response) -> Unit) {
-    return AzureData.deleteCollection(collection, this.id, callback)
+    return AzureData.deleteCollection(collection.id, this.id, callback)
 }
 
 // delete
@@ -47,6 +47,8 @@ fun Database.deleteCollection(collectionId: String, callback: (Response) -> Unit
 
 
 //region DocumentCollection
+
+//region DocumentCollection -> Documents
 
 // list
 fun <T : Document> DocumentCollection.getDocuments(documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
@@ -82,6 +84,47 @@ fun <T : Document> DocumentCollection.replaceDocument(document: T, callback: (Re
 fun <T : Document> DocumentCollection.queryDocuments(query: Query, documentClass: Class<T>, callback: (ResourceListResponse<T>) -> Unit) {
     return AzureData.queryDocuments(this, query, documentClass, callback)
 }
+
+//endregion
+
+//region DocumentCollection -> Stored Procedures
+
+// create
+fun DocumentCollection.createStoredProcedure(storedProcedureId: String, procedure: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+    return AzureData.createStoredProcedure(storedProcedureId, procedure, this, callback)
+}
+
+// list
+fun DocumentCollection.getStoredProcedures(callback: (ResourceListResponse<StoredProcedure>) -> Unit) {
+    return AzureData.getStoredProcedures(this, callback)
+}
+
+// delete
+fun DocumentCollection.deleteStoredProcedure(storedProcedureResourceId: String, callback: (Response) -> Unit) {
+    return AzureData.deleteStoredProcedure(storedProcedureResourceId, this, callback)
+}
+
+// delete
+fun DocumentCollection.deleteStoredProcedure(storedProcedure: StoredProcedure, callback: (Response) -> Unit) {
+    return AzureData.deleteStoredProcedure(storedProcedure, this, callback)
+}
+
+// replace
+fun DocumentCollection.replaceStoredProcedure(storedProcedureId: String, storedProcedureResourceId: String, procedure: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+    return AzureData.replaceStoredProcedure(storedProcedureId, storedProcedureResourceId, procedure, this, callback)
+}
+
+// replace
+fun DocumentCollection.replaceStoredProcedure(storedProcedure: StoredProcedure, callback: (ResourceResponse<StoredProcedure>) -> Unit) {
+    return AzureData.replaceStoredProcedure(storedProcedure, this, callback)
+}
+
+// execute
+fun DocumentCollection.executeStoredProcedure(storedProcedureResourceId: String, parameters: List<String>?, callback: (Response) -> Unit) {
+    return AzureData.executeStoredProcedure(storedProcedureResourceId, parameters, this, callback)
+}
+
+//endregion
 
 //endregion
 

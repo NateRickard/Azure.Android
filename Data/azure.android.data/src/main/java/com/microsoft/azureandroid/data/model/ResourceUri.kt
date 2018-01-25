@@ -90,11 +90,11 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, storedProcedureId)
     }
 
-    fun forStoredProcedure(baseLink: String, storedProcedureId: String? = null) : UrlLink {
+    fun forStoredProcedure(baseLink: String, storedProcedureResourceId: String? = null) : UrlLink {
 
-        val itemLink = getItemLink(ResourceType.StoredProcedure, baseLink, storedProcedureId)
+        val itemLink = getItemLink(ResourceType.StoredProcedure, baseLink, storedProcedureResourceId)
 
-        return getUrlLinkForSelf(baseLink, itemLink, storedProcedureId)
+        return getUrlLinkForSelf(baseLink, itemLink, storedProcedureResourceId)
     }
 
     fun forTrigger(databaseId: String, collectionId: String, triggerId: String? = null): UrlLink {

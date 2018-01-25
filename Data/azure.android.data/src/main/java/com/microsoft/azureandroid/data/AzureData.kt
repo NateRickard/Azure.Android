@@ -91,11 +91,6 @@ class AzureData {
 
         // delete
         @JvmStatic
-        fun deleteCollection(collection: DocumentCollection, databaseId: String, callback: (Response) -> Unit) =
-                documentClient.deleteCollection(collection.id, databaseId, callback)
-
-        // delete
-        @JvmStatic
         fun deleteCollection(collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteCollection(collectionId, databaseId, callback)
 
@@ -312,17 +307,41 @@ class AzureData {
         // delete
         @JvmStatic
         fun deleteStoredProcedure(storedProcedure: StoredProcedure, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
-                documentClient.deleteStoredProcedure(storedProcedure, collectionId, databaseId, callback)
+                documentClient.deleteStoredProcedure(storedProcedure.id, collectionId, databaseId, callback)
 
         // delete
         @JvmStatic
         fun deleteStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (Response) -> Unit) =
-                documentClient.deleteStoredProcedure(storedProcedure, collection, callback)
+                documentClient.deleteStoredProcedure(storedProcedure.resourceId!!, collection, callback)
+
+        // delete
+        fun deleteStoredProcedure(storedProcedureResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) =
+                documentClient.deleteStoredProcedure(storedProcedureResourceId, collection, callback)
 
         // delete
         @JvmStatic
         fun deleteStoredProcedure(storedProcedureId: String, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteStoredProcedure(storedProcedureId, collectionId, databaseId, callback)
+
+        // replace
+        fun replaceStoredProcedure(storedProcedureId: String, procedure: String, collectionId: String, databaseId: String, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
+                documentClient.replaceStoredProcedure(storedProcedureId, procedure, collectionId, databaseId, callback)
+
+        // replace
+        fun replaceStoredProcedure(storedProcedureId: String, storedProcedureResourceId: String, procedure: String, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
+                documentClient.replaceStoredProcedure(storedProcedureId, storedProcedureResourceId, procedure, collection, callback)
+
+        // replace
+        fun replaceStoredProcedure(storedProcedure: StoredProcedure, collection: DocumentCollection, callback: (ResourceResponse<StoredProcedure>) -> Unit) =
+            documentClient.replaceStoredProcedure(storedProcedure.id, storedProcedure.resourceId!!, storedProcedure.body!!, collection, callback)
+
+        // execute
+        fun executeStoredProcedure(storedProcedureId: String, parameters: List<String>?, collectionId: String, databaseId: String, callback: (Response) -> Unit) =
+                documentClient.executeStoredProcedure(storedProcedureId, parameters, collectionId, databaseId, callback)
+
+        // execute
+        fun executeStoredProcedure(storedProcedureResourceId: String, parameters: List<String>?, collection: DocumentCollection, callback: (Response) -> Unit) =
+                documentClient.executeStoredProcedure(storedProcedureResourceId, parameters, collection, callback)
 
         //endregion
 
