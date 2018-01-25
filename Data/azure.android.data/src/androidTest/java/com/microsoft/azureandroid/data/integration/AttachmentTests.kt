@@ -109,7 +109,7 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
             else -> throw Exception("Unhandled URL case")
         }
 
-        await().forever().until {
+        await().until {
             response != null
         }
 

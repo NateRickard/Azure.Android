@@ -174,4 +174,20 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
 
         assertResponseSuccess(dataResponse)
     }
+
+    @Test
+    fun deleteCollectionFromDatabaseById() {
+
+        ensureCollection()
+
+        database?.deleteCollection(collectionId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
 }
