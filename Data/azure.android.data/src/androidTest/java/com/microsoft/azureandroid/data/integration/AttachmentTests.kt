@@ -263,7 +263,7 @@ class AttachmentTests : ResourceTest<Attachment>(ResourceType.Attachment, true, 
         val bytes = getImageData()
         createNewBlobAttachment(bytes)
 
-        AzureData.replaceAttachment(resourceId,"image/jpeg", bytes, documentId, collectionId, databaseId) {
+        AzureData.replaceAttachment(resourceId, "image/jpeg", bytes, documentId, collectionId, databaseId) {
             resourceResponse = it
         }
 

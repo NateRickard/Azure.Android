@@ -387,11 +387,11 @@ val query = Query.select()
                 .andWhere("numberProperty", 12)
                 .orderBy("_etag", true) // descending = true/false
 
-AzureData.queryDocuments(collectionId, databaseId, query, CustomDocument::class.java) {
+AzureData.queryDocuments (collectionId, databaseId, query, CustomDocument::class.java) {
     // matching documents = it.resource?.items
 }
 
-AzureData.queryDocuments(collection, query, CustomDocument::class.java) {
+AzureData.queryDocuments (collection, query, CustomDocument::class.java) {
     // matching documents = it.resource?.items
 }
 
@@ -399,6 +399,104 @@ collection.queryDocuments (query, CustomDocument::class.java) {
     // matching documents = it.resource?.items
 }
 ```
+
+### Attachments
+
+#### Create
+
+Link to existing external media asset:
+
+```kotlin
+AzureData.createAttachment (attachmentId, "image/jpeg", mediaUrl, documentId, collectionId, databaseId) {
+    // attachment = it.resource
+}
+
+document.createAttachment (attachmentId, "image/jpeg", mediaUrl) {
+    // attachment = it.resource
+}
+```
+
+`mediaUrl` can be of type `HttpUrl` (from OkHttp), `URL`, or a string url.
+
+...or upload the media directly:
+
+```kotlin
+AzureData.createAttachment (attachmentId, "image/jpeg", data, documentId, collectionId, databaseId) {
+    // attachment = it.resource
+}
+
+document.createAttachment (attachmentId, "image/jpeg", data) {
+    // attachment = it.resource
+}
+
+```
+
+`data` here is a `ByteArray` containing the bytes for the media/blob, and "image/jpeg" is the content type of the blob.
+
+#### List
+
+```kotlin
+AzureData.getAttachments (documentId, collectionId, databaseId) {
+    // attachments = it.resource?.items
+}
+
+document.getAttachments {
+    // attachments = it.resource?.items
+}
+```
+
+#### Delete
+
+```kotlin
+AzureData.deleteAttachment (attachmentId, documentId, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteAttachment (attachment, documentId, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+document.deleteAttachment (attachment) {
+    // successfully deleted == it.isSuccessful
+}
+
+document.deleteAttachment (attachmentResourceId) {
+    // successfully deleted == it.isSuccessful
+}
+```
+
+#### Replace
+
+Link to existing external media asset:
+
+```kotlin
+AzureData.replaceAttachment (attachmentId, "image/jpeg", mediaUrl, documentId, collectionId, databaseId) {
+    // replaced attachment = it.resource
+}
+
+document.replaceAttachment (attachmentId, attachmentResourceId, "image/jpeg", url) {
+    // replaced attachment = it.resource
+}
+
+```
+
+`mediaUrl` can be of type `HttpUrl` (from OkHttp), `URL`, or a string url.
+
+...or upload the media directly:
+
+```kotlin
+AzureData.replaceAttachment (attachmentId, "image/jpeg", data, documentId, collectionId, databaseId) {
+    // replaced attachment = it.resource
+}
+
+document.replaceAttachment (attachmentId, "image/jpeg", data) {
+    // replaced attachment = it.resource
+}
+
+```
+
+`data` here is a `ByteArray` containing the bytes for the media/blob, and "image/jpeg" is the content type of the blob.
+
 
 ## Using from Java
 
