@@ -102,6 +102,8 @@ class StoredProcedureTests : ResourceTest<StoredProcedure>(ResourceType.StoredPr
         assertTrue(resourceListResponse?.resource?.count!! > 0)
     }
 
+    //region Deletes
+
     @Test
     fun deleteStoredProcedureById() {
 
@@ -182,6 +184,10 @@ class StoredProcedureTests : ResourceTest<StoredProcedure>(ResourceType.StoredPr
         assertResponseSuccess(dataResponse)
     }
 
+    //endregion
+
+    //region Replaces
+
     @Test
     fun replaceStoredProcedureById() {
 
@@ -260,6 +266,10 @@ class StoredProcedureTests : ResourceTest<StoredProcedure>(ResourceType.StoredPr
         assertEquals(storedProcedureBody, sProc.body)
     }
 
+    //endregion
+
+    //region Stored Procs
+
     @Test
     fun executeStoredProcedure() {
 
@@ -313,4 +323,6 @@ class StoredProcedureTests : ResourceTest<StoredProcedure>(ResourceType.StoredPr
 
         assertEquals(storedProcResult, dataResponse?.result?.resource.toString())
     }
+
+    //endregion
 }
