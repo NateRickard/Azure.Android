@@ -268,7 +268,7 @@ class StoredProcedureTests : ResourceTest<StoredProcedure>(ResourceType.StoredPr
 
     //endregion
 
-    //region Stored Procs
+    //region Execute
 
     @Test
     fun executeStoredProcedure() {
