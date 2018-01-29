@@ -183,6 +183,22 @@ class TriggerTests : ResourceTest<Trigger>(ResourceType.Trigger, true, true) {
         assertResponseSuccess(dataResponse)
     }
 
+    @Test
+    fun deleteTriggerViaSelf() {
+
+        val trigger = createNewTrigger()
+
+        trigger.delete {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
     //endregion
 
     //region Replaces
