@@ -488,11 +488,6 @@ class AzureData {
         fun getUser(userId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
                 documentClient.getUser(userId, databaseId, callback)
 
-        // replace
-        @JvmStatic
-        fun replaceUser(userId: String, newUserId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
-                documentClient.replaceUser(userId, newUserId, databaseId, callback)
-
         // delete
         @JvmStatic
         fun deleteUser(userId: String, databaseId: String, callback: (Response) -> Unit) =
@@ -502,6 +497,21 @@ class AzureData {
         @JvmStatic
         fun deleteUser(user: User, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteUser(user.id, databaseId, callback)
+
+        // delete
+        @JvmStatic
+        fun deleteUser(user: User, database: Database, callback: (Response) -> Unit) =
+                documentClient.deleteUser(user.id, database.id, callback)
+
+        // replace
+        @JvmStatic
+        fun replaceUser(userId: String, newUserId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) =
+                documentClient.replaceUser(userId, newUserId, databaseId, callback)
+
+        // replace
+        @JvmStatic
+        fun replaceUser(userId: String, newUserId: String, database: Database, callback: (ResourceResponse<User>) -> Unit) =
+                documentClient.replaceUser(userId, newUserId, database.id, callback)
 
         //endregion
 

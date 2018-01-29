@@ -610,20 +610,20 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return resource(resourceUri, ResourceType.User, callback)
     }
 
-    // replace
-    fun replaceUser(userId: String, newUserId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) {
-
-        val resourceUri = baseUri.forUser(databaseId, userId)
-
-        return replace(newUserId, resourceUri, ResourceType.User, callback)
-    }
-
     // delete
     fun deleteUser(userId: String, databaseId: String, callback: (Response) -> Unit) {
 
         val resourceUri = baseUri.forUser(databaseId, userId)
 
         return delete(resourceUri, ResourceType.User, callback)
+    }
+
+    // replace
+    fun replaceUser(userId: String, newUserId: String, databaseId: String, callback: (ResourceResponse<User>) -> Unit) {
+
+        val resourceUri = baseUri.forUser(databaseId, userId)
+
+        return replace(newUserId, resourceUri, ResourceType.User, callback)
     }
 
     //endregion

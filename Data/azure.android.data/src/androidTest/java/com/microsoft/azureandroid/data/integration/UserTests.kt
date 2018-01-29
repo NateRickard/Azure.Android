@@ -1,16 +1,17 @@
 package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
-import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.delete
+import com.microsoft.azureandroid.data.*
+import com.microsoft.azureandroid.data.model.Database
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.model.User
-import com.microsoft.azureandroid.data.refresh
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroid.data.services.Response
+import junit.framework.Assert.assertEquals
 import org.awaitility.Awaitility.await
 import org.junit.After
 import org.junit.Assert
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,12 +53,19 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         }
     }
 
-    private fun createNewUser() : User {
+    private fun createNewUser(db: Database? = null) : User {
 
         var userResponse: ResourceResponse<User>? = null
 
-        AzureData.createUser(resourceId, databaseId) {
-            userResponse = it
+        if (db == null) {
+            AzureData.createUser(resourceId, databaseId) {
+                userResponse = it
+            }
+        }
+        else {
+            db.createUser(resourceId) {
+                userResponse = it
+            }
         }
 
         await().until {
@@ -65,7 +73,7 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         }
 
         assertResponseSuccess(userResponse)
-        Assert.assertEquals(resourceId, userResponse?.resource?.id)
+        assertEquals(resourceId, userResponse?.resource?.id)
 
         return userResponse!!.resource!!
     }
@@ -77,12 +85,35 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
     }
 
     @Test
+    fun createUserInDatabase() {
+
+        createNewUser(database)
+    }
+
+    @Test
     fun listUsers() {
 
         //make sure we have at least one user
         createNewUser()
 
         AzureData.getUsers(databaseId) {
+            resourceListResponse = it
+        }
+
+        await().until {
+            resourceListResponse != null
+        }
+
+        assertResponseSuccess(resourceListResponse)
+    }
+
+    @Test
+    fun listUsersInDatabase() {
+
+        //make sure we have at least one user
+        createNewUser()
+
+        database?.getUsers {
             resourceListResponse = it
         }
 
@@ -107,15 +138,15 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         }
 
         assertResponseSuccess(resourceResponse)
-        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
     }
 
     @Test
-    fun refreshUser() {
+    fun getUserInDatabase() {
 
-        val user = createNewUser()
+        createNewUser()
 
-        user.refresh {
+        database?.getUser(resourceId) {
             resourceResponse = it
         }
 
@@ -124,28 +155,73 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         }
 
         assertResponseSuccess(resourceResponse)
-        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
     }
 
+    //region Deletes
+
     @Test
-    fun replaceUser() {
+    fun deleteUserById() {
 
-        val replaceUserId = "Updated_$resourceId"
-        val user = createNewUser()
+        createNewUser()
 
-        AzureData.replaceUser(user.id, replaceUserId, databaseId) {
-            resourceResponse = it
+        AzureData.deleteUser(resourceId, databaseId) {
+            dataResponse = it
         }
 
         await().until {
-            resourceResponse != null
+            dataResponse != null
         }
 
-        assertResponseSuccess(resourceResponse)
-        Assert.assertEquals(replaceUserId, resourceResponse?.resource?.id)
-        Assert.assertNotEquals(resourceId, resourceResponse?.resource?.id)
+        assertResponseSuccess(dataResponse)
+    }
 
-        deleteTestUser(replaceUserId)
+    @Test
+    fun deleteUserFromDatabaseById() {
+
+        val user = createNewUser()
+
+        AzureData.deleteUser(user, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteUserFromDatabase() {
+
+        val user = createNewUser()
+
+        database?.deleteUser(user) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deleteUserInDatabaseById() {
+
+        createNewUser()
+
+        database?.deleteUser(resourceId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
     }
 
     @Test
@@ -162,5 +238,66 @@ class UserTests : ResourceTest<User>(ResourceType.User, true, false) {
         }
 
         assertResponseSuccess(dataResponse)
+    }
+
+    //endregion
+
+    @Test
+    fun replaceUser() {
+
+        val replaceUserId = "Updated_$resourceId"
+        val user = createNewUser()
+
+        AzureData.replaceUser(user.id, replaceUserId, databaseId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(replaceUserId, resourceResponse?.resource?.id)
+        assertNotEquals(resourceId, resourceResponse?.resource?.id)
+
+        deleteTestUser(replaceUserId)
+    }
+
+    @Test
+    fun replaceUserInDatabase() {
+
+        val replaceUserId = "Updated_$resourceId"
+        val user = createNewUser()
+
+        database?.replaceUser(user.id, replaceUserId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(replaceUserId, resourceResponse?.resource?.id)
+        assertNotEquals(resourceId, resourceResponse?.resource?.id)
+
+        deleteTestUser(replaceUserId)
+    }
+
+    @Test
+    fun refreshUser() {
+
+        val user = createNewUser()
+
+        user.refresh {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
     }
 }
