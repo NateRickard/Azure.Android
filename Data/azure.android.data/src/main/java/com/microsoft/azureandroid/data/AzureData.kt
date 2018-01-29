@@ -573,8 +573,8 @@ class AzureData {
 
         // list
         @JvmStatic
-        fun offers(callback: (ResourceListResponse<Offer>) -> Unit) =
-                documentClient.offers(callback)
+        fun getOffers(callback: (ResourceListResponse<Offer>) -> Unit) =
+                documentClient.getOffers(callback)
 
         // get
         @JvmStatic

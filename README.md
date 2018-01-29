@@ -993,6 +993,37 @@ AzureData.replace (permissionWithId: id, mode: .read, in: resource, forUser: use
 ```
 
 
+### Offers
+
+#### List
+
+```kotlin
+AzureData.getOffers {
+    // offers = it.resource?.items
+}
+```
+
+#### Get
+
+```kotlin
+AzureData.getOffer (offerId) {
+    // offer = it.resource
+}
+```
+
+#### Replace
+
+```kotlin
+// TODO...
+```
+
+#### Query
+
+```kotlin
+// TODO...
+```
+
+
 ## Using from Java
 
 As noted, this library is written in and optimized for Kotlin.  If your app is written in Java, it's still possible to use this library (assuming [your app targets JDK 1.8](https://developer.android.com/studio/write/java8-support.html)), with a few syntactical differences to the sample code found above:

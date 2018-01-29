@@ -703,7 +703,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     //region Offers
 
     // list
-    fun offers(callback: (ResourceListResponse<Offer>) -> Unit) {
+    fun getOffers(callback: (ResourceListResponse<Offer>) -> Unit) {
 
         val resourceUri = baseUri.forOffer()
 

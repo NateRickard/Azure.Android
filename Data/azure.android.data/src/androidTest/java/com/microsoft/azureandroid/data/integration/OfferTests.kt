@@ -20,7 +20,7 @@ class OfferTests : ResourceTest<Offer>(ResourceType.Offer, false, false) {
     @Test
     fun listOffers() {
 
-        AzureData.offers {
+        AzureData.getOffers {
             resourceListResponse = it
         }
 
@@ -37,7 +37,7 @@ class OfferTests : ResourceTest<Offer>(ResourceType.Offer, false, false) {
 
         var offer: Offer? = null
 
-        AzureData.offers {
+        AzureData.getOffers {
             offer = it.resource?.items?.first()
 
             AzureData.getOffer(offer!!.id) {
