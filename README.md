@@ -899,6 +899,100 @@ database.replaceUser (userId, newUserId) {
 ```
 
 
+### Permissions  
+
+#### Create
+
+```kotlin
+AzureData.createPermission (permissionId, permissionMode, resource, userId, databaseId) {
+    // permission = it.resource
+}
+
+AzureData.createPermission (permissionId, permissionMode, resource, user, databaseId) {
+    // permission = it.resource
+}
+
+<resource>.createPermission (permissionId, permissionMode, user) {
+    // permission = it.resource
+}
+
+user.createPermission (permissionId, permissionMode, resource) {
+    // permission = it.resource
+}
+```
+
+#### List
+
+```kotlin
+AzureData.getPermissions (userId, databaseId) {
+    // permissions = it.resource?.items
+}
+
+AzureData.getPermissions (user) {
+    // permissions = it.resource?.items
+}
+
+user.getPermissions {
+    // permissions = it.resource?.items
+}
+```
+
+#### Get
+
+```kotlin
+AzureData.getPermission (permissionId, userId, databaseId) {
+    // permission = it.resource
+}
+
+AzureData.getPermission (permissionResourceId, user) {
+    // permission = it.resource
+}
+
+user.getPermission (permissionResourceId) {
+    // permission = it.resource
+}
+```
+
+#### Delete
+
+```kotlin
+AzureData.deletePermission (permissionId, userId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deletePermission (permission, userId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deletePermission (permission, user) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deletePermission (permissionResourceId, user) {
+    // successfully deleted == it.isSuccessful
+}
+
+user.deletePermission (permissionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+user.deletePermission (permission) {
+    // successfully deleted == it.isSuccessful
+}
+
+user.deletePermission (permissionResourceId) {
+    // successfully deleted == it.isSuccessful
+}
+```
+
+#### Replace
+```kotlin
+AzureData.replace (permissionWithId: id, mode: .read, in: resource, forUser: userId, inDatabase: databaseId) { r in
+    // permission = r.resource
+}
+```
+
+
 ## Using from Java
 
 As noted, this library is written in and optimized for Kotlin.  If your app is written in Java, it's still possible to use this library (assuming [your app targets JDK 1.8](https://developer.android.com/studio/write/java8-support.html)), with a few syntactical differences to the sample code found above:
