@@ -39,7 +39,7 @@ class UserDefinedFunctionTests : ResourceTest<UserDefinedFunction>(ResourceType.
             }
         }
 
-        await().forever().until {
+        await().until {
             resourceResponse != null
         }
 
@@ -168,9 +168,9 @@ class UserDefinedFunctionTests : ResourceTest<UserDefinedFunction>(ResourceType.
     @Test
     fun deleteUDFFromCollectionByRId() {
 
-        val sproc = createNewUDF()
+        val udf = createNewUDF()
 
-        collection?.deleteUserDefinedFunction(sproc.resourceId!!) {
+        collection?.deleteUserDefinedFunction(udf.resourceId!!) {
             dataResponse = it
         }
 
