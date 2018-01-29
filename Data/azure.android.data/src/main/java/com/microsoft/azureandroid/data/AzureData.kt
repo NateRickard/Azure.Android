@@ -524,8 +524,8 @@ class AzureData {
 
         // create
         @JvmStatic
-        fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
-                documentClient.createPermission(permissionId, permissionMode, resource, user.id, databaseId, callback)
+        fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.createPermission(permissionId, permissionMode, resource, user, callback)
 
         // list
         @JvmStatic
@@ -544,8 +544,8 @@ class AzureData {
 
         // get
         @JvmStatic
-        fun getPermission(permissionId: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
-                documentClient.getPermission(permissionId, user, callback)
+        fun getPermission(permissionResourceId: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.getPermission(permissionResourceId, user, callback)
 
         // delete
         @JvmStatic
@@ -560,7 +560,12 @@ class AzureData {
         // delete
         @JvmStatic
         fun deletePermission(permission: Permission, user: User, callback: (Response) -> Unit) =
-                documentClient.deletePermission(permission, user, callback)
+                documentClient.deletePermission(permission.resourceId!!, user, callback)
+
+        // delete
+        @JvmStatic
+        fun deletePermission(permissionResourceId: String, user: User, callback: (Response) -> Unit) =
+                documentClient.deletePermission(permissionResourceId, user, callback)
 
         //endregion
 

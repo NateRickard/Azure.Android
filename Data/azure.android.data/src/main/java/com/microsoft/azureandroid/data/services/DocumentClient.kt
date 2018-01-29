@@ -641,16 +641,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create
-//    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
-//
-////        val resourceUri = baseUri.forPermission(user.selfLink!!, null)
-//
-//        val resourceUri = baseUri.forPermission(databaseId, user.id, null)
-//
-//        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
-//
-//        return create(permission, resourceUri, ResourceType.Permission, callback = callback)
-//    }
+    fun createPermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: Resource, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(user.selfLink!!, null)
+
+        val permission = Permission(permissionId, permissionMode, resource.selfLink!!)
+
+        return create(permission, resourceUri, ResourceType.Permission, callback = callback)
+    }
 
     // list
     fun getPermissions(userId: String, databaseId: String, callback: (ResourceListResponse<Permission>) -> Unit) {
@@ -677,9 +675,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // get
-    fun getPermission(permissionId: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
+    fun getPermission(permissionResourceId: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
 
-        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionId)
+        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionResourceId)
 
         return resource(resourceUri, ResourceType.Permission, callback)
     }
@@ -693,9 +691,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deletePermission(permission: Permission, user: User, callback: (Response) -> Unit) {
+    fun deletePermission(permissionResourceId: String, user: User, callback: (Response) -> Unit) {
 
-        val resourceUri = baseUri.forPermission(user.selfLink!!, permission.id)
+        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionResourceId)
 
         return delete(resourceUri, ResourceType.Permission, callback)
     }

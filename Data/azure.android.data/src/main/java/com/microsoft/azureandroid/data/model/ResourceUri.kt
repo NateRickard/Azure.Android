@@ -37,11 +37,11 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, permissionId)
     }
 
-    fun forPermission(baseLink: String, resourceId: String?): UrlLink {
+    fun forPermission(baseLink: String, permissionResourceId: String?): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.Permission, baseLink, resourceId)
+        val itemLink = getItemLink(ResourceType.Permission, baseLink, permissionResourceId)
 
-        return getUrlLinkForSelf(baseLink, itemLink, resourceId)
+        return getUrlLinkForSelf(baseLink, itemLink, permissionResourceId)
     }
 
     fun forCollection(databaseId: String, collectionId: String? = null) : UrlLink {

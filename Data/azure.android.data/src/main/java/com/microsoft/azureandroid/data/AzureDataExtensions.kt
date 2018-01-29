@@ -286,6 +286,45 @@ fun Document.replaceAttachment (attachmentId: String, attachmentRId: String, con
 //endregion
 
 
+//region User
+
+//region User -> Permission
+
+// create
+fun <TResource : Resource> User.createPermission (permissionId: String, permissionMode: Permission.PermissionMode, resource: TResource, callback: (ResourceResponse<Permission>) -> Unit) {
+    return AzureData.createPermission(permissionId, permissionMode, resource, this, callback)
+}
+
+// list
+fun User.getPermissions (callback: (ResourceListResponse<Permission>) -> Unit) {
+    return AzureData.getPermissions(this, callback)
+}
+
+// get
+fun User.getPermission (permissionResourceId: String, callback: (ResourceResponse<Permission>) -> Unit) {
+    return AzureData.getPermission(permissionResourceId, this, callback)
+}
+
+// delete
+fun User.deletePermission (permissionId: String, databaseId: String, callback: (Response) -> Unit) {
+    return AzureData.deletePermission(permissionId, this.id, databaseId, callback)
+}
+
+// delete
+fun User.deletePermission (permission: Permission, callback: (Response) -> Unit) {
+    return AzureData.deletePermission(permission, this, callback)
+}
+
+// delete
+fun User.deletePermission (permissionResourceId: String, callback: (Response) -> Unit) {
+    return AzureData.deletePermission(permissionResourceId, this, callback)
+}
+
+//endregion
+
+//endregion
+
+
 // Resource
 
 fun <TResource : Resource> TResource.delete (callback: (Response) -> Unit) =
@@ -293,3 +332,6 @@ fun <TResource : Resource> TResource.delete (callback: (Response) -> Unit) =
 
 fun <TResource : Resource> TResource.refresh (callback: (ResourceResponse<TResource>) -> Unit) =
         AzureData.refresh(this, callback)
+
+fun <TResource : Resource> TResource.createPermission (permissionId: String, permissionMode: Permission.PermissionMode, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+        AzureData.createPermission(permissionId, permissionMode,this, user, callback)

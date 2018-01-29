@@ -1,13 +1,14 @@
 package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
-import com.microsoft.azureandroid.data.AzureData
-import com.microsoft.azureandroid.data.delete
+import com.microsoft.azureandroid.data.*
+import com.microsoft.azureandroid.data.model.DocumentCollection
 import com.microsoft.azureandroid.data.model.Permission
 import com.microsoft.azureandroid.data.model.ResourceType
 import com.microsoft.azureandroid.data.model.User
 import com.microsoft.azureandroid.data.services.ResourceResponse
 import com.microsoft.azureandroid.data.services.Response
+import junit.framework.Assert.assertEquals
 import org.awaitility.Awaitility.await
 import org.junit.After
 import org.junit.Assert
@@ -71,15 +72,22 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         }
 
         assertResponseSuccess(userResponse)
-        Assert.assertEquals(userId, userResponse?.resource?.id)
+        assertEquals(userId, userResponse?.resource?.id)
 
         return userResponse!!.resource!!
     }
 
-    private fun createNewPermission() : Permission {
+    private fun createNewPermission(coll: DocumentCollection? = null) : Permission {
 
-        AzureData.createPermission(resourceId, Permission.PermissionMode.Read, collection!!, user!!, databaseId) {
-            resourceResponse = it
+        if (coll == null) {
+            AzureData.createPermission(resourceId, Permission.PermissionMode.Read, collection!!, userId, databaseId) {
+                resourceResponse = it
+            }
+        }
+        else {
+            coll.createPermission(resourceId, Permission.PermissionMode.Read, user!!) {
+                resourceResponse = it
+            }
         }
 
         await().until {
@@ -87,7 +95,7 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         }
 
         assertResponseSuccess(resourceResponse)
-        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
 
         return resourceResponse!!.resource!!
     }
@@ -99,9 +107,48 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
     }
 
     @Test
+    fun createPermissionForCollection() {
+
+        createNewPermission(collection)
+    }
+
+    @Test
+    fun createPermissionForUser() {
+
+        user?.createPermission(resourceId, Permission.PermissionMode.Read, collection!!) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+    }
+
+    @Test
     fun listPermissions() {
 
+        createNewPermission()
+
         AzureData.getPermissions(userId, databaseId) {
+            resourceListResponse = it
+        }
+
+        await().until {
+            resourceListResponse != null
+        }
+
+        assertResponseSuccess(resourceListResponse)
+    }
+
+    @Test
+    fun listPermissionsForUser() {
+
+        createNewPermission()
+
+        user?.getPermissions() {
             resourceListResponse = it
         }
 
@@ -126,7 +173,56 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         }
 
         assertResponseSuccess(resourceResponse)
-        Assert.assertEquals(resourceId, resourceResponse?.resource?.id)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+    }
+
+    @Test
+    fun getPermissionForUser() {
+
+        val permission = createNewPermission()
+
+        user?.getPermission(permission.resourceId!!) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+    }
+
+    @Test
+    fun deletePermissionViaSelf() {
+
+        val permission = createNewPermission()
+
+        permission.delete {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deletePermissionById() {
+
+        createNewPermission()
+
+        AzureData.deletePermission(resourceId, userId, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
     }
 
     @Test
@@ -134,7 +230,55 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
 
         val permission = createNewPermission()
 
-        permission.delete {
+        AzureData.deletePermission(permission, userId, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deletePermissionFromUser() {
+
+        val permission = createNewPermission()
+
+        user?.deletePermission(permission) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deletePermissionFromUserById() {
+
+        createNewPermission()
+
+        user?.deletePermission(resourceId, databaseId) {
+            dataResponse = it
+        }
+
+        await().until {
+            dataResponse != null
+        }
+
+        assertResponseSuccess(dataResponse)
+    }
+
+    @Test
+    fun deletePermissionFromUserByResourceId() {
+
+        val permission = createNewPermission()
+
+        user?.deletePermission(permission.resourceId!!) {
             dataResponse = it
         }
 
