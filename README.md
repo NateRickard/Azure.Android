@@ -150,7 +150,6 @@ database.delete {
 ```
 
 
-
 ### Collections
 
 #### Create
@@ -404,6 +403,7 @@ collection.queryDocuments (query, CustomDocument::class.java) {
 }
 ```
 
+
 ### Attachments
 
 #### Create
@@ -501,6 +501,7 @@ document.replaceAttachment (attachmentId, "image/jpeg", data) {
 
 `data` here is a `ByteArray` containing the bytes for the media/blob, and "image/jpeg" is the content type of the blob.
 
+
 ### Stored Procedures
 
 #### Create
@@ -589,11 +590,15 @@ AzureData.replaceStoredProcedure (storedProcedureId, storedProcedureResourceId, 
     // storedProcedure = it.resource
 }
 
-collection.replaceStoredProcedure(storedProcedureId, storedProcedureResourceId, storedProcedureBody) {
+AzureData.replaceStoredProcedure (storedProcedure, collection) {
     // storedProcedure = it.resource
 }
 
-collection.replaceStoredProcedure(storedProcedure) {
+collection.replaceStoredProcedure (storedProcedureId, storedProcedureResourceId, storedProcedureBody) {
+    // storedProcedure = it.resource
+}
+
+collection.replaceStoredProcedure (storedProcedure) {
     // storedProcedure = it.resource
 }
 ```
@@ -613,6 +618,197 @@ collection.executeStoredProcedure (storedProcedureResourceId, parameters) {
     // raw response data = it.resource
 }
 ```
+
+
+### User Defined Functions
+
+#### Create
+
+Given a user defined function body:
+
+```
+val udfBody = """
+        function (input) { return input.toLowerCase(); }
+        """
+```
+
+A user defined function can be created like so:
+
+```kotlin
+AzureData.createUserDefinedFunction (userDefinedFunctionId, udfBody, collectionId, databaseId) {
+    // userDefinedFunction = it.resource
+}
+
+AzureData.createUserDefinedFunction (userDefinedFunctionId, udfBody, collection) {
+    // userDefinedFunction = it.resource
+}
+
+collection.createUserDefinedFunction (userDefinedFunctionId, udfBody) {
+    // userDefinedFunction = it.resource
+}
+```
+
+#### List
+
+```kotlin
+AzureData.getUserDefinedFunctions (collectionId, databaseId) {
+    // userDefinedFunctions = it.resource?.items
+}
+
+AzureData.getUserDefinedFunctions (collection) {
+    // userDefinedFunction = it.resource?.items
+}
+
+collection.getUserDefinedFunctions {
+    // userDefinedFunctions = it.resource?.items
+}
+```
+
+#### Delete
+
+```kotlin
+AzureData.deleteUserDefinedFunction (userDefinedFunctionId, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteUserDefinedFunction (userDefinedFunction, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteUserDefinedFunction (userDefinedFunction, collection) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteUserDefinedFunction (userDefinedFunctionResourceId, collection) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteUserDefinedFunction (userDefinedFunction) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteUserDefinedFunction (userDefinedFunctionResourceId) {
+    // successfully deleted == it.isSuccessful
+}
+```
+
+#### Replace
+
+```kotlin
+AzureData.replaceUserDefinedFunction (userDefinedFunctionId, userDefinedFunctionBody, collectionId, databaseId) {
+    // userDefinedFunction = it.resource
+}
+
+AzureData.replaceUserDefinedFunction (userDefinedFunctionId, userDefinedFunctionResourceId, userDefinedFunctionBody, collection) {
+    // userDefinedFunction = it.resource
+}
+
+AzureData.replaceUserDefinedFunction (userDefinedFunction, collection) {
+    // userDefinedFunction = it.resource
+}
+
+collection.replaceUserDefinedFunction (userDefinedFunctionId, userDefinedFunctionResourceId, userDefinedFunctionBody) {
+    // userDefinedFunction = it.resource
+}
+
+collection.replaceUserDefinedFunction (userDefinedFunction) {
+    // userDefinedFunction = it.resource
+}
+```
+
+
+### Triggers
+
+#### Create
+
+Given a trigger body:
+
+```kotlin
+val triggerBody = """
+        function updateMetadata() {}
+        """
+```
+
+A trigger can be created like so:
+
+```kotlin
+AzureData.createTrigger (triggerId, triggerOperation, triggerType, triggerBody, collectionId, databaseId) {
+    // trigger = it.resource
+}
+
+AzureData.createTrigger (triggerId, triggerOperation, triggerType, triggerBody, collection) {
+    // trigger = it.resource
+}
+
+collection.createTrigger (triggerId, triggerOperation, triggerType, triggerBody) {
+    // trigger = it.resource
+}
+```
+
+#### List
+
+```kotlin
+AzureData.getTriggers (collectionId, databaseId) {
+    // triggers = it.resource?.items
+}
+
+AzureData.getTriggers (collection) {
+    // triggers = it.resource?.items
+}
+
+collection.getTriggers {
+    // triggers = it.resource?.items
+}
+```
+
+#### Delete
+
+```kotlin
+AzureData.deleteTrigger (triggerId, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteTrigger (trigger, collectionId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteTrigger (trigger, collection) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteTrigger (trigger) {
+    // successfully deleted == it.isSuccessful
+}
+
+collection.deleteTrigger (triggerResourceId) {
+    // successfully deleted == it.isSuccessful
+}
+```
+
+#### Replace
+
+```kotlin
+AzureData.replaceTrigger (triggerId, triggerOperation, triggerType, triggerBody, collectionId, databaseId) {
+    // trigger = it.resource
+}
+
+AzureData.replaceTrigger (triggerId, triggerResourceId, triggerOperation, triggerType, triggerBody, collection) {
+    // trigger = it.resource
+}
+
+AzureData.replaceTrigger (trigger, collection) {
+    // trigger = it.resource
+}
+
+collection.replaceTrigger (triggerId, triggerResourceId, triggerOperation, triggerType, triggerBody) {
+    // trigger = it.resource
+}
+
+collection.replaceTrigger (trigger) {
+    // trigger = it.resource
+}
+```
+
 
 ## Using from Java
 
