@@ -783,6 +783,10 @@ collection.deleteTrigger (trigger) {
 collection.deleteTrigger (triggerResourceId) {
     // successfully deleted == it.isSuccessful
 }
+
+trigger.delete {
+    // successfully deleted == it.isSuccessful
+}
 ```
 
 #### Replace
@@ -806,6 +810,91 @@ collection.replaceTrigger (triggerId, triggerResourceId, triggerOperation, trigg
 
 collection.replaceTrigger (trigger) {
     // trigger = it.resource
+}
+```
+
+
+### Users    
+
+#### Create
+
+```kotlin
+AzureData.createUser (userId, databaseId) {
+    // user = it.resource
+}
+
+database.createUser (userId) {
+    // user = it.resource
+}
+
+```
+
+#### List
+
+```kotlin
+AzureData.getUsers (databaseId) {
+    // users = it.resource?.items
+}
+
+database.getUsers {
+    // users = it.resource?.items
+}
+```
+
+#### Get
+
+```kotlin
+AzureData.getUser (userId, databaseId) {
+    // user = it.resource
+}
+
+database.getUser (userId) {
+    // user = it.resource
+}
+```
+
+#### Delete
+
+```kotlin
+AzureData.deleteUser (userId, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteUser (user, databaseId) {
+    // successfully deleted == it.isSuccessful
+}
+
+AzureData.deleteUser (user, database) {
+    // successfully deleted == it.isSuccessful
+}
+
+database.deleteUser (userId) {
+    // successfully deleted == it.isSuccessful
+}
+
+database.deleteUser (user) {
+    // successfully deleted == it.isSuccessful
+}
+
+user.delete {
+    // successfully deleted == it.isSuccessful
+}
+
+```
+
+#### Replace
+
+```kotlin
+AzureData.replaceUser (userId, newUserId, databaseId) {
+    // user = it.resource
+}
+
+AzureData.replaceUser (userId, newUserId, database) {
+    // user = it.resource
+}
+
+database.replaceUser (userId, newUserId) {
+    // user = it.resource
 }
 ```
 
