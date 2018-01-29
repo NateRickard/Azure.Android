@@ -529,7 +529,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     // create
     fun createTrigger(triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) {
 
-        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = triggerId)
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!)
 
         return create(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.Trigger, callback = callback)
     }
@@ -559,9 +559,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // delete
-    fun deleteTrigger(trigger: Trigger, collection: DocumentCollection, callback: (Response) -> Unit) {
+    fun deleteTrigger(triggerResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) {
 
-        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = trigger.id)
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerResourceId = triggerResourceId)
 
         return delete(resourceUri, ResourceType.Trigger, callback)
     }
@@ -575,9 +575,9 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // replace
-    fun replaceTrigger(triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) {
+    fun replaceTrigger(triggerId: String, triggerResourceId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) {
 
-        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerId = triggerId)
+        val resourceUri = baseUri.forTrigger(collection.selfLink!!, triggerResourceId = triggerResourceId)
 
         return replace(Trigger(triggerId, triggerBody, operation, triggerType), resourceUri, ResourceType.Trigger, callback = callback)
     }

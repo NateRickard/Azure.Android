@@ -105,11 +105,11 @@ class ResourceUri(databaseName: String) {
         return getUrlLink(baseLink, itemLink, triggerId)
     }
 
-    fun forTrigger(baseLink: String, triggerId: String? = null): UrlLink {
+    fun forTrigger(baseLink: String, triggerResourceId: String? = null): UrlLink {
 
-        val itemLink = getItemLink(ResourceType.Trigger, baseLink, triggerId)
+        val itemLink = getItemLink(ResourceType.Trigger, baseLink, triggerResourceId)
 
-        return getUrlLinkForSelf(baseLink, itemLink, triggerId)
+        return getUrlLinkForSelf(baseLink, itemLink, triggerResourceId)
     }
 
     fun forUdf(databaseId: String, collectionId: String, udfId: String? = null): UrlLink {

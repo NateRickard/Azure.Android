@@ -447,7 +447,12 @@ class AzureData {
         // delete
         @JvmStatic
         fun deleteTrigger(trigger: Trigger, collection: DocumentCollection, callback: (Response) -> Unit) =
-                documentClient.deleteTrigger(trigger, collection, callback)
+                documentClient.deleteTrigger(trigger.resourceId!!, collection, callback)
+
+        // delete
+        @JvmStatic
+        fun deleteTrigger(triggerResourceId: String, collection: DocumentCollection, callback: (Response) -> Unit) =
+                documentClient.deleteTrigger(triggerResourceId, collection, callback)
 
         // replace
         @JvmStatic
@@ -456,8 +461,13 @@ class AzureData {
 
         // replace
         @JvmStatic
-        fun replaceTrigger(triggerId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) =
-                documentClient.replaceTrigger(triggerId, operation, triggerType, triggerBody, collection, callback)
+        fun replaceTrigger(triggerId: String, triggerResourceId: String, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, triggerBody: String, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) =
+                documentClient.replaceTrigger(triggerId, triggerResourceId, operation, triggerType, triggerBody, collection, callback)
+
+        // replace
+        @JvmStatic
+        fun replaceTrigger(trigger: Trigger, operation: Trigger.TriggerOperation, triggerType: Trigger.TriggerType, collection: DocumentCollection, callback: (ResourceResponse<Trigger>) -> Unit) =
+                documentClient.replaceTrigger(trigger.id, trigger.resourceId!!, operation, triggerType, trigger.body!!, collection, callback)
 
         //endregion
 
