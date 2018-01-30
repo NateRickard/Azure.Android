@@ -986,9 +986,50 @@ user.deletePermission (permissionResourceId) {
 ```
 
 #### Replace
+
 ```kotlin
-AzureData.replace (permissionWithId: id, mode: .read, in: resource, forUser: userId, inDatabase: databaseId) { r in
-    // permission = r.resource
+AzureData.replacePermission (permissionId, permissionMode, resourceSelfLink, userId, databaseId) {
+    // replaced permission = it.resource
+}
+
+AzureData.replacePermission (permissionId, permissionMode, resource, userId, databaseId) {
+    // replaced permission = it.resource
+}
+
+AzureData.replacePermission (permissionId, permissionResourceId, permissionMode, resourceSelfLink, user) {
+    // replaced permission = it.resource
+}
+
+AzureData.replacePermission (permissionId, permissionResourceId, permissionMode, resource, user) {
+    // replaced permission = it.resource
+}
+
+AzureData.replacePermission (permission, user) {
+    // replaced permission = it.resource
+}
+
+resource.replacePermission (permissionId, permissionMode, userId, databaseId) {
+    // replaced permission = it.resource
+}
+
+resource.replacePermission (permission, userId, databaseId) {
+    // replaced permission = it.resource
+}
+
+resource.replacePermission (permissionId, permissionResourceId, permissionMode, user) {
+    // replaced permission = it.resource
+}
+
+user.replacePermission (permissionId, permissionResourceId, permissionMode, resource) {
+    // replaced permission = it.resource
+}
+
+user.replacePermission (permissionId, permissionResourceId, permissionMode, resourceSelfLink) {
+    // replaced permission = it.resource
+}
+
+user.replacePermission (permission) {
+    // replaced permission = it.resource
 }
 ```
 
