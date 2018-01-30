@@ -104,6 +104,8 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         return permission
     }
 
+    //region Create
+
     @Test
     fun createPermission() {
 
@@ -130,6 +132,8 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         assertResponseSuccess(resourceResponse)
         assertEquals(resourceId, resourceResponse?.resource?.id)
     }
+
+    //endregion
 
     @Test
     fun listPermissions() {
