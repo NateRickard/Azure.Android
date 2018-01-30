@@ -97,7 +97,11 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         assertResponseSuccess(resourceResponse)
         assertEquals(resourceId, resourceResponse?.resource?.id)
 
-        return resourceResponse!!.resource!!
+        val permission = resourceResponse!!.resource!!
+
+        resetResponse()
+
+        return permission
     }
 
     @Test
@@ -192,6 +196,8 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
         assertResponseSuccess(resourceResponse)
         assertEquals(resourceId, resourceResponse?.resource?.id)
     }
+
+    //region Deletes
 
     @Test
     fun deletePermissionViaSelf() {
@@ -288,4 +294,146 @@ class PermissionTests : ResourceTest<Permission>(ResourceType.Permission, true, 
 
         assertResponseSuccess(dataResponse)
     }
+
+    //endregion
+
+    //region Replaces
+
+    @Test
+    fun replacePermissionDetailsById() {
+
+        createNewPermission()
+
+        collection?.replacePermission(resourceId, Permission.PermissionMode.All, userId, databaseId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    @Test
+    fun replacePermissionForResourceById() {
+
+        val permission = createNewPermission()
+        permission.permissionMode = Permission.PermissionMode.All
+
+        collection?.replacePermission(permission, userId, databaseId) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    @Test
+    fun replacePermissionDetailsForResource() {
+
+        val permission = createNewPermission()
+
+        collection?.replacePermission(resourceId, permission.resourceId!!, Permission.PermissionMode.All, user!!) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    @Test
+    fun replacePermissionForUser() {
+
+        val permission = createNewPermission()
+        permission.permissionMode = Permission.PermissionMode.All
+
+        AzureData.replacePermission(permission, user!!) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    @Test
+    fun replacePermissionOnUser() {
+
+        val permission = createNewPermission()
+        permission.permissionMode = Permission.PermissionMode.All
+
+        user?.replacePermission(permission) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    @Test
+    fun replacePermissionDetailsOnUserForResource() {
+
+        val permission = createNewPermission()
+
+        user?.replacePermission(permission.id, permission.resourceId!!, Permission.PermissionMode.All, collection!!) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    @Test
+    fun replacePermissionDetailsOnUserForResourceLink() {
+
+        val permission = createNewPermission()
+
+        user?.replacePermission(permission.id, permission.resourceId!!, Permission.PermissionMode.All, collection?.selfLink!!) {
+            resourceResponse = it
+        }
+
+        await().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        assertEquals(Permission.PermissionMode.All, resourceResponse?.resource?.permissionMode)
+    }
+
+    //endregion
 }
