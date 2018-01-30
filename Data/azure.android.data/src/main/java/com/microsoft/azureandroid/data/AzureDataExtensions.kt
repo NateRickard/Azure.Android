@@ -320,6 +320,21 @@ fun User.deletePermission (permissionResourceId: String, callback: (Response) ->
     return AzureData.deletePermission(permissionResourceId, this, callback)
 }
 
+// replace
+fun <TResource : Resource> User.replacePermission (permissionId: String, permissionResourceId: String, permissionMode: Permission.PermissionMode, resource: TResource, callback: (ResourceResponse<Permission>) -> Unit) {
+    return AzureData.replacePermission(permissionId, permissionResourceId, permissionMode, resource, this, callback)
+}
+
+// replace
+fun User.replacePermission (permissionId: String, permissionResourceId: String, permissionMode: Permission.PermissionMode, resourceSelfLink: String, callback: (ResourceResponse<Permission>) -> Unit) {
+    return AzureData.replacePermission(permissionId, permissionResourceId, permissionMode, resourceSelfLink, this, callback)
+}
+
+// replace
+fun User.replacePermission (permission: Permission, callback: (ResourceResponse<Permission>) -> Unit) {
+    return AzureData.replacePermission(permission, this, callback)
+}
+
 //endregion
 
 //endregion
@@ -335,3 +350,12 @@ fun <TResource : Resource> TResource.refresh (callback: (ResourceResponse<TResou
 
 fun <TResource : Resource> TResource.createPermission (permissionId: String, permissionMode: Permission.PermissionMode, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
         AzureData.createPermission(permissionId, permissionMode,this, user, callback)
+
+fun <TResource : Resource> TResource.replacePermission (permissionId: String, permissionMode: Permission.PermissionMode, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
+        AzureData.replacePermission(permissionId, permissionMode, this.selfLink!!, userId, databaseId, callback)
+
+fun <TResource : Resource> TResource.replacePermission (permission: Permission, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
+        AzureData.replacePermission(permission.id, permission.permissionMode!!, this, userId, databaseId, callback)
+
+fun <TResource : Resource> TResource.replacePermission (permissionId: String, permissionResourceId: String, permissionMode: Permission.PermissionMode, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+        AzureData.replacePermission(permissionId, permissionResourceId, permissionMode, this, user, callback)

@@ -567,6 +567,31 @@ class AzureData {
         fun deletePermission(permissionResourceId: String, user: User, callback: (Response) -> Unit) =
                 documentClient.deletePermission(permissionResourceId, user, callback)
 
+        // replace
+        @JvmStatic
+        fun replacePermission(permissionId: String, permissionMode: Permission.PermissionMode, resourceSelfLink: String, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.replacePermission(permissionId, permissionMode, resourceSelfLink, userId, databaseId, callback)
+
+        // replace
+        @JvmStatic
+        fun <TResource : Resource> replacePermission(permissionId: String, permissionMode: Permission.PermissionMode, resource: TResource, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.replacePermission(permissionId, permissionMode, resource.selfLink!!, userId, databaseId, callback)
+
+        // replace
+        @JvmStatic
+        fun replacePermission(permissionId: String, permissionResourceId: String, permissionMode: Permission.PermissionMode, resourceSelfLink: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.replacePermission(permissionId, permissionResourceId, permissionMode, resourceSelfLink, user, callback)
+
+        // replace
+        @JvmStatic
+        fun <TResource : Resource> replacePermission(permissionId: String, permissionResourceId: String, permissionMode: Permission.PermissionMode, resource: TResource, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.replacePermission(permissionId, permissionResourceId, permissionMode, resource.selfLink!!, user, callback)
+
+        // replace
+        @JvmStatic
+        fun replacePermission(permission: Permission, user: User, callback: (ResourceResponse<Permission>) -> Unit) =
+                documentClient.replacePermission(permission.id, permission.resourceId!!, permission.permissionMode!!, permission.resourceLink!!, user, callback)
+
         //endregion
 
         //region Offers

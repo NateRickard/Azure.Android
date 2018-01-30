@@ -698,6 +698,22 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         return delete(resourceUri, ResourceType.Permission, callback)
     }
 
+    // replace
+    fun replacePermission(permissionId: String, permissionMode: Permission.PermissionMode, resourceSelfLink: String, userId: String, databaseId: String, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(databaseId, userId, permissionId)
+
+        return replace(Permission(permissionId, permissionMode, resourceSelfLink), resourceUri, ResourceType.Permission, callback = callback)
+    }
+
+    // replace
+    fun replacePermission(permissionId: String, permissionResourceId: String, permissionMode: Permission.PermissionMode, resourceSelfLink: String, user: User, callback: (ResourceResponse<Permission>) -> Unit) {
+
+        val resourceUri = baseUri.forPermission(user.selfLink!!, permissionResourceId = permissionResourceId)
+
+        return replace(Permission(permissionId, permissionMode, resourceSelfLink), resourceUri, ResourceType.Permission, callback = callback)
+    }
+
     //endregion
 
     //region Offers
