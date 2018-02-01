@@ -210,8 +210,43 @@ collection.delete {
 
 #### Replace
 
+A `Replace` operation on a `DocumentCollection` allows you to replace the `IndexingPolicy` for the collection.
+
+Given a created `IndexingPolicy`:
+
 ```kotlin
-// TODO...
+val policy = IndexingPolicy.create {
+    automatic = true
+    mode = IndexingMode.Lazy
+    includedPaths {
+        includedPath {
+            path = "/*"
+            indexes {
+                // create indexes via factory methods
+                index(Index.range(DataType.Number, -1))
+                // or, by specifying each member
+                index {
+                    kind = IndexKind.Hash
+                    dataType = DataType.String
+                    precision = 3
+                }
+                index(Index.spatial(DataType.Point))
+            }
+        }
+    }
+    // omit if no paths should be excluded
+    excludedPaths {
+        excludedPath {
+            path = "/test/*"
+        }
+    }
+}
+```
+
+```kotlin
+AzureData.replaceCollection(resourceId, databaseId, policy) {
+    // replaced collection = it.resource
+}
 ```
 
 
@@ -368,7 +403,7 @@ document.delete {
 #### Replace
 
 ```kotlin
-AzureData.replaceDocument (document, inCollection: collectionId, inDatabase: databaseId) {
+AzureData.replaceDocument (document, collectionId, databaseId) {
     // updated document = it.resource
 }
 
