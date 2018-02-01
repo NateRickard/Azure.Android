@@ -11,7 +11,6 @@ import com.microsoft.azureandroid.data.services.Response
 import junit.framework.Assert.assertEquals
 import org.awaitility.Awaitility.await
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
