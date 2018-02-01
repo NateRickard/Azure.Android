@@ -2,8 +2,8 @@ package com.microsoft.azureandroid.data.integration
 
 import android.support.test.runner.AndroidJUnit4
 import com.microsoft.azureandroid.data.*
-import com.microsoft.azureandroid.data.model.DocumentCollection
-import com.microsoft.azureandroid.data.model.ResourceType
+import com.microsoft.azureandroid.data.model.*
+import com.microsoft.azureandroid.data.model.indexing.*
 import org.awaitility.Awaitility.await
 import org.junit.Assert.*
 import org.junit.Test
@@ -127,6 +127,8 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
         assertEquals(collectionId, resourceResponse?.resource?.id)
     }
 
+    //region Deletes
+
     @Test
     fun deleteCollection() {
 
@@ -189,5 +191,108 @@ class DocumentCollectionTests : ResourceTest<DocumentCollection>(ResourceType.Co
         }
 
         assertResponseSuccess(dataResponse)
+    }
+
+    //endregion
+
+    @Test
+    fun replaceCollectionById() {
+
+        ensureCollection()
+
+        val policy = IndexingPolicy.create {
+            automatic = true
+            mode = IndexingMode.Lazy
+            includedPaths {
+                includedPath {
+                    path = "/*"
+                    indexes {
+                        index(Index.range(DataType.Number, -1))
+                        index {
+                            kind = IndexKind.Hash
+                            dataType = DataType.String
+                            precision = 3
+                        }
+                        index(Index.spatial(DataType.Point))
+                    }
+                }
+            }
+            excludedPaths {
+                excludedPath {
+                    path = "/test/*"
+                }
+            }
+        }
+
+        AzureData.replaceCollection(resourceId, databaseId, policy) {
+            resourceResponse = it
+        }
+
+        await().forever().until {
+            resourceResponse != null
+        }
+
+        assertResponseSuccess(resourceResponse)
+        assertEquals(resourceId, resourceResponse?.resource?.id)
+
+        val newPolicy = resourceResponse?.resource?.indexingPolicy!!
+
+        assertEquals(policy.automatic, newPolicy.automatic)
+        assertEquals(policy.indexingMode, newPolicy.indexingMode)
+
+        //complicated logic to compare the returned policy follows....
+        assertEquals(policy.includedPaths!!.size, newPolicy.includedPaths!!.size)
+
+        for (path in policy.includedPaths!!) {
+
+            for (newPath in newPolicy.includedPaths!!) {
+
+                if (newPath.path != path.path) {
+
+                    if (newPath == newPolicy.includedPaths!!.last()) {
+                        throw Exception("Included path not found in indexingPolicy")
+                    }
+                }
+                else {
+
+                    assertEquals(path.indexes!!.size, newPath.indexes!!.size)
+
+                    for (index in path.indexes as List<Index>) {
+
+                        for (newIndex in newPath.indexes as List<Index>) {
+
+                            if (newIndex.dataType == index.dataType ||
+                                    newIndex.kind == index.kind ||
+                                    newIndex.precision == index.precision) {
+                                break
+                            }
+                            else if (newIndex == newPath.indexes!!.last()) {
+                                throw Exception("Index not found in included path")
+                            }
+                        }
+                    }
+
+                    break
+                }
+            }
+        }
+
+        assertEquals(policy.excludedPaths!!.size, newPolicy.excludedPaths!!.size)
+
+        for (path in policy.excludedPaths!!) {
+
+            for (newPath in newPolicy.excludedPaths!!) {
+
+                if (newPath.path != path.path) {
+
+                    if (newPath == newPolicy.excludedPaths!!.last()) {
+                        throw Exception("Excluded path not found in indexingPolicy")
+                    }
+                }
+                else {
+                    break
+                }
+            }
+        }
     }
 }
