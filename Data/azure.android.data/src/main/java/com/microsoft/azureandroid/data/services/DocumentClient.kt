@@ -6,6 +6,7 @@ import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.BuildConfig
 import com.microsoft.azureandroid.data.model.*
 import com.google.gson.reflect.TypeToken
+import com.microsoft.azureandroid.data.model.indexing.IndexingPolicy
 import com.microsoft.azureandroid.data.util.*
 import com.microsoft.azureandroid.data.util.json.gson
 import okhttp3.*
@@ -144,6 +145,14 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
         val resourceUri = baseUri.forCollection(databaseId, collectionId)
 
         return delete(resourceUri, ResourceType.Collection, callback)
+    }
+
+    // replace
+    fun replaceCollection(collectionId: String, databaseId: String, indexingPolicy: IndexingPolicy, callback: (ResourceResponse<DocumentCollection>) -> Unit) {
+
+        val resourceUri = baseUri.forCollection(databaseId, collectionId)
+
+        return replace(collectionId, mutableMapOf<String, Any>("indexingPolicy" to indexingPolicy), resourceUri, ResourceType.Collection, callback = callback)
     }
 
     //endregion
@@ -419,7 +428,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(databaseId, collectionId, storedProcedureId)
 
-        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
+        replace(storedProcedureId, mutableMapOf<String, Any>("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
     }
 
     // replace
@@ -427,7 +436,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forStoredProcedure(collection.selfLink!!, storedProcedureResourceId = storedProcedureResourceId)
 
-        replace(storedProcedureId, mutableMapOf("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
+        replace(storedProcedureId, mutableMapOf<String, Any>("body" to procedure), resourceUri, ResourceType.StoredProcedure, callback = callback)
     }
 
     // execute
@@ -503,7 +512,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(databaseId, collectionId, udfId = userDefinedFunctionId)
 
-        return replace(userDefinedFunctionId, mutableMapOf("body" to function), resourceUri, ResourceType.Udf, callback = callback)
+        return replace(userDefinedFunctionId, mutableMapOf<String, Any>("body" to function), resourceUri, ResourceType.Udf, callback = callback)
     }
 
     // replace
@@ -511,7 +520,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
 
         val resourceUri = baseUri.forUdf(collection.selfLink!!, udfResourceId = userDefinedFunctionResourceId)
 
-        return replace(userDefinedFunctionId, mutableMapOf("body" to function), resourceUri, ResourceType.Udf, callback = callback)
+        return replace(userDefinedFunctionId, mutableMapOf<String, Any>("body" to function), resourceUri, ResourceType.Udf, callback = callback)
     }
 
     //endregion
@@ -835,7 +844,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
             = replace(resourceId, data = null, resourceUri = resourceUri, resourceType = resourceType, callback = callback)
 
     // replace
-    private fun <T : Resource> replace(resourceId: String, data: MutableMap<String, String>? = null, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
+    private fun <T : Resource> replace(resourceId: String, data: MutableMap<String, Any>? = null, resourceUri: UrlLink, resourceType: ResourceType, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit) {
 
         if (!resourceId.isValidResourceId()) {
             return callback(ResourceResponse(DataError.fromType(ErrorType.InvalidId)))
@@ -864,7 +873,7 @@ class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: Tok
     }
 
     // create or replace
-    private fun <T : Resource> createOrReplace(body: Map<String, String>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
+    private fun <T : Resource> createOrReplace(body: Map<String, Any>, resourceUri: UrlLink, resourceType: ResourceType, replacing: Boolean = false, additionalHeaders: Headers? = null, callback: (ResourceResponse<T>) -> Unit, resourceClass: Class<T>? = null) {
 
         try {
             val jsonBody = gson.toJson(body)
