@@ -3,6 +3,7 @@ package com.microsoft.azureandroid.data
 import android.content.Context
 import com.microsoft.azureandroid.data.constants.TokenType
 import com.microsoft.azureandroid.data.model.*
+import com.microsoft.azureandroid.data.model.indexing.IndexingPolicy
 import com.microsoft.azureandroid.data.services.DocumentClient
 import com.microsoft.azureandroid.data.services.ResourceListResponse
 import com.microsoft.azureandroid.data.services.ResourceResponse
@@ -93,6 +94,10 @@ class AzureData {
         @JvmStatic
         fun deleteCollection(collectionId: String, databaseId: String, callback: (Response) -> Unit) =
                 documentClient.deleteCollection(collectionId, databaseId, callback)
+
+        // replace
+        fun replaceCollection(collectionId: String, databaseId: String, indexingPolicy: IndexingPolicy, callback: (ResourceResponse<DocumentCollection>) -> Unit) =
+                documentClient.replaceCollection(collectionId, databaseId, indexingPolicy, callback)
 
         //endregion
 
