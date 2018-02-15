@@ -218,7 +218,7 @@ abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<
                                 // currently we'll limit this to functioning on ONE resource since we need a unique permission name, but we'll leave loopng code here in case we find a way to support
                                 for (resourceItem in selectedItems) {
 
-                                    AzureData.createPermission(permissionId, mode, resourceItem, user, databaseId) { response ->
+                                    AzureData.createPermission(permissionId, mode, resourceItem, user) { response ->
 
                                         try {
                                             if (response.isSuccessful) {

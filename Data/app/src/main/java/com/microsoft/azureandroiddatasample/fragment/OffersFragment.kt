@@ -28,7 +28,7 @@ class OffersFragment : ResourceListFragment<Offer>() {
 
     override fun fetchData(callback: (ResourceListResponse<Offer>) -> Unit) {
 
-        AzureData.offers { response ->
+        AzureData.getOffers { response ->
             callback(response)
         }
     }
