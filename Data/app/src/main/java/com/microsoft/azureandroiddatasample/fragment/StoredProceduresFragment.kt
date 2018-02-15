@@ -55,7 +55,7 @@ class StoredProceduresFragment : ResourceListFragment<StoredProcedure>() {
             var context = getContext();
             var r = context.getResponse();
 
-            r.setBody(\"Hello World!\");
+            r.setBody('Hello World!');
         }
         """
 
