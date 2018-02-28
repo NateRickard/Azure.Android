@@ -7,9 +7,9 @@ import android.view.HapticFeedbackConstants
 typealias ClickHandler = (View, Int) -> Unit
 
 /**
-* Created by Nate Rickard on 11/14/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 abstract class ViewHolder<in TData>(itemView: View) : RecyclerView.ViewHolder(itemView), TypedViewHolder<TData>, View.OnClickListener, View.OnLongClickListener {
 

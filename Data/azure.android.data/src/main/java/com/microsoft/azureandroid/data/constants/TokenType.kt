@@ -1,7 +1,8 @@
 package com.microsoft.azureandroid.data.constants
 
 /**
- * Created by nater on 10/27/17.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 enum class TokenType(val value: String) {

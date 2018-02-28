@@ -5,9 +5,9 @@ import android.os.Build
 import java.util.*
 
 /**
-* Created by Nate Rickard on 11/9/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 class LocaleHelper {
 

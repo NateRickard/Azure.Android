@@ -4,9 +4,9 @@ import android.net.Uri
 import okhttp3.HttpUrl
 
 /**
-* Created by Nate Rickard on 10/31/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 // https://docs.microsoft.com/en-us/rest/api/documentdb/documentdb-resource-uri-syntax-for-rest
 class ResourceUri(databaseName: String) {

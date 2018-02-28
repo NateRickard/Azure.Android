@@ -1,5 +1,10 @@
 package com.microsoft.azureandroiddatasample
 
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import org.junit.Test
 
 import org.junit.Assert.*

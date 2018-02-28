@@ -9,6 +9,12 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 
 /**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+
+/**
  * Instrumented test, which will execute on an Android device.
  *
  * See [testing documentation](http://d.android.com/tools/testing).

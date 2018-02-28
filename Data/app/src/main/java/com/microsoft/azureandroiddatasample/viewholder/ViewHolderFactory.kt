@@ -4,6 +4,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import java.lang.reflect.InvocationTargetException
 
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 object ViewHolderFactory {
 
     /**

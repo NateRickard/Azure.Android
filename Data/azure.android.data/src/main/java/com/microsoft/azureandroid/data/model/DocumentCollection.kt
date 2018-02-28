@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 import com.microsoft.azureandroid.data.model.indexing.IndexingPolicy
 
 /**
-* Created by Nate Rickard on 11/11/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 /**
  * Represents a document collection in the Azure Cosmos DB service.

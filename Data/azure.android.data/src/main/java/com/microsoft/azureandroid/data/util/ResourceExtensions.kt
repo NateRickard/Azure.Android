@@ -5,8 +5,8 @@ import com.microsoft.azureandroid.data.model.Resource
 import com.microsoft.azureandroid.data.util.json.gson
 
 /**
- * Created by Nate Rickard on 11/17/17.
- * Copyright © 2017 Nate Rickard. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 class ResourceExtensions {

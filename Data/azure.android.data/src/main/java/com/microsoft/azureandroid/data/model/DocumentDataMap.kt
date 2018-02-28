@@ -3,8 +3,8 @@ package com.microsoft.azureandroid.data.model
 import java.util.*
 
 /**
- * Created by Nate Rickard on 12/12/17.
- * Copyright © 2017 Nate Rickard. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 internal class DocumentDataMap : LinkedHashMap<String, Any?>()

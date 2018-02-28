@@ -12,8 +12,8 @@ import org.awaitility.Awaitility.*
 import org.junit.Assert.*
 
 /**
- * Created by Nate Rickard on 12/5/17.
- * Copyright © 2017 Nate Rickard. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 @RunWith(AndroidJUnit4::class)

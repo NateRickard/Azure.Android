@@ -3,7 +3,8 @@ package com.microsoft.azureandroiddatasample.model
 import com.microsoft.azureandroid.data.model.Document
 
 /**
- * Created by nater on 11/11/17.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 class MyDocument : Document() {
