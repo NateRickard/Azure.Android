@@ -1,6 +1,5 @@
-#set ($USER = "Nate Rickard")
 
 /**
- * Created by ${USER} on ${DATE}.
- * Copyright © ${YEAR} ${USER}. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */

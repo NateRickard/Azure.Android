@@ -15,9 +15,9 @@ typealias Atch = Attachment
 typealias Ofr = Offer
 
 /**
-* Created by Nate Rickard on 10/31/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 enum class ResourceType(val path: String, fullname: String, val type: Type, val listType: Type) {
 

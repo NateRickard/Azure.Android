@@ -3,9 +3,9 @@ package com.microsoft.azureandroid.data.model
 import com.google.gson.annotations.SerializedName
 
 /**
-* Created by Nate Rickard on 10/27/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 class Database : Resource() {
 

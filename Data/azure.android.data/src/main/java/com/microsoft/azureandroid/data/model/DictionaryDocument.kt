@@ -1,8 +1,8 @@
 package com.microsoft.azureandroid.data.model
 
 /**
- * Created by Nate Rickard on 1/3/18.
- * Copyright © 2018 Nate Rickard. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 class DictionaryDocument(id: String? = null) : Document(id) {

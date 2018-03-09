@@ -29,8 +29,8 @@ import com.microsoft.azureandroiddatasample.extensions.updateItemEnabledStatus
 import kotlinx.android.synthetic.main.dialog_create_permission.view.*
 
 /**
- * Created by Nate Rickard on 11/15/17.
- * Copyright © 2017 Nate Rickard. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 abstract class ResourceListFragment<TData: Resource> : RecyclerViewListFragment<TData, ResourceViewHolder>(), ActionMode.Callback {

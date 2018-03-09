@@ -4,9 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 
 /**
-* Created by Nate Rickard on 11/10/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 abstract class ViewHolderBase<in T: Any>(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

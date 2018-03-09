@@ -6,9 +6,9 @@ import com.microsoft.azureandroiddatasample.viewholder.ViewHolderBase
 import kotlinx.android.synthetic.main.document_view.view.*
 
 /**
-* Created by Nate Rickard on 10/27/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 class DocumentViewHolder(itemView: View) : ViewHolderBase<Document>(itemView) {
 

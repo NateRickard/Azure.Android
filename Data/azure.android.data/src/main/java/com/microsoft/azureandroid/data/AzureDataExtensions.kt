@@ -8,9 +8,9 @@ import okhttp3.HttpUrl
 import java.net.URL
 
 /**
-* Created by Nate Rickard on 11/11/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 //region Database
 

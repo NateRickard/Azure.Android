@@ -5,12 +5,17 @@ import android.content.Context
 import com.microsoft.azureandroid.data.AzureData
 import com.microsoft.azureandroid.data.constants.TokenType
 
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        AzureData.configure(applicationContext, "mobile", "gioHmSqPP7J7FE5XlqRgBjmqykWLbm0KnP2FCAOl7gu17ZWlvMTRxOvsUYWQ3YUN2Yvmd077O0hyFyBOIftjOg==", TokenType.MASTER, true)
+        
 
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, exception ->

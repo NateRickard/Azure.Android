@@ -13,9 +13,9 @@ import okhttp3.*
 import java.io.IOException
 
 /**
-* Created by Nate Rickard on 10/31/17.
-* Copyright © 2017 Nate Rickard. All rights reserved.
-*/
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
 
 class DocumentClient(private val baseUri: ResourceUri, key: String, keyType: TokenType = TokenType.MASTER) {
 

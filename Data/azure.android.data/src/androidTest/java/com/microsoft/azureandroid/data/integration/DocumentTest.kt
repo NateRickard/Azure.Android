@@ -10,8 +10,8 @@ import org.junit.Test
 import java.util.*
 
 /**
- * Created by Nate Rickard on 1/17/18.
- * Copyright © 2018 Nate Rickard. All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
  */
 
 abstract class DocumentTest<TDoc : Document>(private val docType: Class<TDoc>)
